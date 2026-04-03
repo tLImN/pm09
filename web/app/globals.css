@@ -1,0 +1,131 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap');
+@import "tailwindcss";
+
+:root {
+  --accent-color: #e2001a;
+  --accent-hover-color: #ba0015;
+  --text-color: #1a171b;
+  --subtext-color: #6a5e6e;
+  --border-color: #b6acb9;
+  --link-color: #1656f8;
+  --inverted-text-color: #ffffff;
+  --background: #ffffff;
+  --foreground: #1a171b;
+}
+
+/* @theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: 'Manrope', sans-serif;
+} */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  margin: 0;
+  color: var(--text-color);
+  background: var(--background);
+}
+
+a {
+  color: var(--link-color);
+  text-decoration: none;
+}
+
+button {
+  background-color: var(--accent-color);
+  border: 0;
+  color: var(--inverted-text-color);
+  padding: 0.5em 1em;
+  font-size: 1.2rem;
+  font-weight: 500;
+  border-radius: 5px;
+  font-family: 'Manrope', sans-serif;
+  cursor: pointer;
+  transition-duration: 0.2s;
+}
+
+button:hover {
+  background-color: var(--accent-hover-color);
+}
+
+input {
+  font-family: 'Manrope', sans-serif;
+  font-size: 16px;
+  padding: 0 15px;
+  min-height: 40px;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  font-weight: 500;
+  width: 100%;
+}
+
+input[type="checkbox"] {
+  height: 25px;
+  width: 25px;
+  accent-color: var(--accent-color);
+  margin: 0;
+}
+
+input[type="checkbox"]:checked:hover {
+  accent-color: var(--accent-hover-color);
+}
+
+select {
+  background-color: var(--inverted-text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  padding: 0 15px;
+  font-size: 16px;
+  height: 40px;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 500;
+}
+
+address {
+  font-style: normal;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: 700;
+}
+
+.expand-button {
+  width: 35px;
+  height: 35px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  font-size: 1.2rem;
+}
+
+.expand-button::after {
+  content: "+";
+}
+
+details[open] .expand-button::after {
+  content: "-";
+}
+
+.page-article ul {
+  list-style: disc;
+  margin-left: 2em;
+}
+
+.loading-status {
+  text-align: center;
+  border-radius: 5;
+  padding: 20px 20px 20px;
+  border: 1px solid var(--border-color);
+}

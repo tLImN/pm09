@@ -1,0 +1,61 @@
+# ===========================================
+# Root .gitignore
+# ===========================================
+
+# Dependencies
+**/node_modules
+
+# Environment files
+**/.env
+**/.env.local
+**/.env.production
+**/.env.staging
+
+# Build outputs
+**/dist
+**/build
+**/.next
+**/out
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+.AppleDouble
+.LSOverride
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+*~
+.vs
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Docker volumes (PostgreSQL data)
+pgdata/
+
+# Strapi
+.strapi
+.strapi-updater.json
+.strapi-cloud.json
+license.txt
+exports/
+
+# Old project backups (not needed in repo)
+web-1203/
+web-2203/
+
+# Coverage
+coverage/
+
+# Misc
+*.tsbuildinfo
+.eslintcache
+.turbo

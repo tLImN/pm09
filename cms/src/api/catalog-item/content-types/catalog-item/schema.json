@@ -1,0 +1,54 @@
+{
+  "kind": "collectionType",
+  "collectionName": "catalog_items",
+  "info": {
+    "singularName": "catalog-item",
+    "pluralName": "catalog-items",
+    "displayName": "Catalog Item"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "item_title": {
+      "type": "string",
+      "required": true
+    },
+    "item_slug": {
+      "type": "uid",
+      "required": true
+    },
+    "item_type": {
+      "type": "enumeration",
+      "required": true,
+      "default": "product",
+      "enum": [
+        "product",
+        "service"
+      ]
+    },
+    "item_category": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::category.category",
+      "inversedBy": "catalog_items"
+    },
+    "item_manufacturer": {
+      "type": "string"
+    },
+    "item_description": {
+      "type": "blocks"
+    },
+    "item_images": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    }
+  }
+}
