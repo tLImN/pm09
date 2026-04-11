@@ -73,7 +73,7 @@ export default function Home() {
       </section>
 
       <section style={{ padding: "33px 100px" }}>
-        <h2 style={{ textAlign: "center", fontSize: "2.1875rem", margin: "30px auto"}}>
+        <h2 style={{ textAlign: "center", fontSize: "2.1875rem", margin: "30px auto" }}>
           Ассортимент
         </h2>
         <div
@@ -84,75 +84,81 @@ export default function Home() {
             flexWrap: "wrap",
           }}
         >
-          <div className="h-[336px] w-[366px] text-center flex flex-col gap-[24px] text-[1.625rem]">
-            <div className="image-container"
-              style={{
-                border: "1px solid var(--border-color)",
-                height: 257,
-                borderRadius: 5,
-                overflow: "clip",
-              }}
-            >
-              <img
-                src="/img/Стеллаж FL 900.jpg"
+          <Link href="./catalog/1-stellazhi-dlya-sklada" style={{ color: "var(--text-color)" }}>
+            <div className="h-[336px] w-[366px] text-center flex flex-col gap-[24px] text-[1.625rem]">
+              <div className="image-container"
                 style={{
-                  width: "100%",
-                  height: "100%",
-                  maxWidth: "fit-content",
-                  maxHeight: "fit-content",
-                  margin: "0 auto",
-                  padding: 15,
+                  border: "1px solid var(--border-color)",
+                  height: 257,
+                  borderRadius: 5,
+                  overflow: "clip",
                 }}
-              />
+              >
+                <img
+                  src="/img/stelazh-fl-900.jpg"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    maxWidth: "fit-content",
+                    maxHeight: "fit-content",
+                    margin: "0 auto",
+                    padding: 15,
+                  }}
+                />
+              </div>
+              <span>Стеллажи для склада</span>
             </div>
-            <span>Стеллажи для склада</span>
-          </div>
-          <div className="h-[336px] w-[366px] text-center flex flex-col gap-[24px] text-[1.625rem]">
-            <div className="image-container"
-              style={{
-                border: "1px solid var(--border-color)",
-                height: 257,
-                borderRadius: 5,
-                overflow: "clip",
-              }}
-            >
-              <img
-                src="/img/Погрузчик TEU FB18(FB18S).jpg"
+          </Link>
+          <Link href="./catalog/pogruzchiki" style={{ color: "var(--text-color)" }}>
+            <div className="h-[336px] w-[366px] text-center flex flex-col gap-[24px] text-[1.625rem]">
+              <div className="image-container"
                 style={{
-                  width: "100%",
-                  height: "100%",
-                  maxWidth: "fit-content",
-                  maxHeight: "fit-content",
-                  margin: "0 auto",
-                  padding: 15,
+                  border: "1px solid var(--border-color)",
+                  height: 257,
+                  borderRadius: 5,
+                  overflow: "clip",
                 }}
-              />
+              >
+                <img
+                  src="/img/pogruzchik-teu-fb18.jpg"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    maxWidth: "fit-content",
+                    maxHeight: "fit-content",
+                    margin: "0 auto",
+                    padding: 15,
+                  }}
+                />
+              </div>
+              <span>Погрузчики</span>
             </div>
-            <span>Погрузчики</span>
-          </div>
-          <div className="h-[336px] w-[366px] text-center flex flex-col gap-[24px] text-[1.625rem]">
-            <div className="image-container"
-              style={{
-                border: "1px solid var(--border-color)",
-                height: 257,
-                borderRadius: 5,
-                overflow: "clip",
-              }}
-            >
-              <img
-                src="/img/1766672410.png"
+          </Link>
+          <Link href="./catalog/shtabelery" style={{ color: "var(--text-color)" }}>
+            <div className="h-[336px] w-[366px] text-center flex flex-col gap-[24px] text-[1.625rem]">
+              <div className="image-container"
                 style={{
-                  width: "100%",
-                  height: "100%",
-                  maxWidth: "fit-content",
-                  maxHeight: "fit-content",
-                  margin: "0 auto",
-                  padding: 15,
+                  border: "1px solid var(--border-color)",
+                  height: 257,
+                  borderRadius: 5,
+                  overflow: "clip",
                 }}
-              />
+              >
+                <img
+                  src="/img/1766672410.png"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    maxWidth: "fit-content",
+                    maxHeight: "fit-content",
+                    margin: "0 auto",
+                    padding: 15,
+                  }}
+                />
+              </div>
+              <span>Штабелеры</span>
             </div>
-            <span>Штабелеры</span>
-          </div>
+          </Link>
         </div>
       </section>
 
