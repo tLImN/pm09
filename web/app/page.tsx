@@ -6,6 +6,7 @@ import { getHomePageData } from "@/lib/api";
 //import { getStrapiImageUrl } from "@/lib/utils";
 import { CatalogItem } from "@/lib/types";
 import DetailsItem from "@/components/DetailsItem";
+import AssortmentSection from "@/components/AssortmentSection";
 
 export default function Home() {
   const [items, setItems] = useState<CatalogItem[]>([]);
@@ -76,90 +77,30 @@ export default function Home() {
         <h2 style={{ textAlign: "center", fontSize: "2.1875rem", margin: "30px auto" }}>
           Ассортимент
         </h2>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            gap: 35,
-            flexWrap: "wrap",
-          }}
-        >
-          <Link href="./catalog/1-stellazhi-dlya-sklada" style={{ color: "var(--text-color)" }}>
-            <div className="h-[336px] w-[366px] text-center flex flex-col gap-[24px] text-[1.625rem]">
-              <div className="image-container"
-                style={{
-                  border: "1px solid var(--border-color)",
-                  height: 257,
-                  borderRadius: 5,
-                  overflow: "clip",
-                }}
-              >
-                <img
-                  src="/img/stelazh-fl-900.jpg"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    maxWidth: "fit-content",
-                    maxHeight: "fit-content",
-                    margin: "0 auto",
-                    padding: 15,
-                  }}
-                />
-              </div>
-              <span>Стеллажи для склада</span>
-            </div>
-          </Link>
-          <Link href="./catalog/pogruzchiki" style={{ color: "var(--text-color)" }}>
-            <div className="h-[336px] w-[366px] text-center flex flex-col gap-[24px] text-[1.625rem]">
-              <div className="image-container"
-                style={{
-                  border: "1px solid var(--border-color)",
-                  height: 257,
-                  borderRadius: 5,
-                  overflow: "clip",
-                }}
-              >
-                <img
-                  src="/img/pogruzchik-teu-fb18.jpg"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    maxWidth: "fit-content",
-                    maxHeight: "fit-content",
-                    margin: "0 auto",
-                    padding: 15,
-                  }}
-                />
-              </div>
-              <span>Погрузчики</span>
-            </div>
-          </Link>
-          <Link href="./catalog/shtabelery" style={{ color: "var(--text-color)" }}>
-            <div className="h-[336px] w-[366px] text-center flex flex-col gap-[24px] text-[1.625rem]">
-              <div className="image-container"
-                style={{
-                  border: "1px solid var(--border-color)",
-                  height: 257,
-                  borderRadius: 5,
-                  overflow: "clip",
-                }}
-              >
-                <img
-                  src="/img/1766672410.png"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    maxWidth: "fit-content",
-                    maxHeight: "fit-content",
-                    margin: "0 auto",
-                    padding: 15,
-                  }}
-                />
-              </div>
-              <span>Штабелеры</span>
-            </div>
-          </Link>
-        </div>
+        <AssortmentSection
+          items={[
+            {
+              href: "./catalog/1-stellazhi-dlya-sklada",
+              imageSrc: "/img/stelazh-fl-900.jpg",
+              title: "Стеллажи для склада",
+            },
+            {
+              href: "./catalog/pogruzchiki",
+              imageSrc: "/img/pogruzchik-teu-fb18.jpg",
+              title: "Погрузчики",
+            },
+            {
+              href: "./catalog/shtabelery",
+              imageSrc: "/img/1766672410.png",
+              title: "Штабелеры",
+            },
+            {
+              href: "./catalog/pogruzchiki",
+              imageSrc: "/img/60-5001_a.png",
+              title: "Гидравлические тележки",
+            },
+          ]}
+        />
       </section>
 
       <section style={{ padding: "33px 100px" }}>

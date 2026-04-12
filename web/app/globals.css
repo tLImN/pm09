@@ -114,7 +114,7 @@ h3 {
   content: "+";
 }
 
-details[open] .expand-button::after {
+.expand-button.open::after {
   content: "-";
 }
 
