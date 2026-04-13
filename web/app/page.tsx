@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { getHomePageData } from "@/lib/api";
 //import { getStrapiImageUrl } from "@/lib/utils";
 import { CatalogItem } from "@/lib/types";
+import HeroBanner from "@/components/HeroBanner";
 import DetailsItem from "@/components/DetailsItem";
 import AssortmentSection from "@/components/AssortmentSection";
 
@@ -21,57 +22,15 @@ export default function Home() {
 
   return (
     <>
-      <section
-        id="banner"
-        style={{
-          backgroundColor: "var(--text-color)",
-          backgroundImage: "url(/img/banner-background.png)",
-          backgroundPosition: "center",
-          backgroundSize: "cover",
-          backgroundAttachment: "fixed",
-          height: 453,
-          color: "var(--inverted-text-color)",
-        }}
+      <HeroBanner
+        title="Функциональные решения для вашего склада"
+        subtitle="ООО «Альтернатива Форклифт» предлагаем проверенное оборудование от надёжных производителей, индивидуальный подбор решений и полный цикл сопровождения."
+        backgroundImage="/img/banner-background.png"
       >
-        <div
-          style={{
-            backgroundColor: "rgba(26, 23, 27, 0.8)",
-            height: "100%",
-          }}
-        >
-          <div
-            style={{
-              padding: "30px 100px",
-              maxWidth: 1440,
-              margin: "0 auto",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "baseline",
-              justifyContent: "center",
-              gap: 30,
-              height: "100%",
-            }}
-          >
-            <h1 style={{ fontSize: "4rem", margin: 7, maxWidth: 884 }}>
-              Функциональные решения для вашего склада
-            </h1>
-            <p
-              style={{
-                fontSize: "1.375rem",
-                margin: 7,
-                maxWidth: 1200,
-              }}
-            >
-              ООО «Альтернатива Форклифт» предлагаем проверенное оборудование от
-              надёжных производителей, индивидуальный подбор решений и полный цикл
-              сопровождения.
-            </p>
-            <Link href="/catalog">
-              <button>Перейти в каталог</button>
-            </Link>
-          </div>
-        </div>
-      </section>
+        <Link href="/catalog">
+          <button>Перейти в каталог</button>
+        </Link>
+      </HeroBanner>
 
       <section style={{ padding: "33px 100px" }}>
         <h2 style={{ textAlign: "center", fontSize: "2.1875rem", margin: "30px auto" }}>
@@ -112,7 +71,9 @@ export default function Home() {
             display: "flex",
             flexDirection: "column",
             gap: 35,
-            padding: "33px 160px",
+            padding: "30px",
+            maxWidth: 1440,
+            margin: "0 auto"
           }}
         >
           <DetailsItem question="Какие гарантии предоставляются на складскую технику?">
@@ -160,12 +121,6 @@ export default function Home() {
       </section>
       <style>{`
         @media (max-width: 768px) {
-          #banner h1 {
-            font-size: 2rem !important;
-          }
-          #banner > div > div {
-            padding: 30px 20px !important;
-          }
           section {
             padding: 20px !important;
           }
