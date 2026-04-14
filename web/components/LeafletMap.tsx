@@ -2,7 +2,17 @@
 
 import { useEffect, useRef } from "react";
 
-export default function LeafletMap() {
+interface LeafletMapProps {
+  lat?: number;
+  lng?: number;
+  popupText?: string;
+}
+
+export default function LeafletMap({
+  lat = 56.0967,
+  lng = 40.3477,
+  popupText = "ООО «Альтернатива Форклифт»",
+}: LeafletMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<unknown>(null);
 
@@ -32,7 +42,7 @@ export default function LeafletMap() {
         map = (L as any).map(mapRef.current, { 
           attributionControl: false
         }).setView(
-          [56.0967, 40.3477],
+          [lat, lng],
           18
         );
 
@@ -50,9 +60,9 @@ export default function LeafletMap() {
         myAttrControl.setPrefix('<a href="https://leafletjs.com/">Leaflet</a>');
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const marker = (L as any).marker([56.0967, 40.3477]).addTo(map);
+        const marker = (L as any).marker([lat, lng]).addTo(map);
         marker
-          .bindPopup("ООО «Альтернатива Форклифт»")
+          .bindPopup(popupText)
           .openPopup();
 
         mapInstanceRef.current = map;

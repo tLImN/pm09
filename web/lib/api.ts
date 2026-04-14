@@ -3,6 +3,10 @@ import {
   StrapiSingleResponse,
   Category,
   CatalogItem,
+  AboutPage,
+  ContactPage,
+  PaymentPage,
+  PrivacyPage,
 } from "./types";
 
 const STRAPI_URL =
@@ -156,5 +160,42 @@ export async function getHomePageData(): Promise<{
     return { items: itemsRes.data || [], categories };
   } catch {
     return { items: [], categories: [] };
+  }
+}
+
+// Static pages from Strapi
+export async function getAboutPage(): Promise<AboutPage | null> {
+  try {
+    const res = await fetchAPI<StrapiSingleResponse<AboutPage>>("/about");
+    return res.data || null;
+  } catch {
+    return null;
+  }
+}
+
+export async function getContactPage(): Promise<ContactPage | null> {
+  try {
+    const res = await fetchAPI<StrapiSingleResponse<ContactPage>>("/contact");
+    return res.data || null;
+  } catch {
+    return null;
+  }
+}
+
+export async function getPaymentPage(): Promise<PaymentPage | null> {
+  try {
+    const res = await fetchAPI<StrapiSingleResponse<PaymentPage>>("/payment");
+    return res.data || null;
+  } catch {
+    return null;
+  }
+}
+
+export async function getPrivacyPage(): Promise<PrivacyPage | null> {
+  try {
+    const res = await fetchAPI<StrapiSingleResponse<PrivacyPage>>("/privacy");
+    return res.data || null;
+  } catch {
+    return null;
   }
 }

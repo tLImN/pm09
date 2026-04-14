@@ -1,6 +1,15 @@
 import Link from "next/link";
+import { getContactPage } from "@/lib/api";
 
-export default function Footer() {
+export default async function Footer() {
+  const contact = await getContactPage();
+
+  const phone = contact?.phone || "+7 (905) 617-98-52";
+  const email = contact?.email || "info@aforklift.ru";
+  const address =
+    contact?.address ||
+    "600033, Владимирская область, город Владимир, Мещёрская ул., д. 4, офис 36";
+
   return (
     <footer
       style={{
@@ -94,24 +103,21 @@ export default function Footer() {
             >
               <li>
                 <a
-                  href="tel:+79056179852"
+                  href={`tel:${phone.replace(/[\s\-\(\)]/g, "")}`}
                   style={{ color: "var(--inverted-text-color)" }}
                 >
-                  +7 (905) 617-98-52
+                  {phone}
                 </a>
               </li>
               <li>
                 <a
-                  href="mailto:info@aforklift.ru"
+                  href={`mailto:${email}`}
                   style={{ color: "var(--inverted-text-color)" }}
                 >
-                  info@aforklift.ru
+                  {email}
                 </a>
               </li>
-              <li>
-                600033, Владимирская область, город Владимир, Мещёрская ул., д. 4,
-                офис 36
-              </li>
+              <li>{address}</li>
             </ul>
           </address>
         </div>

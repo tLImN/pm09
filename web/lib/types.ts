@@ -40,6 +40,7 @@ export interface StrapiBlock {
   type: "paragraph" | "list" | "heading" | "list-item";
   children?: StrapiBlockChild[];
   format?: string;
+  level?: number;
 }
 
 // Category
@@ -65,6 +66,30 @@ export interface CatalogItem {
   item_manufacturer?: string;
   item_description?: StrapiBlock[];
   item_images?: StrapiMedia[];
+}
+
+// About Page (singleType)
+export interface AboutPage {
+  content?: StrapiBlock[];
+}
+
+// Contact Page (singleType)
+export interface ContactPage {
+  phone?: string;
+  email?: string;
+  address?: string;
+  latitude?: number;
+  longitude?: number;
+}
+
+// Payment Page (singleType)
+export interface PaymentPage {
+  content?: StrapiBlock[];
+}
+
+// Privacy/Licenses Page (singleType)
+export interface PrivacyPage {
+  content?: StrapiBlock[];
 }
 
 // Contact Form Data

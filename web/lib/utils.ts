@@ -36,7 +36,8 @@ export function formatDescription(blocks?: StrapiBlock[]): string {
         const text = block.children
           ?.map((child) => child.text)
           .join("") || "";
-        return `<h3>${text}</h3>`;
+        const level = block.level ? block.level + 1 : 3;
+        return `<h${level}>${text}</h${level}>`;
       }
       if (block.type === "list-item") {
         const text = block.children

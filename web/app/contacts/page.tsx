@@ -1,12 +1,31 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import { getContactPage } from "@/lib/api";
+import { ContactPage as ContactPageData } from "@/lib/types";
 
 const LeafletMap = dynamic(() => import("@/components/LeafletMap"), {
   ssr: false,
 });
 
 export default function ContactsPage() {
+  const [contact, setContact] = useState<ContactPageData | null>(null);
+
+  useEffect(() => {
+    getContactPage().then((data) => {
+      if (data) setContact(data);
+    });
+  }, []);
+
+  const phone = contact?.phone || "+7 (905) 617-98-52";
+  const email = contact?.email || "info@aforklift.ru";
+  const address =
+    contact?.address ||
+    "600033, Владимирская область, город Владимир, Мещёрская ул., д. 4, офис 36";
+  const lat = contact?.latitude ?? 56.0967;
+  const lng = contact?.longitude ?? 40.3477;
+
   return (
     <main>
       <h1 style={{ textAlign: "center", fontSize: "2.1875rem", display: "block", height: 70, margin: "0.8em 0" }}>
@@ -24,17 +43,16 @@ export default function ContactsPage() {
       >
         <address>
           <p>
-            <b>Телефон:</b> +7 (905) 617-98-52
+            <b>Телефон:</b> {phone}
           </p>
           <p>
-            <b>Почта:</b> info@aforklift.ru
+            <b>Почта:</b> {email}
           </p>
           <p>
-            <b>Адрес:</b> 600033, Владимирская область, город Владимир,
-            Мещёрская ул., д. 4, офис 36
+            <b>Адрес:</b> {address}
           </p>
         </address>
-        <LeafletMap />
+        <LeafletMap lat={lat} lng={lng} popupText={address} />
       </article>
       <style>{`
         @media (max-width: 768px) {
