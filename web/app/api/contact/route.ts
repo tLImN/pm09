@@ -1,77 +1,62 @@
 import { NextResponse } from "next/server";
 
+const STRAPI_URL =
+  process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, tel, email, message } = body;
+    const { name, tel, email, message, contact_method } = body;
 
-    // Валидация
-    if (!name || !tel || !email || !message) {
+    // Валидация обязательных полей
+    if (!name || !tel || !message || !contact_method) {
       return NextResponse.json(
-        { success: false, error: "Все поля обязательны" },
+        { success: false, error: "Заполните все обязательные поля" },
         { status: 400 }
       );
     }
 
-    // Проверяем наличие SMTP настроек
-    const smtpHost = process.env.SMTP_HOST;
-
-    if (!smtpHost) {
-      // Режим заглушки: логируем данные и возвращаем success
-      console.log("=== ЗАЯВКА С САЙТА (режим заглушки) ===");
-      console.log(`Имя: ${name}`);
-      console.log(`Телефон: ${tel}`);
-      console.log(`Email: ${email}`);
-      console.log(`Сообщение: ${message}`);
-      console.log("=========================================");
-
-      return NextResponse.json({
-        success: true,
-        message: "Заявка принята (режим заглушки)",
-      });
+    // Если выбран email как способ связи — email обязателен
+    if (contact_method === "email" && !email) {
+      return NextResponse.json(
+        { success: false, error: "Укажите email для связи" },
+        { status: 400 }
+      );
     }
 
-    // Если SMTP настроен — пытаемся отправить email через nodemailer
+    // Отправляем заявку в Strapi
     try {
-      const nodemailer = await import("nodemailer");
-
-      const transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: parseInt(process.env.SMTP_PORT || "587"),
-        secure: false,
-        auth: {
-          user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASS,
-        },
+      const strapiRes = await fetch(`${STRAPI_URL}/api/incoming-requests`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          data: {
+            request_date: new Date().toISOString(),
+            name,
+            phone: tel,
+            email: email || "",
+            message,
+            contact_method,
+          },
+        }),
       });
 
-      await transporter.sendMail({
-        from: process.env.SMTP_USER,
-        to: process.env.CONTACT_EMAIL || "info@aforklift.ru",
-        subject: `Заявка с сайта от ${name}`,
-        text: `
-Имя: ${name}
-Телефон: ${tel}
-Email: ${email}
-Сообщение: ${message}
-        `,
-        html: `
-<h2>Новая заявка с сайта</h2>
-<p><b>Имя:</b> ${name}</p>
-<p><b>Телефон:</b> ${tel}</p>
-<p><b>Email:</b> ${email}</p>
-<p><b>Сообщение:</b> ${message}</p>
-        `,
-      });
+      if (!strapiRes.ok) {
+        const errorData = await strapiRes.json().catch(() => null);
+        console.error("Ошибка Strapi API:", strapiRes.status, errorData);
+        return NextResponse.json(
+          { success: false, error: "Ошибка при сохранении заявки" },
+          { status: 500 }
+        );
+      }
 
       return NextResponse.json({ success: true });
-    } catch (emailError) {
-      console.error("Ошибка отправки email:", emailError);
-      // Всё равно возвращаем success, чтобы пользователь не видел ошибку
-      return NextResponse.json({
-        success: true,
-        message: "Заявка принята (ошибка отправки email, данные сохранены в лог)",
-      });
+    } catch (strapiError) {
+      console.error("Ошибка отправки в Strapi:", strapiError);
+      return NextResponse.json(
+        { success: false, error: "Ошибка сервера" },
+        { status: 500 }
+      );
     }
   } catch (error) {
     console.error("Ошибка обработки формы:", error);

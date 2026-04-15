@@ -459,7 +459,7 @@ export interface ApiAboutAbout extends Struct.SingleTypeSchema {
 export interface ApiCatalogItemCatalogItem extends Struct.CollectionTypeSchema {
   collectionName: 'catalog_items';
   info: {
-    displayName: 'Catalog Item';
+    displayName: '\u0422\u043E\u0432\u0430\u0440\u044B \u0438 \u0443\u0441\u043B\u0443\u0433\u0438';
     pluralName: 'catalog-items';
     singularName: 'catalog-item';
   };
@@ -501,7 +501,7 @@ export interface ApiCatalogItemCatalogItem extends Struct.CollectionTypeSchema {
 export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
   collectionName: 'categories';
   info: {
-    displayName: 'Category';
+    displayName: '\u041A\u0430\u0442\u0435\u0433\u043E\u0440\u0438\u0438';
     pluralName: 'categories';
     singularName: 'category';
   };
@@ -567,6 +567,40 @@ export interface ApiContactContact extends Struct.SingleTypeSchema {
     phone: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     title: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiIncomingRequestIncomingRequest
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'incoming_requests';
+  info: {
+    displayName: '\u0412\u0445\u043E\u0434\u044F\u0449\u0438\u0435 \u0437\u0430\u044F\u0432\u043A\u0438';
+    pluralName: 'incoming-requests';
+    singularName: 'incoming-request';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    contact_method: Schema.Attribute.Enumeration<['phone', 'email']>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    email: Schema.Attribute.Email;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::incoming-request.incoming-request'
+    > &
+      Schema.Attribute.Private;
+    message: Schema.Attribute.Text;
+    name: Schema.Attribute.String;
+    phone: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    request_date: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1146,6 +1180,7 @@ declare module '@strapi/strapi' {
       'api::catalog-item.catalog-item': ApiCatalogItemCatalogItem;
       'api::category.category': ApiCategoryCategory;
       'api::contact.contact': ApiContactContact;
+      'api::incoming-request.incoming-request': ApiIncomingRequestIncomingRequest;
       'api::payment.payment': ApiPaymentPayment;
       'api::privacy.privacy': ApiPrivacyPrivacy;
       'plugin::content-releases.release': PluginContentReleasesRelease;

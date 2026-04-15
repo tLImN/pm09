@@ -11,6 +11,7 @@ export default function PopupForm() {
     tel: "",
     email: "",
     message: "",
+    contact_method: "phone",
   });
   const [agreed, setAgreed] = useState(false);
   const [status, setStatus] = useState<
@@ -61,7 +62,7 @@ export default function PopupForm() {
       const data = await res.json();
       if (data.success) {
         setStatus("success");
-        setFormData({ name: "", tel: "", email: "", message: "" });
+        setFormData({ name: "", tel: "", email: "", message: "", contact_method: "phone" });
         setAgreed(false);
         setTimeout(() => {
           setStatus("idle");
@@ -156,25 +157,69 @@ export default function PopupForm() {
                 setFormData({ ...formData, tel: e.target.value })
               }
             />
-            <input
-              name="email"
-              type="email"
-              placeholder="Email"
-              required
-              value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
-            />
-            <input
+            <div style={{ display: "flex", gap: 20, alignItems: "center", marginTop: 5 }}>
+              <span style={{ fontSize: 14, fontWeight: 500 }}>Как с вами связаться?</span>
+              <label style={{ display: "flex", gap: 5, alignItems: "center", cursor: "pointer", fontSize: 14 }}>
+                <input
+                  type="radio"
+                  name="contact_method"
+                  value="phone"
+                  checked={formData.contact_method === "phone"}
+                  onChange={() =>
+                    setFormData({ ...formData, contact_method: "phone" })
+                  }
+                  style={{ margin: 0 }}
+                />
+                Звонок
+              </label>
+              <label style={{ display: "flex", gap: 5, alignItems: "center", cursor: "pointer", fontSize: 14 }}>
+                <input
+                  type="radio"
+                  name="contact_method"
+                  value="email"
+                  checked={formData.contact_method === "email"}
+                  onChange={() =>
+                    setFormData({ ...formData, contact_method: "email" })
+                  }
+                  style={{ margin: 0 }}
+                />
+                Email
+              </label>
+            </div>
+            {formData.contact_method === "email" && (
+              <input
+                name="email"
+                type="email"
+                placeholder="Email"
+                required
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
+              />
+            )}
+            <textarea
               name="message"
-              type="text"
-              placeholder="Сообщение"
+              placeholder="Сообщение (добавьте выбранные товары и услуги)"
               required
+              autoComplete="off"
               value={formData.message}
               onChange={(e) =>
                 setFormData({ ...formData, message: e.target.value })
               }
+              rows={4}
+              style={{
+                fontFamily: 'Manrope, sans-serif',
+                fontSize: 16,
+                padding: '10px 15px',
+                border: '1px solid var(--border-color)',
+                borderRadius: 5,
+                fontWeight: 500,
+                width: '100%',
+                resize: 'vertical',
+                outline: 'none',
+                transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
+              }}
             />
           </fieldset>
           <label

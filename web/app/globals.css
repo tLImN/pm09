@@ -65,6 +65,14 @@ input {
   border-radius: 5px;
   font-weight: 500;
   width: 100%;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus,
+textarea:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 1px var(--accent-color);
 }
 
 input[type="checkbox"] {
@@ -75,6 +83,14 @@ input[type="checkbox"] {
 }
 
 input[type="checkbox"]:checked:hover {
+  accent-color: var(--accent-hover-color);
+}
+
+input[type="radio"] {
+  accent-color: var(--accent-color);
+}
+
+input[type="radio"]:checked:hover {
   accent-color: var(--accent-hover-color);
 }
 

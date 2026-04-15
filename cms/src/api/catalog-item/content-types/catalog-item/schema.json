@@ -4,7 +4,7 @@
   "info": {
     "singularName": "catalog-item",
     "pluralName": "catalog-items",
-    "displayName": "Catalog Item"
+    "displayName": "Товары и услуги"
   },
   "options": {
     "draftAndPublish": true

@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "incoming_requests",
+  "info": {
+    "singularName": "incoming-request",
+    "pluralName": "incoming-requests",
+    "displayName": "Входящие заявки"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "request_date": {
+      "type": "datetime"
+    },
+    "name": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "email": {
+      "type": "email"
+    },
+    "message": {
+      "type": "text"
+    },
+    "contact_method": {
+      "type": "enumeration",
+      "enum": [
+        "phone",
+        "email"
+      ]
+    }
+  }
+}
