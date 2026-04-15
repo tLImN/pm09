@@ -13,8 +13,10 @@ export default async function LicensesPage() {
       {descriptionHtml ? (
         <article
           style={{
-            padding: "0 160px 30px",
-            marginBottom: 160,
+            padding: "0 60px 30px",
+            paddingBottom: 160,
+            maxWidth: 1440,
+            margin: "0 auto",
             display: "flex",
             flexDirection: "column",
             gap: 10,

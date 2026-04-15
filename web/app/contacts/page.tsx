@@ -33,12 +33,14 @@ export default function ContactsPage() {
       </h1>
       <article
         style={{
-          padding: "0 160px 30px",
-          marginBottom: 160,
-          display: "flex",
-          flexDirection: "column",
-          gap: 10,
-        }}
+            padding: "0 60px 30px",
+            paddingBottom: 160,
+            maxWidth: 1440,
+            margin: "0 auto",
+            display: "flex",
+            flexDirection: "column",
+            gap: 10,
+          }}
         className="page-article"
       >
         <address>
