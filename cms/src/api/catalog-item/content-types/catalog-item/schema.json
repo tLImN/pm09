@@ -34,6 +34,9 @@
       "target": "api::category.category",
       "inversedBy": "catalog_items"
     },
+    "item_price": {
+      "type": "decimal"
+    },
     "item_manufacturer": {
       "type": "string"
     },

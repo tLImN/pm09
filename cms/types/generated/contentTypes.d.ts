@@ -480,6 +480,7 @@ export interface ApiCatalogItemCatalogItem extends Struct.CollectionTypeSchema {
       true
     >;
     item_manufacturer: Schema.Attribute.String;
+    item_price: Schema.Attribute.Decimal;
     item_slug: Schema.Attribute.UID & Schema.Attribute.Required;
     item_title: Schema.Attribute.String & Schema.Attribute.Required;
     item_type: Schema.Attribute.Enumeration<['product', 'service']> &

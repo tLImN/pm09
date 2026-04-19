@@ -90,9 +90,16 @@ export default function ProductCard({
             justifyContent: "space-between",
           }}
         >
-          <span style={{ color: "var(--subtext-color)" }}>
-            Позвоните, чтобы уточнить цену
-          </span>
+          <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+            {item.item_price && item.item_price > 0 && (
+              <span style={{ fontSize: 20, fontWeight: 600 }}>
+                {Number(item.item_price).toLocaleString("ru-RU")} ₽
+              </span>
+            )}
+            <span style={{ color: "var(--subtext-color)" }}>
+              Позвоните, чтобы уточнить цену
+            </span>
+          </div>
           <Link href={href}>
             <button>Подробнее</button>
           </Link>

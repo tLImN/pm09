@@ -63,6 +63,7 @@ export interface CatalogItem {
   item_slug: string;
   item_type: "product" | "service";
   item_category?: Category[];
+  item_price?: number;
   item_manufacturer?: string;
   item_description?: StrapiBlock[];
   item_images?: StrapiMedia[];
