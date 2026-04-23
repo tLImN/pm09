@@ -71,7 +71,7 @@ export default function ProductCardPage({ item }: { item: CatalogItem }) {
         <div style={{ display: "flex", flexDirection: "column", gap: 15 }}>
           {item.item_price && item.item_price > 0 && (
             <span style={{ fontSize: 35, fontWeight: 600 }}>
-              {Number(item.item_price).toLocaleString("ru-RU")} ₽
+              от {Number(item.item_price).toLocaleString("ru-RU")} ₽
             </span>
           )}
           <button onClick={handlePopupOpen} style={{ width: "fit-content" }}>

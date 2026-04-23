@@ -93,7 +93,7 @@ export default function ProductCard({
           <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
             {item.item_price && item.item_price > 0 && (
               <span style={{ fontSize: 20, fontWeight: 600 }}>
-                {Number(item.item_price).toLocaleString("ru-RU")} ₽
+                от {Number(item.item_price).toLocaleString("ru-RU")} ₽
               </span>
             )}
             <span style={{ color: "var(--subtext-color)" }}>
