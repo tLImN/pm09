@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { getCategoryBySlug, getCatalogItems } from "@/lib/api";
 import { CatalogItem, Category } from "@/lib/types";
 import { formatDescription } from "@/lib/utils";
@@ -10,6 +10,7 @@ import Pagination from "@/components/Pagination";
 
 export default function CategoryPage() {
   const params = useParams();
+  const router = useRouter();
   const categorySlug = params.categorySlug as string;
 
   const [category, setCategory] = useState<Category | null>(null);
@@ -20,6 +21,7 @@ export default function CategoryPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [redirecting, setRedirecting] = useState(false);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -29,15 +31,26 @@ export default function CategoryPage() {
         getCatalogItems({ category: categorySlug, sort: sortBy, page, pageSize }),
       ]);
       setCategory(cat);
-      setItems(itemsData.data || []);
+      
+      const fetchedItems = itemsData.data || [];
+      const fetchedTotal = itemsData.meta?.pagination?.total || 0;
+      
+      // Редирект: если в категории только один элемент и это услуга (service)
+      if (fetchedTotal === 1 && fetchedItems.length === 1 && fetchedItems[0].item_type === "service") {
+        setRedirecting(true);
+        router.push(`/catalog/${categorySlug}/${fetchedItems[0].item_slug}`);
+        return;
+      }
+      
+      setItems(fetchedItems);
       setTotalPages(itemsData.meta?.pagination?.pageCount || 1);
-      setTotal(itemsData.meta?.pagination?.total || 0);
+      setTotal(fetchedTotal);
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
     }
-  }, [categorySlug, sortBy, page, pageSize]);
+  }, [categorySlug, sortBy, page, pageSize, router]);
 
   useEffect(() => {
     fetchData();
@@ -88,7 +101,7 @@ export default function CategoryPage() {
             </span>
           )}
         </div>
-        {loading ? (
+        {loading || redirecting ? (
           <p className="loading-status">Загрузка...</p>
         ) : items.length === 0 ? (
           <p className="loading-status">Товары не найдены</p>
