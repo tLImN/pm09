@@ -26,7 +26,7 @@ export default function ProductCard({
         border: "1px solid var(--border-color)",
         borderRadius: 5,
         paddingRight: 20,
-        height: 163,
+        height: 180,
         display: "flex",
         gap: 18,
       }}
@@ -34,7 +34,7 @@ export default function ProductCard({
       <div
         className="image-container"
         style={{
-          maxHeight: 163,
+          maxHeight: 180,
           width: 231,
           margin: 0,
           outline: "1px solid var(--border-color)",
