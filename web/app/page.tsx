@@ -8,6 +8,7 @@ import { CatalogItem } from "@/lib/types";
 import HeroBanner from "@/components/HeroBanner";
 import DetailsItem from "@/components/DetailsItem";
 import AssortmentSection from "@/components/AssortmentSection";
+import Button from "@/components/Button";
 
 export default function Home() {
   const [items, setItems] = useState<CatalogItem[]>([]);
@@ -25,10 +26,10 @@ export default function Home() {
       <HeroBanner
         title="Функциональные решения для вашего склада"
         subtitle="ООО «Альтернатива Форклифт» предлагаем проверенное оборудование от надёжных производителей, индивидуальный подбор решений и полный цикл сопровождения."
-        backgroundImage="/img/banner-background.png"
+        backgroundImage="/img/banner-background.webp"
       >
         <Link href="/catalog">
-          <button>Перейти в каталог</button>
+          <Button>Перейти в каталог</Button>
         </Link>
       </HeroBanner>
 
@@ -40,22 +41,22 @@ export default function Home() {
           items={[
             {
               href: "./catalog/1-stellazhi-dlya-sklada",
-              imageSrc: "/img/stelazh-fl-900.jpg",
+              imageSrc: "/img/ki_assortment_stellazhi-dlya-sklada.webp",
               title: "Стеллажи для склада",
             },
             {
               href: "./catalog/pogruzchiki",
-              imageSrc: "/img/pogruzchik-teu-fb18.jpg",
+              imageSrc: "/img/ki_assortment_pogruzchiki.webp",
               title: "Погрузчики",
             },
             {
               href: "./catalog/shtabelery",
-              imageSrc: "/img/1766672410.png",
+              imageSrc: "/img/ki_assortment_shtabelery.webp",
               title: "Штабелеры",
             },
             {
               href: "./catalog/pogruzchiki",
-              imageSrc: "/img/60-5001_a.png",
+              imageSrc: "/img/ki_assortment_girdravlicheskiye-telezhki.webp",
               title: "Гидравлические тележки",
             },
           ]}

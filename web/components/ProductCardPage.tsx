@@ -2,6 +2,7 @@
 
 import { CatalogItem } from "@/lib/types";
 import { getStrapiImageUrl } from "@/lib/utils";
+import Button from "@/components/Button";
 
 export default function ProductCardPage({ item }: { item: CatalogItem }) {
   const handlePopupOpen = () => {
@@ -11,7 +12,7 @@ export default function ProductCardPage({ item }: { item: CatalogItem }) {
   const imageUrl =
     item.item_images?.[0]?.url
       ? getStrapiImageUrl(item.item_images[0].url)
-      : "/img/no-picture.jpg";
+      : "/img/ki_image-placeholder.webp";
 
   return (
     <div
@@ -74,9 +75,9 @@ export default function ProductCardPage({ item }: { item: CatalogItem }) {
               от {Number(item.item_price).toLocaleString("ru-RU")} ₽
             </span>
           )}
-          <button onClick={handlePopupOpen} style={{ width: "fit-content" }}>
+          <Button onClick={handlePopupOpen} style={{ width: "fit-content" }}>
             Уточнить цену
-          </button>
+          </Button>
           <span style={{ color: "var(--subtext-color)" }}>
             С подробной информацией об условиях сотрудничества можете
             ознакомиться в разделе «Доставка и оплата».

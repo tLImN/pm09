@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Button from "@/components/Button";
 
 export default function PopupForm() {
   const [isOpen, setIsOpen] = useState(false);
@@ -255,7 +256,7 @@ export default function PopupForm() {
             </p>
           )}
 
-          <button
+          <Button
             type="submit"
             disabled={!agreed || status === "loading"}
             style={{
@@ -264,7 +265,7 @@ export default function PopupForm() {
             }}
           >
             {status === "loading" ? "Отправка..." : "Отправить"}
-          </button>
+          </Button>
         </form>
       </div>
     </div>

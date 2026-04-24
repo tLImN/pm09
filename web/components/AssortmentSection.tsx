@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback, useMemo } from "react";
+import { useState, useRef, useCallback, useId } from "react";
 import AssortmentCard from "./AssortmentCard";
 
 interface AssortmentItem {
@@ -30,8 +30,9 @@ export default function AssortmentSection({
   // Вычисляем сдвиг для одной копи элементов (ширина оригинальных карточек)
   const singleSetWidth = items.length * cardWidth;
 
-  // Генерируем уникальный ID для keyframes
-  const animationName = useMemo(() => `scroll_${Math.random().toString(36).substr(2, 9)}`, []);
+  // Генерируем уникальный ID для keyframes (стабильный для SSR)
+  const id = useId();
+  const animationName = `scroll_${id.replace(/:/g, '')}`;
 
   const scrollLeft = useCallback(() => {
     if (scrollContainerRef.current) {

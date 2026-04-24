@@ -14,7 +14,7 @@ export default function AssortmentCard({ href, imageSrc, title }: AssortmentCard
           className="assortment-card__image-container"
           style={{
             border: "1px solid var(--border-color)",
-            height: 257,
+            height: 270,
             borderRadius: 5,
             overflow: "clip",
           }}
@@ -28,7 +28,7 @@ export default function AssortmentCard({ href, imageSrc, title }: AssortmentCard
               maxWidth: "fit-content",
               maxHeight: "fit-content",
               margin: "0 auto",
-              padding: 15,
+              padding: 5,
             }}
           />
         </div>

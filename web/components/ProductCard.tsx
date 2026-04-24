@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CatalogItem } from "@/lib/types";
 import { getStrapiImageUrl } from "@/lib/utils";
+import Button from "@/components/Button";
 
 export default function ProductCard({
   item,
@@ -12,7 +13,7 @@ export default function ProductCard({
   const imageUrl =
     item.item_images?.[0]?.url
       ? getStrapiImageUrl(item.item_images[0].url)
-      : "/img/no-picture.jpg";
+      : "/img/ki_image-placeholder.webp";
 
   const href = categorySlug
     ? `/catalog/${categorySlug}/${item.item_slug}`
@@ -101,7 +102,7 @@ export default function ProductCard({
             </span>
           </div>
           <Link href={href}>
-            <button>Подробнее</button>
+            <Button>Подробнее</Button>
           </Link>
         </div>
       </div>

@@ -1,5 +1,6 @@
 "use client";
 import { useState } from 'react';
+import Button from "@/components/Button";
 
 interface DetailsItemProps {
   question: string;
@@ -30,9 +31,9 @@ export default function DetailsItem({ question, children }: DetailsItemProps) {
         }}
       >
         {question}
-        <button
-          className={`expand-button ${isOpen ? 'open' : ''}`}
-          type="button"
+        <Button
+          variant="icon"
+          className={isOpen ? 'open' : ''}
           aria-label="Развернуть"
         />
       </div>
