@@ -17,7 +17,6 @@ export default function ProductCardPage({ item }: { item: CatalogItem }) {
   return (
     <div
       style={{
-        paddingRight: 20,
         display: "flex",
         gap: 36,
       }}
@@ -25,7 +24,6 @@ export default function ProductCardPage({ item }: { item: CatalogItem }) {
     >
       <div
         style={{
-          minWidth: 406,
           height: 406,
           border: "1px solid var(--border-color)",
           borderRadius: 5,
@@ -44,6 +42,7 @@ export default function ProductCardPage({ item }: { item: CatalogItem }) {
             zIndex: -1,
             height: "fit-content",
             objectFit: "cover",
+            margin: "0 auto"
           }}
         />
       </div>
@@ -78,7 +77,10 @@ export default function ProductCardPage({ item }: { item: CatalogItem }) {
           <Button onClick={handlePopupOpen} style={{ width: "fit-content" }}>
             Уточнить цену
           </Button>
-          <span style={{ color: "var(--subtext-color)" }}>
+          <span style={{ 
+            color: "var(--subtext-color)",
+            paddingRight: 20 
+            }}>
             С подробной информацией об условиях сотрудничества можете
             ознакомиться в разделе «Доставка и оплата».
           </span>
@@ -94,6 +96,11 @@ export default function ProductCardPage({ item }: { item: CatalogItem }) {
             min-width: auto !important;
             width: 100% !important;
             height: auto !important;
+          }
+        }
+        @media (max-width: 1000px) {
+          .product-card-page > div:first-child {
+            flex-shrink: 0.2 !important;
           }
         }
       `}</style>

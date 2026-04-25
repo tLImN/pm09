@@ -17,7 +17,15 @@ export default function CatalogLayout({
   // Определяем активный slug из URL
   // /catalog → undefined
   // /catalog/pogruzchiki → "pogruzchiki"
-  const activeCategorySlug = pathname.split("/catalog/")[1] || undefined;
+  // /catalog/pogruzchiki/dizelnye → "dizelnye" (категория)
+  // /catalog/pogruzchiki/dizelnye/produkt-slug → "dizelnye" (товар → категория)
+  const pathAfterCatalog = pathname.split("/catalog/")[1] || "";
+  const pathSegments = pathAfterCatalog.split("/").filter(Boolean);
+  // Если 2+ сегментов — это товар, берём второй сегмент как категорию
+  // Если 1 сегмент — это категория
+  const activeCategorySlug = pathSegments.length >= 2
+    ? pathSegments[1]
+    : pathSegments[0] || undefined;
 
   // Загружаем категории один раз при монтировании layout
   useEffect(() => {
@@ -38,7 +46,7 @@ export default function CatalogLayout({
       <Sidebar categories={categories} activeCategorySlug={activeCategorySlug} />
       {children}
       <style>{`
-        @media (max-width: 768px) {
+        @media (max-width: 900px) {
           .content-wrapper-aside {
             flex-direction: column !important;
             padding: 20px !important;

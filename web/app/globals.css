@@ -117,6 +117,7 @@ h3 {
 
 .expand-button {
   width: 35px;
+  min-width: 35px;
   height: 35px;
   padding: 0;
   display: flex;

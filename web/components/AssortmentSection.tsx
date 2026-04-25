@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback, useId } from "react";
+import { useState, useRef, useCallback, useId, useEffect } from "react";
 import AssortmentCard from "./AssortmentCard";
 
 interface AssortmentItem {
@@ -22,7 +22,16 @@ export default function AssortmentSection({
 }: AssortmentSectionProps) {
   const useCarousel = items.length > carouselThreshold;
   const [isPaused, setIsPaused] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Определяем мобильное устройство
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Ширина одной карточки + gap
   const cardWidth = 401; // 366px карточка + 35px gap
@@ -46,8 +55,41 @@ export default function AssortmentSection({
     }
   }, [cardWidth]);
 
+  // На мобильных устройствах показываем адаптивную сетку
+  if (isMobile) {
+    return (
+      <div
+        className="assortment-grid-mobile"
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(2, 1fr)",
+          gap: 16,
+          padding: "0 16px",
+          maxWidth: 600,
+          margin: "0 auto",
+        }}
+      >
+        {items.map((item, index) => (
+          <AssortmentCard
+            key={index}
+            href={item.href}
+            imageSrc={item.imageSrc}
+            title={item.title}
+          />
+        ))}
+        <style>{`
+          @media (max-width: 360px) {
+            .assortment-grid-mobile {
+              grid-template-columns: 1fr !important;
+            }
+          }
+        `}</style>
+      </div>
+    );
+  }
+
   if (!useCarousel) {
-    // Обычный flex-ряд без карусели
+    // Обычный flex-ряд без карусели (для десктопа)
     return (
       <div
         style={{

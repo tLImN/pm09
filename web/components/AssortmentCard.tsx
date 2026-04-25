@@ -9,12 +9,12 @@ interface AssortmentCardProps {
 export default function AssortmentCard({ href, imageSrc, title }: AssortmentCardProps) {
   return (
     <Link href={href} style={{ color: "var(--text-color)" }}>
-      <div className="assortment-card h-[336px] w-[366px] text-center flex flex-col gap-[24px] text-[1.625rem]">
+      <div className="assortment-card text-center flex flex-col gap-[16px] md:gap-[24px] text-[1.1rem] sm:text-[1.3rem] md:text-[1.625rem]">
         <div
           className="assortment-card__image-container"
           style={{
             border: "1px solid var(--border-color)",
-            height: 270,
+            aspectRatio: "366 / 270",
             borderRadius: 5,
             overflow: "clip",
           }}
@@ -25,10 +25,9 @@ export default function AssortmentCard({ href, imageSrc, title }: AssortmentCard
             style={{
               width: "100%",
               height: "100%",
-              maxWidth: "fit-content",
-              maxHeight: "fit-content",
+              objectFit: "contain",
               margin: "0 auto",
-              padding: 5,
+              padding: "4px",
             }}
           />
         </div>
@@ -39,6 +38,7 @@ export default function AssortmentCard({ href, imageSrc, title }: AssortmentCard
           transition: transform 0.3s ease, box-shadow 0.3s ease;
           cursor: pointer;
           margin-bottom: 10px;
+          width: 100%;
         }
         .assortment-card:hover {
           transform: scale(1.03);
@@ -50,6 +50,16 @@ export default function AssortmentCard({ href, imageSrc, title }: AssortmentCard
         }
         .assortment-card:hover .assortment-card__image-container {
           border-color: var(--accent-color, #007bff);
+        }
+        @media (min-width: 769px) {
+          .assortment-card {
+            width: 366px;
+            height: 336px;
+          }
+          .assortment-card__image-container {
+            height: 270px !important;
+            aspect-ratio: auto !important;
+          }
         }
       `}</style>
     </Link>
