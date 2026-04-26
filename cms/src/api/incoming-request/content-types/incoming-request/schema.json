@@ -12,7 +12,8 @@
   "pluginOptions": {},
   "attributes": {
     "request_date": {
-      "type": "datetime"
+      "type": "datetime",
+      "required": true
     },
     "name": {
       "type": "string"
@@ -28,10 +29,30 @@
     },
     "contact_method": {
       "type": "enumeration",
+      "required": true,
       "enum": [
         "phone",
         "email"
       ]
+    },
+    "request_type": {
+      "type": "enumeration",
+      "required": true,
+      "default": "callback",
+      "enum": [
+        "callback",
+        "quote",
+        "service"
+      ]
+    },
+    "item": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::catalog-item.catalog-item",
+      "inversedBy": "incoming_requests"
+    },
+    "page_url": {
+      "type": "string"
     }
   }
 }

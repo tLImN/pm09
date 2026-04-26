@@ -55,7 +55,7 @@ export default function Home() {
               title: "Штабелеры",
             },
             {
-              href: "./catalog/pogruzchiki",
+              href: "./catalog/gidravlicheskie-telezhki",
               imageSrc: "/img/ki_assortment_girdravlicheskiye-telezhki.webp",
               title: "Гидравлические тележки",
             },

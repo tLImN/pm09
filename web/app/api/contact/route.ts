@@ -6,10 +6,10 @@ const STRAPI_URL =
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, tel, email, message, contact_method } = body;
+    const { name, tel, email, message, contact_method, request_type, page_url, documentId } = body;
 
     // Валидация обязательных полей
-    if (!name || !tel || !message || !contact_method) {
+    if (!name || !tel || !contact_method) {
       return NextResponse.json(
         { success: false, error: "Заполните все обязательные поля" },
         { status: 400 }
@@ -34,19 +34,23 @@ export async function POST(request: Request) {
             request_date: new Date().toISOString(),
             name,
             phone: tel,
-            email: email || "",
-            message,
+            ...(email ? { email } : {}),
+            message: message || "",
             contact_method,
+            request_type: request_type || "callback",
+            page_url: page_url || "",
+            ...(documentId ? { item: documentId } : {}),
           },
         }),
       });
 
       if (!strapiRes.ok) {
         const errorData = await strapiRes.json().catch(() => null);
-        console.error("Ошибка Strapi API:", strapiRes.status, errorData);
+        const errorMessage = errorData?.error?.message || JSON.stringify(errorData);
+        console.error("Ошибка Strapi API:", strapiRes.status, errorMessage, errorData);
         return NextResponse.json(
-          { success: false, error: "Ошибка при сохранении заявки" },
-          { status: 500 }
+          { success: false, error: `Ошибка при сохранении заявки: ${errorMessage}` },
+          { status: strapiRes.status }
         );
       }
 

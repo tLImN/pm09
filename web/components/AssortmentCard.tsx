@@ -23,10 +23,10 @@ export default function AssortmentCard({ href, imageSrc, title }: AssortmentCard
             src={imageSrc}
             alt={title}
             style={{
-              width: "100%",
-              height: "100%",
+              width: "110%",
+              height: "110%",
               objectFit: "contain",
-              margin: "0 auto",
+              margin: "-2% auto",
               padding: "4px",
             }}
           />

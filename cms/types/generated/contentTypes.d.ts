@@ -470,6 +470,10 @@ export interface ApiCatalogItemCatalogItem extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    incoming_requests: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::incoming-request.incoming-request'
+    >;
     item_category: Schema.Attribute.Relation<
       'manyToMany',
       'api::category.category'
@@ -586,11 +590,16 @@ export interface ApiIncomingRequestIncomingRequest
     draftAndPublish: true;
   };
   attributes: {
-    contact_method: Schema.Attribute.Enumeration<['phone', 'email']>;
+    contact_method: Schema.Attribute.Enumeration<['phone', 'email']> &
+      Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     email: Schema.Attribute.Email;
+    item: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::catalog-item.catalog-item'
+    >;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -599,9 +608,15 @@ export interface ApiIncomingRequestIncomingRequest
       Schema.Attribute.Private;
     message: Schema.Attribute.Text;
     name: Schema.Attribute.String;
+    page_url: Schema.Attribute.String;
     phone: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
-    request_date: Schema.Attribute.DateTime;
+    request_date: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    request_type: Schema.Attribute.Enumeration<
+      ['callback', 'quote', 'service']
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'callback'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

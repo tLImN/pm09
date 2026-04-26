@@ -26,7 +26,7 @@ export default function ProductCard({
         border: "1px solid var(--border-color)",
         borderRadius: 5,
         paddingRight: 20,
-        height: 180,
+        height: 190,
         display: "flex",
         gap: 18,
       }}
@@ -34,23 +34,24 @@ export default function ProductCard({
       <div
         className="image-container"
         style={{
-          maxHeight: 180,
+          maxHeight: 190,
           width: 231,
           margin: 0,
           outline: "1px solid var(--border-color)",
           borderBottomLeftRadius: 5,
           borderTopLeftRadius: 5,
           flexShrink: 0,
-          overflow: "hidden"
+          overflow: "hidden",
         }}
       >
         <Link href={href}><img
           src={imageUrl}
           alt={item.item_title}
           style={{
-            width: "100%",
-            height: "100%",
+            width: "110%",
+            height: "110%",
             objectFit: "contain",
+            margin: "-2% -1%",
           }}
         /></Link>
       </div>
@@ -98,7 +99,7 @@ export default function ProductCard({
               </span>
             )}
             <span style={{ color: "var(--subtext-color)" }}>
-              Позвоните, чтобы уточнить цену
+              Позвоните, чтобы рассчитать цену
             </span>
           </div>
           <Link href={href}>

@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useState } from "react";
 
 export default function Header() {
@@ -32,7 +31,7 @@ export default function Header() {
           padding: "10px 20px",
         }}
       >
-        <Link href="/"><Image src="/Logo-wide.svg" width="433" height="72" alt="Альтернатива Форклифт" /></Link>
+        <Link href="/"><img src="/Logo-wide.svg" width="433" height="72" alt="Альтернатива Форклифт" loading="eager" fetchPriority="high" /></Link>
         
         {/* Кнопка гамбургер - показывается только на мобильных */}
         <button 

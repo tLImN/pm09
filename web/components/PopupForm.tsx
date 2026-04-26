@@ -18,17 +18,26 @@ export default function PopupForm() {
   const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error"
   >("idle");
+  const [requestType, setRequestType] = useState("callback");
+  const [pageUrl, setPageUrl] = useState("");
+  const [documentId, setDocumentId] = useState<string | null>(null);
 
   const handleClose = () => {
     setIsClosing(true);
     setTimeout(() => {
       setIsOpen(false);
       setIsClosing(false);
+      setAgreed(false);
+      setStatus("idle");
     }, 300);
   };
 
   useEffect(() => {
-    const handleOpen = () => {
+    const handleOpen = (e: Event) => {
+      const detail = (e as CustomEvent).detail || {};
+      setRequestType(detail.request_type || "callback");
+      setPageUrl(detail.page_url || window.location.href);
+      setDocumentId(detail.documentId || null);
       setIsOpen(true);
       setIsClosing(false);
       setIsOpening(true);
@@ -58,12 +67,20 @@ export default function PopupForm() {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          request_type: requestType,
+          page_url: pageUrl,
+          documentId: documentId,
+        }),
       });
       const data = await res.json();
       if (data.success) {
         setStatus("success");
         setFormData({ name: "", tel: "", email: "", message: "", contact_method: "phone" });
+        setRequestType("callback");
+        setPageUrl("");
+        setDocumentId(null);
         setAgreed(false);
         setTimeout(() => {
           setStatus("idle");
@@ -202,7 +219,6 @@ export default function PopupForm() {
             <textarea
               name="message"
               placeholder="Сообщение (добавьте выбранные товары и услуги)"
-              required
               autoComplete="off"
               value={formData.message}
               onChange={(e) =>
