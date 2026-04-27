@@ -55,6 +55,9 @@ web-2203/
 # Coverage
 coverage/
 
+# Backups
+backups/
+
 # Misc
 *.tsbuildinfo
 .eslintcache
