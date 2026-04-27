@@ -15,9 +15,16 @@ export default async function Footer() {
       style={{
         backgroundColor: "var(--text-color)",
         color: "var(--inverted-text-color)",
-        padding: "20px 76px",
+        padding: "20px 0",
       }}
     >
+      <div
+        style={{
+          maxWidth: 1400,
+          margin: "0 auto",
+          padding: "0 20px",
+        }}
+      >
       <div
         id="footer-columns"
         style={{
@@ -26,7 +33,7 @@ export default async function Footer() {
           gap: 47,
         }}
       >
-        <div className="footer-column" style={{ width: 398 }}>
+        <div className="footer-column" style={{ flex: 1 }}>
           <h3 style={{ fontSize: 26, margin: "1em 0" }}>Информация</h3>
           <ul
             style={{
@@ -55,7 +62,7 @@ export default async function Footer() {
             </li>
           </ul>
         </div>
-        <div className="footer-column" style={{ width: 398 }}>
+        <div className="footer-column" style={{ flex: 1 }}>
           <h3 style={{ fontSize: 26, margin: "1em 0" }}>Каталог</h3>
           <ul
             style={{
@@ -68,23 +75,23 @@ export default async function Footer() {
             }}
           >
             <li>
-              <Link href="/catalog" style={{ color: "var(--inverted-text-color)" }}>
+              <Link href="/catalog/1-stellazhi-dlya-sklada" style={{ color: "var(--inverted-text-color)" }}>
                 Стеллажи для склада
               </Link>
             </li>
             <li>
-              <Link href="/catalog" style={{ color: "var(--inverted-text-color)" }}>
+              <Link href="/catalog/2-spectehnika" style={{ color: "var(--inverted-text-color)" }}>
                 Спецтехника
               </Link>
             </li>
             <li>
-              <Link href="/catalog" style={{ color: "var(--inverted-text-color)" }}>
+              <Link href="/catalog/3-uslugi" style={{ color: "var(--inverted-text-color)" }}>
                 Услуги
               </Link>
             </li>
           </ul>
         </div>
-        <div className="footer-column" style={{ width: 398 }}>
+        <div className="footer-column" style={{ flex: 1 }}>
           <h3 style={{ fontSize: 26, margin: "1em 0"}}>Наши контакты</h3>
           <address
             style={{
@@ -126,13 +133,13 @@ export default async function Footer() {
         id="copyright"
         style={{
           display: "block",
-          maxWidth: 1300,
-          margin: "20px auto 0",
+          margin: "20px 0 0",
           textAlign: "left",
         }}
       >
         © «Альтернатива Форклифт» {new Date().getFullYear()}
       </span>
+      </div>
       <style>{`
         footer a:hover {
           text-decoration: underline;
@@ -143,14 +150,12 @@ export default async function Footer() {
           padding-top: 1rem;
         }
         @media (max-width: 768px) {
-          footer {
-            padding: 20px 20px !important;
-          }
           #footer-columns {
             flex-direction: column !important;
             gap: 30px !important;
           }
           .footer-column {
+            flex: none !important;
             width: 100% !important;
           }
         }
