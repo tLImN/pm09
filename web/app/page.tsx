@@ -1,5 +1,6 @@
 import Link from "next/link";
 import HeroBanner from "@/components/HeroBanner";
+import AdvantagesSection from "@/components/AdvantagesSection";
 import DetailsItem from "@/components/DetailsItem";
 import AssortmentSection from "@/components/AssortmentSection";
 import Button from "@/components/Button";
@@ -47,6 +48,8 @@ export default function Home() {
           ]}
         />
       </section>
+
+      <AdvantagesSection />
 
       <section className="py-[33px] px-[100px] max-md:px-5 max-md:py-5">
         <h2 className="text-center text-[2.1875rem] my-[30px] mx-auto font-bold">

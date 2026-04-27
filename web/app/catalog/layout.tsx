@@ -35,9 +35,15 @@ export default function CatalogLayout({
   return (
     <div
       style={{
+        maxWidth: 1400,
+        margin: "0 auto",
+        padding: "30px 20px",
+      }}
+    >
+    <div
+      style={{
         display: "flex",
         justifyContent: "center",
-        padding: "30px 0",
         gap: 40,
         marginBottom: 40,
       }}
@@ -49,10 +55,10 @@ export default function CatalogLayout({
         @media (max-width: 900px) {
           .content-wrapper-aside {
             flex-direction: column !important;
-            padding: 20px !important;
           }
         }
       `}</style>
+    </div>
     </div>
   );
 }
