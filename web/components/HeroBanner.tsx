@@ -14,69 +14,23 @@ export default function HeroBanner({
   children,
 }: HeroBannerProps) {
   return (
-    <>
-      <section
-        id="banner"
-        style={{
-          position: "relative",
-          backgroundColor: "var(--text-color)",
-          backgroundImage: backgroundImage ? `url(${backgroundImage})` : undefined,
-          backgroundPosition: "center",
-          backgroundSize: "cover",
-          backgroundAttachment: "fixed",
-          minHeight: 453,
-          color: "var(--inverted-text-color)",
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            backgroundColor: "rgba(26, 23, 27, 0.8)",
-          }}
-        />
-        <div
-          style={{
-            position: "relative",
-            padding: "30px",
-            maxWidth: 1440,
-            margin: "0 auto",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "baseline",
-            justifyContent: "center",
-            gap: 30,
-            minHeight: 453,
-          }}
-        >
-            <h1 style={{ fontSize: "4rem", margin: 0, maxWidth: 884, lineHeight: 1.2 }}>
-              {title}
-            </h1>
-            {subtitle && (
-              <p
-                style={{
-                  fontSize: "1.375rem",
-                  margin: 0,
-                  maxWidth: 1440,
-                  lineHeight: 1.5,
-                }}
-              >
-                {subtitle}
-              </p>
-            )}
-            {children}
-          </div>
-      </section>
-      <style>{`
-        @media (max-width: 768px) {
-          #banner h1 {
-            font-size: 2rem !important;
-          }
-          #banner > div:last-child {
-            padding: 30px 20px !important;
-          }
-        }
-      `}</style>
-    </>
+    <section
+      id="banner"
+      className="relative min-h-[453px] bg-[var(--text-color)] text-[var(--inverted-text-color)] bg-center bg-cover bg-fixed"
+      style={backgroundImage ? { backgroundImage: `url(${backgroundImage})` } : undefined}
+    >
+      <div className="absolute inset-0 bg-[rgba(26,23,27,0.8)]" />
+      <div className="relative p-[30px] max-w-[1440px] mx-auto flex flex-col items-baseline justify-center gap-[30px] min-h-[453px] max-md:p-5">
+        <h1 className="text-[4rem] m-0 max-w-[884px] leading-[1.2] max-md:text-[2rem]">
+          {title}
+        </h1>
+        {subtitle && (
+          <p className="text-[1.375rem] m-0 max-w-[1440px] leading-[1.5]">
+            {subtitle}
+          </p>
+        )}
+        {children}
+      </div>
+    </section>
   );
 }

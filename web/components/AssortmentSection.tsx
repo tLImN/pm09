@@ -58,17 +58,7 @@ export default function AssortmentSection({
   // На мобильных устройствах показываем адаптивную сетку
   if (isMobile) {
     return (
-      <div
-        className="assortment-grid-mobile"
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(2, 1fr)",
-          gap: 16,
-          padding: "0 16px",
-          maxWidth: 600,
-          margin: "0 auto",
-        }}
-      >
+      <div className="assortment-grid-mobile grid grid-cols-2 gap-4 px-4 max-w-[600px] mx-auto max-[360px]:grid-cols-1">
         {items.map((item, index) => (
           <AssortmentCard
             key={index}
@@ -77,13 +67,6 @@ export default function AssortmentSection({
             title={item.title}
           />
         ))}
-        <style>{`
-          @media (max-width: 360px) {
-            .assortment-grid-mobile {
-              grid-template-columns: 1fr !important;
-            }
-          }
-        `}</style>
       </div>
     );
   }
@@ -91,14 +74,7 @@ export default function AssortmentSection({
   if (!useCarousel) {
     // Обычный flex-ряд без карусели (для десктопа)
     return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          gap: 35,
-          flexWrap: "wrap",
-        }}
-      >
+      <div className="flex justify-center gap-[35px] flex-wrap">
         {items.map((item, index) => (
           <AssortmentCard
             key={index}
@@ -116,65 +92,21 @@ export default function AssortmentSection({
   const duplicatedItems = [...items, ...items, ...items];
 
   return (
-    <div
-      className="carousel-wrapper"
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 15,
-        justifyContent: "center",
-      }}
-    >
-
-      {/* <button
-        onClick={scrollLeft}
-        className="carousel-btn carousel-btn--prev"
-        aria-label="Прокрутить назад"
-        style={{
-          flexShrink: 0,
-          width: 44,
-          height: 44,
-          borderRadius: "50%",
-          border: "none",
-          backgroundColor: "rgba(255, 255, 255, 0.9)",
-          cursor: "pointer",
-          fontSize: 20,
-          color: "var(--text-color)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          boxShadow: "0 2px 6px rgba(0, 0, 0, 0.15)",
-          zIndex: 2,
-        }}
-      >
-        ‹
-      </button> */}
+    <div className="carousel-wrapper flex items-center gap-[15px] justify-center max-md:gap-[10px]">
 
       {/* Карусель */}
       <div
-        className="assortment-carousel"
+        className="assortment-carousel overflow-x-hidden overflow-y-visible max-w-[1400px] py-5 px-[50px] mask-[linear-gradient(to_right,transparent_0%,black_8%,black_92%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_right,transparent_0%,black_8%,black_92%,transparent_100%)]"
         ref={scrollContainerRef}
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
-        style={{
-          overflowX: "hidden",
-          overflowY: "visible",
-          maxWidth: 1400,
-          padding: "20px 50px",
-          maskImage: "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
-          WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
-        }}
       >
         {/* Лента с карточками — непрерывная CSS-анимация */}
         <div
-          className={`carousel-track ${isPaused ? "carousel-track--paused" : ""}`}
-          style={{
-            display: "flex",
-            gap: 35,
-          }}
+          className={`carousel-track flex gap-[35px] ${isPaused ? "carousel-track--paused" : ""}`}
         >
           {duplicatedItems.map((item, index) => (
-            <div key={index} style={{ flexShrink: 0 }}>
+            <div key={index} className="shrink-0">
               <AssortmentCard
                 href={item.href}
                 imageSrc={item.imageSrc}
@@ -184,30 +116,6 @@ export default function AssortmentSection({
           ))}
         </div>
       </div>
-
-      {/* <button
-        onClick={scrollRight}
-        className="carousel-btn carousel-btn--next"
-        aria-label="Прокрутить вперёд"
-        style={{
-          flexShrink: 0,
-          width: 44,
-          height: 44,
-          borderRadius: "50%",
-          border: "none",
-          backgroundColor: "rgba(255, 255, 255, 0.9)",
-          cursor: "pointer",
-          fontSize: 20,
-          color: "var(--text-color)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
-          zIndex: 2,
-        }}
-      >
-        ›
-      </button> */}
 
       <style>{`
         @keyframes ${animationName} {
@@ -226,26 +134,6 @@ export default function AssortmentSection({
 
         .carousel-track--paused {
           animation-play-state: paused;
-        }
-
-        .carousel-btn:hover {
-          background-color: rgba(255, 255, 255, 1) !important;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
-        }
-
-        .carousel-btn:active {
-          transform: scale(0.95) !important;
-        }
-
-        @media (max-width: 768px) {
-          .carousel-wrapper {
-            gap: 10px !important;
-          }
-          .carousel-btn {
-            width: 36px !important;
-            height: 36px !important;
-            font-size: 16px !important;
-          }
         }
       `}</style>
     </div>

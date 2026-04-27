@@ -1,26 +1,11 @@
-"use client";
-
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import { getHomePageData } from "@/lib/api";
-//import { getStrapiImageUrl } from "@/lib/utils";
-import { CatalogItem } from "@/lib/types";
 import HeroBanner from "@/components/HeroBanner";
 import DetailsItem from "@/components/DetailsItem";
 import AssortmentSection from "@/components/AssortmentSection";
 import Button from "@/components/Button";
+import PopupTrigger from "@/components/PopupTrigger";
 
 export default function Home() {
-  const [items, setItems] = useState<CatalogItem[]>([]);
-
-  useEffect(() => {
-    getHomePageData().then((data) => setItems(data.items));
-  }, []);
-
-  const handlePopupOpen = () => {
-    window.dispatchEvent(new CustomEvent("open-popup"));
-  };
-
   return (
     <>
       <HeroBanner
@@ -33,29 +18,29 @@ export default function Home() {
         </Link>
       </HeroBanner>
 
-      <section style={{ padding: "33px 100px" }}>
-        <h2 style={{ textAlign: "center", fontSize: "2.1875rem", margin: "30px auto" }}>
+      <section className="py-[33px] px-[100px] max-md:px-5 max-md:py-5">
+        <h2 className="text-center text-[2.1875rem] my-[30px] mx-auto font-bold">
           Ассортимент
         </h2>
         <AssortmentSection
           items={[
             {
-              href: "./catalog/1-stellazhi-dlya-sklada",
+              href: "/catalog/1-stellazhi-dlya-sklada",
               imageSrc: "/img/ki_assortment_stellazhi-dlya-sklada.webp",
               title: "Стеллажи для склада",
             },
             {
-              href: "./catalog/pogruzchiki",
+              href: "/catalog/pogruzchiki",
               imageSrc: "/img/ki_assortment_pogruzchiki.webp",
               title: "Погрузчики",
             },
             {
-              href: "./catalog/shtabelery",
+              href: "/catalog/shtabelery",
               imageSrc: "/img/ki_assortment_shtabelery.webp",
               title: "Штабелеры",
             },
             {
-              href: "./catalog/gidravlicheskie-telezhki",
+              href: "/catalog/gidravlicheskie-telezhki",
               imageSrc: "/img/ki_assortment_girdravlicheskiye-telezhki.webp",
               title: "Гидравлические тележки",
             },
@@ -63,20 +48,11 @@ export default function Home() {
         />
       </section>
 
-      <section style={{ padding: "33px 100px" }}>
-        <h2 style={{ textAlign: "center", fontSize: "2.1875rem", margin: "30px auto" }}>
+      <section className="py-[33px] px-[100px] max-md:px-5 max-md:py-5">
+        <h2 className="text-center text-[2.1875rem] my-[30px] mx-auto font-bold">
           Часто задаваемые вопросы
         </h2>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 35,
-            padding: "30px",
-            maxWidth: 1440,
-            margin: "0 auto"
-          }}
-        >
+        <div className="flex flex-col gap-[35px] p-[30px] max-w-[1440px] mx-auto max-md:px-0 max-md:py-5">
           <DetailsItem question="Какие гарантии предоставляются на складскую технику?">
             Стандартный гарантийный срок — 1 год. При заключении договора на
             техническое обслуживание гарантия продлевается.
@@ -106,30 +82,11 @@ export default function Home() {
           </DetailsItem>
           <span>
             Не нашли ответ на свой вопрос?{" "}
-            <a
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                handlePopupOpen();
-              }}
-              style={{ cursor: "pointer" }}
-            >
-              Оставьте заявку
-            </a>
+            <PopupTrigger>Оставьте заявку</PopupTrigger>
             , и наш специалист свяжется и ответит на ваш вопрос.
           </span>
         </div>
       </section>
-      <style>{`
-        @media (max-width: 768px) {
-          section {
-            padding: 20px !important;
-          }
-          section > div:last-child {
-            padding: 20px 0 !important;
-          }
-        }
-      `}</style>
     </>
   );
 }
