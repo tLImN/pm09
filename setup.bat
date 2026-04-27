@@ -49,14 +49,28 @@ if not exist web\.env.local (
     echo ⏭️  web\.env.local already exists, skipping
 )
 
-REM 3. Start PostgreSQL via Docker
+REM 3. Generate random secrets for Strapi
+echo 🔐 Generating random secrets...
+
+for /f "delims=" %%i in ('powershell -NoProfile -Command "[Convert]::ToBase64String([byte[]]::new(32))"') do set API_TOKEN_SALT=%%i
+for /f "delims=" %%i in ('powershell -NoProfile -Command "[Convert]::ToBase64String([byte[]]::new(32))"') do set ADMIN_JWT_SECRET=%%i
+for /f "delims=" %%i in ('powershell -NoProfile -Command "[Convert]::ToBase64String([byte[]]::new(32))"') do set TRANSFER_TOKEN_SALT=%%i
+for /f "delims=" %%i in ('powershell -NoProfile -Command "[Convert]::ToBase64String([byte[]]::new(32))"') do set JWT_SECRET=%%i
+for /f "delims=" %%i in ('powershell -NoProfile -Command "$k1=[Convert]::ToBase64String([byte[]]::new(32));$k2=[Convert]::ToBase64String([byte[]]::new(32));$k3=[Convert]::ToBase64String([byte[]]::new(32));$k4=[Convert]::ToBase64String([byte[]]::new(32));Write-Host \"$k1,$k2,$k3,$k4\" "') do set APP_KEYS=%%i
+
+powershell -NoProfile -Command ^
+    "(Get-Content cms\.env) | ForEach-Object { $_ -replace 'API_TOKEN_SALT=.*', 'API_TOKEN_SALT=%API_TOKEN_SALT%' -replace 'ADMIN_JWT_SECRET=.*', 'ADMIN_JWT_SECRET=%ADMIN_JWT_SECRET%' -replace 'TRANSFER_TOKEN_SALT=.*', 'TRANSFER_TOKEN_SALT=%TRANSFER_TOKEN_SALT%' -replace 'JWT_SECRET=.*', 'JWT_SECRET=%JWT_SECRET%' -replace 'APP_KEYS=.*', 'APP_KEYS=%APP_KEYS%' } | Set-Content cms\.env"
+
+echo ✅ Secrets generated and saved to cms\.env
+
+REM 4. Start PostgreSQL via Docker
 echo 🐘 Starting PostgreSQL database...
 docker-compose up -d
 
 echo ⏳ Waiting for database to be ready...
 timeout /t 5 /nobreak >nul
 
-REM 4. Install dependencies
+REM 5. Install dependencies
 echo 📦 Installing CMS dependencies...
 cd cms
 call npm install

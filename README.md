@@ -2,8 +2,8 @@
 
 Веб-приложение для каталога складской техники.
 
-- **Frontend:** Next.js (TypeScript, Tailwind CSS)
-- **Backend (CMS):** Strapi v5
+- **Frontend:** Next.js 16 (TypeScript, Tailwind CSS v4, React 19)
+- **Backend (CMS):** Strapi v5.38
 - **Database:** PostgreSQL 16 (Docker)
 
 ---
@@ -110,6 +110,9 @@ project/
 ├── docker-compose.yml      # Конфигурация Docker (PostgreSQL)
 ├── setup.sh                # Скрипт установки (Linux/macOS)
 ├── setup.bat               # Скрипт установки (Windows)
+├── backup.sh               # Бэкап БД + медиа (Linux/macOS)
+├── backup.bat              # Бэкап БД + медиа (Windows)
+├── BACKUP.md               # Документация по бэкапам
 ├── .gitignore              # Исключения для Git
 └── README.md               # Этот файл
 ```
@@ -135,12 +138,16 @@ project/
 | `DATABASE_NAME` | Имя БД (strapi) |
 | `DATABASE_USERNAME` | Пользователь БД |
 | `DATABASE_PASSWORD` | Пароль БД |
+| `ENCRYPTION_KEY` | Ключ шифрования |
+| `PREVIEW_SECRET` | Секрет для Strapi Preview (должен совпадать с `STRAPI_PREVIEW_SECRET` во фронтенде) |
+| `FRONTEND_URL` | URL фронтенда (http://localhost:3000) |
 
 ### Frontend (`web/.env.local`)
 
 | Переменная | Описание |
 |---|---|
 | `NEXT_PUBLIC_STRAPI_URL` | URL Strapi API (http://localhost:1337) |
+| `STRAPI_PREVIEW_SECRET` | Секрет для Draft Mode / Preview (должен совпадать с `PREVIEW_SECRET` в CMS) |
 
 ---
 
@@ -161,11 +168,18 @@ cd web && npm run build
 cd cms && npm audit
 cd web && npm audit
 
-# Экспорт бэкапа Strapi
+# Бэкап БД и медиафайлов (pg_dump + копирование uploads)
+# Linux / macOS:
+./backup.sh
+# Windows:
+backup.bat
+# (подробнее в BACKUP.md)
+
+# Экспорт данных через Strapi Data Transfer
 npx strapi export --no-encrypt -f my-backup
 npx strapi export --encrypt -f my-backup --key mySecretKey
 
-# Импорт бэкапа Strapi
+# Импорт данных через Strapi Data Transfer
 npx strapi import -f my-backup.tar.gz
 npx strapi import -f my-backup.tar.gz --key mySecretKey
 ```
@@ -174,6 +188,5 @@ npx strapi import -f my-backup.tar.gz --key mySecretKey
 
 ## Примечания
 
-- Папки `web-1203/` и `web-2203/` — старые версии фронтенда, не используются.
 - Файлы `.env` не попадают в Git (добавлены в `.gitignore`).
 - При развёртывании на другом компьютере достаточно клонировать репозиторий и запустить `setup.sh` / `setup.bat`.
