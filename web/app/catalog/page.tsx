@@ -48,44 +48,51 @@ export default function CatalogPage() {
 
   return (
     <main style={{ maxWidth: 950, display: "flex", flexDirection: "column", gap: 20, width: "100%" }}>
-        <h1 style={{ margin: 0, fontSize: 35, fontWeight: 600 }}>Каталог</h1>
-        <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-          <select
-            value={sortBy}
-            onChange={(e) => handleSortChange(e.target.value)}
-          >
-            <option value="title-asc">Сортировать: по названию (А-Я)</option>
-            <option value="title-desc">Сортировать: по названию (Я-А)</option>
-            <option value="newest">Сортировать: сначала новые</option>
-            <option value="oldest">Сортировать: сначала старые</option>
-          </select>
-          <select
-            value={pageSize}
-            onChange={(e) => handlePageSizeChange(Number(e.target.value))}
-          >
-            <option value={5}>Показывать: 5</option>
-            <option value={10}>Показывать: 10</option>
-            <option value={20}>Показывать: 20</option>
-            <option value={50}>Показывать: 50</option>
-          </select>
-          {!loading && total > 0 && (
-            <span style={{ fontSize: 14, color: "#666" }}>
-              {startItem}–{endItem} из {total}
-            </span>
-          )}
-        </div>
-        {loading ? (
-          <p className="loading-status">Загрузка...</p>
-        ) : items.length === 0 ? (
-          <p className="loading-status">Товары не найдены</p>
-        ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: 19 }}>
-            {items.map((item) => (
-              <ProductCard key={item.id} item={item} />
-            ))}
-          </div>
+      <h1 style={{ margin: 0, fontSize: 35, fontWeight: 600 }}>Каталог</h1>
+      <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+        <select
+          value={sortBy}
+          onChange={(e) => handleSortChange(e.target.value)}
+        >
+          <option value="title-asc">Сортировать: по названию (А-Я)</option>
+          <option value="title-desc">Сортировать: по названию (Я-А)</option>
+          <option value="newest">Сортировать: сначала новые</option>
+          <option value="oldest">Сортировать: сначала старые</option>
+        </select>
+        <select
+          value={pageSize}
+          onChange={(e) => handlePageSizeChange(Number(e.target.value))}
+        >
+          <option value={5}>Показывать: 5</option>
+          <option value={10}>Показывать: 10</option>
+          <option value={20}>Показывать: 20</option>
+          <option value={50}>Показывать: 50</option>
+        </select>
+        {!loading && total > 0 && (
+          <span style={{ fontSize: 14, color: "#666" }}>
+            {startItem}–{endItem} из {total}
+          </span>
         )}
-        <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+      </div>
+      {loading ? (
+        <p className="loading-status">Загрузка...</p>
+      ) : items.length === 0 ? (
+        <p className="loading-status">Товары не найдены</p>
+      ) : (
+        <div className="product-cards-container" style={{ display: "flex", flexDirection: "column", gap: 19, marginRight: "10px" }}>
+          {items.map((item) => (
+            <ProductCard key={item.id} item={item} />
+          ))}
+        </div>
+      )}
+      <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+      <style>{`
+        @media (max-width: 900px) {
+          .product-cards-container {
+            margin-right: 0 !important;
+          }
+        }
+      `}</style>
     </main>
   );
 }

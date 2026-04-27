@@ -115,21 +115,25 @@ export default function PopupForm() {
         zIndex: 1000,
         transition: "background-color 0.2s ease, opacity 0.2s ease",
         opacity: isClosing ? 0 : isOpening ? 0 : 1,
+        overflowY: "auto",
       }}
     >
       <div
-        className="popup"
+        className="popup-form"
         style={{
-          width: 600,
-          maxWidth: "90vw",
+          width: "100%",
+          maxWidth: 600,
           padding: "20px 40px",
           borderRadius: 5,
           marginTop: "20vh",
+          marginBottom: "20px",
           border: "1px solid var(--border-color)",
           backgroundColor: "var(--inverted-text-color)",
           transition: "transform 0.3s ease, opacity 0.3s ease",
           transform: isClosing ? "translateY(-20px)" : isOpening ? "translateY(20px)" : "translateY(0)",
           opacity: isClosing ? 0 : isOpening ? 0 : 1,
+          maxHeight: "85vh",
+          overflowY: "auto",
         }}
       >
         <form onSubmit={handleSubmit}>
@@ -175,7 +179,7 @@ export default function PopupForm() {
                 setFormData({ ...formData, tel: e.target.value })
               }
             />
-            <div style={{ display: "flex", gap: 20, alignItems: "center", marginTop: 5 }}>
+            <div className="popup-contact-method" style={{ display: "flex", gap: 20, alignItems: "center", marginTop: 5 }}>
               <span style={{ fontSize: 14, fontWeight: 500 }}>Как с вами связаться?</span>
               <label style={{ display: "flex", gap: 5, alignItems: "center", cursor: "pointer", fontSize: 14 }}>
                 <input
@@ -284,6 +288,24 @@ export default function PopupForm() {
           </Button>
         </form>
       </div>
+
+      <style>{`
+        @media (max-width: 640px) {
+          .popup-form {
+            padding: 20px 16px !important;
+            max-width: 95vw !important;
+            border-radius: 8px !important;
+          }
+          .popup-header {
+            font-size: 26px !important;
+            margin-bottom: 20px !important;
+          }
+          .popup-contact-method {
+            flex-wrap: wrap !important;
+            gap: 8px 16px !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }
