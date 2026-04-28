@@ -18,23 +18,20 @@ export default function LeafletMap({
 
   useEffect(() => {
     let map: unknown;
-    const initMap = async () => {
+      const initMap = async () => {
       const L = await import("leaflet");
 
-      // Динамически добавляем CSS Leaflet
-      if (!document.querySelector('link[href*="leaflet.css"]')) {
+      // Динамически добавляем CSS Leaflet и ждём его полной загрузки
+      await new Promise<void>((resolve) => {
+        if (document.querySelector('link[href*="leaflet.css"]')) {
+          resolve();
+          return;
+        }
         const link = document.createElement("link");
         link.rel = "stylesheet";
         link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+        link.onload = () => resolve();
         document.head.appendChild(link);
-      }
-
-      // Исправляем пути иконок для работы с модульными сборщиками
-      delete (L.Icon.Default.prototype as any)._getIconUrl;
-      L.Icon.Default.mergeOptions({
-        iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-        iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-        shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
       });
 
       if (mapRef.current && !mapInstanceRef.current) {
@@ -59,13 +56,30 @@ export default function LeafletMap({
         const myAttrControl = (L as any).control.attribution().addTo(map);
         myAttrControl.setPrefix('<a href="https://leafletjs.com/">Leaflet</a>');
 
+        const markerIcon = (L as any).icon({
+          iconUrl: "/img/markers/marker-icon-red.png",
+          iconRetinaUrl: "/img/markers/marker-icon-2x-red.png",
+          shadowUrl: "/img/markers/marker-shadow.png",
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          popupAnchor: [1, -34],
+          shadowSize: [41, 41],
+        });
+
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const marker = (L as any).marker([lat, lng]).addTo(map);
-        marker
-          .bindPopup(popupText)
-          .openPopup();
+        const marker = (L as any).marker([lat, lng], { icon: markerIcon }).addTo(map);
+        marker.bindPopup(popupText);
 
         mapInstanceRef.current = map;
+
+        // Открываем popup после того как браузер применит стили и пересчитает layout
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (map as any).invalidateSize();
+            marker.openPopup();
+          }, 100);
+        });
       }
     };
 
