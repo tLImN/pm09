@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { getCategoryBySlug, getCatalogItems } from "@/lib/api";
 import { CatalogItem, Category } from "@/lib/types";
 import { formatDescription } from "@/lib/utils";
@@ -11,6 +11,7 @@ import Pagination from "@/components/Pagination";
 export default function CategoryPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const categorySlug = params.categorySlug as string;
 
   const [category, setCategory] = useState<Category | null>(null);
@@ -23,12 +24,25 @@ export default function CategoryPage() {
   const [loading, setLoading] = useState(true);
   const [redirecting, setRedirecting] = useState(false);
 
+  // Читаем фильтры из URL
+  const priceMin = searchParams.get("priceMin") ? Number(searchParams.get("priceMin")) : undefined;
+  const priceMax = searchParams.get("priceMax") ? Number(searchParams.get("priceMax")) : undefined;
+  const manufacturer = searchParams.get("manufacturer") || undefined;
+
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const [cat, itemsData] = await Promise.all([
         getCategoryBySlug(categorySlug),
-        getCatalogItems({ category: categorySlug, sort: sortBy, page, pageSize }),
+        getCatalogItems({
+          category: categorySlug,
+          sort: sortBy,
+          page,
+          pageSize,
+          priceMin,
+          priceMax,
+          manufacturer,
+        }),
       ]);
       setCategory(cat);
 
@@ -36,7 +50,7 @@ export default function CategoryPage() {
       const fetchedTotal = itemsData.meta?.pagination?.total || 0;
 
       // Редирект: если в категории только один элемент и это услуга (service)
-      if (fetchedTotal === 1 && fetchedItems.length === 1 && fetchedItems[0].item_type === "service") {
+      if (fetchedTotal === 1 && fetchedItems.length === 1 && fetchedItems[0].item_type === "service" && !priceMin && !priceMax && !manufacturer) {
         setRedirecting(true);
         router.push(`/catalog/${categorySlug}/${fetchedItems[0].item_slug}`);
         return;
@@ -50,11 +64,16 @@ export default function CategoryPage() {
     } finally {
       setLoading(false);
     }
-  }, [categorySlug, sortBy, page, pageSize, router]);
+  }, [categorySlug, sortBy, page, pageSize, router, priceMin, priceMax, manufacturer]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  // Сбрасываем страницу при изменении фильтров в URL
+  useEffect(() => {
+    setPage(1);
+  }, [priceMin, priceMax, manufacturer]);
 
   const handleSortChange = (value: string) => {
     setSortBy(value);
@@ -83,6 +102,8 @@ export default function CategoryPage() {
         <select value={sortBy} onChange={(e) => handleSortChange(e.target.value)}>
           <option value="title-asc">Сортировать: по названию (А-Я)</option>
           <option value="title-desc">Сортировать: по названию (Я-А)</option>
+          <option value="price-asc">Сортировать: сначала дешевле</option>
+          <option value="price-desc">Сортировать: сначала дороже</option>
           <option value="newest">Сортировать: сначала новые</option>
           <option value="oldest">Сортировать: сначала старые</option>
         </select>

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Category } from "@/lib/types";
+import { Category, CatalogItem } from "@/lib/types";
 
 export default function Sidebar({
   categories,
@@ -16,7 +16,7 @@ export default function Sidebar({
   const [isMobile, setIsMobile] = useState(false);
   const pathname = usePathname();
 
-  // Сбрасываем collapsed при смене страницы
+  // Сбрасываем collapsed при смене страницы на мобильных
   useEffect(() => {
     if (isMobile) {
       setCollapsed(true);
@@ -31,7 +31,8 @@ export default function Sidebar({
 
     const handler = (e: MediaQueryListEvent) => {
       setIsMobile(e.matches);
-      if (!e.matches) setCollapsed(false);
+      if (e.matches) setCollapsed(true);
+      else setCollapsed(false);
     };
     mediaQuery.addEventListener("change", handler);
     return () => mediaQuery.removeEventListener("change", handler);
@@ -47,32 +48,102 @@ export default function Sidebar({
     return activeCategorySlug === parent.category_slug;
   };
 
-  const isCollapsed = isMobile && collapsed;
+  // Проверяем, нужно ли показывать услуги напрямую вместо подкатегорий
+  // Условие: все catalog_items (собранные из родительской + дочерних) — услуги
+  const shouldShowServicesDirectly = (parent: Category): boolean => {
+    // Собираем все услуги из дочерних категорий
+    const childServices = (parent.children_categories || []).flatMap(
+      (child) =>
+        (child.catalog_items || []).filter(
+          (item) => item.item_type === "service"
+        )
+    );
+    // Собираем услуги, привязанные напрямую к родительской категории
+    const parentServices = (parent.catalog_items || []).filter(
+      (item) => item.item_type === "service"
+    );
+
+    const allServices = [...childServices, ...parentServices];
+
+    // Проверяем, что есть услуги и нет товаров
+    if (allServices.length === 0) return false;
+
+    // Проверяем наличие товаров (не услуг) — если есть, не показываем услуги напрямую
+    const nonServiceItems = [
+      ...(parent.children_categories || []).flatMap(
+        (child) =>
+          (child.catalog_items || []).filter(
+            (item) => item.item_type !== "service"
+          )
+      ),
+      ...(parent.catalog_items || []).filter(
+        (item) => item.item_type !== "service"
+      ),
+    ];
+
+    // Если товаров нет (все элементы — услуги), показываем их напрямую
+    return nonServiceItems.length === 0;
+  };
+
+  // Собираем услуги для отображения: из дочерних категорий и из родительской
+  const collectServices = (parent: Category) => {
+    const services: {
+      parentCategorySlug: string;
+      service: CatalogItem;
+    }[] = [];
+
+    // Услуги из дочерних категорий
+    (parent.children_categories || [])
+      .sort((a, b) => a.category_slug.localeCompare(b.category_slug))
+      .forEach((child) => {
+        (child.catalog_items || [])
+          .filter((item) => item.item_type === "service")
+          .forEach((service) => {
+            services.push({
+              parentCategorySlug: child.category_slug,
+              service,
+            });
+          });
+      });
+
+    // Услуги, привязанные напрямую к родительской категории
+    (parent.catalog_items || [])
+      .filter((item) => item.item_type === "service")
+      .forEach((service) => {
+        services.push({
+          parentCategorySlug: parent.category_slug,
+          service,
+        });
+      });
+
+    return services.sort((a, b) =>
+      a.service.item_title.localeCompare(b.service.item_title)
+    );
+  };
 
   return (
     <aside
-      onClick={isCollapsed ? () => setCollapsed(false) : undefined}
+      onClick={collapsed ? () => setCollapsed(false) : undefined}
       style={{
         border: "1px solid var(--border-color)",
         width: 344,
         minWidth: 200,
         borderRadius: 5,
-        padding: isCollapsed ? "16px 20px 16px" : "20px 20px 40px",
+        padding: collapsed ? "16px 20px 16px" : "20px 20px 40px",
         display: "flex",
         flexDirection: "column",
         gap: 16,
         height: "fit-content",
         boxSizing: "border-box",
-        cursor: isCollapsed ? "pointer" : "default",
+        cursor: collapsed ? "pointer" : "default",
         position: "relative",
         overflow: "hidden",
-        maxHeight: isCollapsed ? 60 : 2000,
+        maxHeight: collapsed ? 60 : 2000,
         transition: "max-height 0.3s ease, padding 0.3s ease",
       }}
     >
-      {/* Кнопка свернуть — всегда в одном и том же месте */}
-      {isMobile && (
-        <button
+      {/* Кнопка свернуть */}
+      <button
           onClick={(e) => {
             e.stopPropagation();
             setCollapsed(!collapsed);
@@ -110,10 +181,8 @@ export default function Sidebar({
             <polyline points="18 15 12 9 6 15" />
           </svg>
         </button>
-      )}
-
       {/* Заголовок в свернутом виде */}
-      {isCollapsed && (
+      {collapsed && (
         <span
           style={{
             fontSize: 18,
@@ -127,11 +196,12 @@ export default function Sidebar({
       )}
 
       {/* Все категории */}
-      {!isCollapsed &&
+      {!collapsed &&
         parentCategories.map((parent) => (
           <div key={parent.id}>
             <Link
               href={`/catalog/${parent.category_slug}`}
+              scroll={false}
               style={{
                 fontSize: 22,
                 fontWeight: 600,
@@ -145,7 +215,33 @@ export default function Sidebar({
             >
               {parent.category_title}
             </Link>
-            {parent.children_categories &&
+            {shouldShowServicesDirectly(parent) ? (
+              <ul
+                style={{
+                  listStyle: "none",
+                  paddingLeft: 30,
+                  margin: 0,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 8,
+                }}
+              >
+                {collectServices(parent).map(({ parentCategorySlug, service }) => (
+                  <li key={service.id}>
+                    <Link
+                      href={`/catalog/${parentCategorySlug}/${service.item_slug}`}
+                      scroll={false}
+                      style={{
+                        color: "var(--text-color)",
+                      }}
+                    >
+                      {service.item_title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              parent.children_categories &&
               parent.children_categories.length > 0 && (
                 <ul
                   style={{
@@ -165,6 +261,7 @@ export default function Sidebar({
                       <li key={child.id}>
                         <Link
                           href={`/catalog/${child.category_slug}`}
+                          scroll={false}
                           style={{
                             color:
                               activeCategorySlug === child.category_slug
@@ -177,18 +274,14 @@ export default function Sidebar({
                       </li>
                     ))}
                 </ul>
-              )}
+              )
+            )}
           </div>
         ))}
 
       <style>{`
         aside a:hover {
           color: var(--accent-hover-color) !important;
-        }
-        @media (max-width: 1366px) {
-          aside {
-            margin-left: 10px;
-          }
         }
         @media (max-width: 900px) {
           aside {

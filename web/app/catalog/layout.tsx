@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { getCategories } from "@/lib/api";
 import { Category } from "@/lib/types";
 import Sidebar from "@/components/Sidebar";
+import FilterPanel from "@/components/FilterPanel";
 
 export default function CatalogLayout({
   children,
@@ -21,11 +22,11 @@ export default function CatalogLayout({
   // /catalog/pogruzchiki/dizelnye/produkt-slug → "dizelnye" (товар → категория)
   const pathAfterCatalog = pathname.split("/catalog/")[1] || "";
   const pathSegments = pathAfterCatalog.split("/").filter(Boolean);
-  // Если 2+ сегментов — это товар, берём второй сегмент как категорию
+  // Если 2+ сегментов — это страница товара/услуги
   // Если 1 сегмент — это категория
-  const activeCategorySlug = pathSegments.length >= 2
-    ? pathSegments[1]
-    : pathSegments[0] || undefined;
+  // Если 0 сегментов — главная страница каталога
+  const isProductPage = pathSegments.length >= 2;
+  const activeCategorySlug = pathSegments[0] || undefined;
 
   // Загружаем категории один раз при монтировании layout
   useEffect(() => {
@@ -49,12 +50,40 @@ export default function CatalogLayout({
       }}
       className="content-wrapper-aside"
     >
-      <Sidebar categories={categories} activeCategorySlug={activeCategorySlug} />
+      <div
+        className="sidebar-filters-column"
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 16,
+          width: 344,
+          minWidth: 200,
+          flexShrink: 0,
+          height: "fit-content",
+        }}
+      >
+        <Sidebar categories={categories} activeCategorySlug={activeCategorySlug} />
+        {!isProductPage && (
+          <Suspense fallback={null}>
+            <FilterPanel categorySlug={activeCategorySlug} />
+          </Suspense>
+        )}
+      </div>
       {children}
       <style>{`
+        @media (max-width: 1366px) {
+          .sidebar-filters-column {
+            margin-left: 10px;
+          }
+        }
         @media (max-width: 900px) {
           .content-wrapper-aside {
             flex-direction: column !important;
+          }
+          .sidebar-filters-column {
+            width: 100% !important;
+            min-width: 0 !important;
+            margin-left: 0;
           }
         }
       `}</style>

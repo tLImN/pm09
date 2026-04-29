@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useSearchParams } from "next/navigation";
 import { getCatalogItems } from "@/lib/api";
 import { CatalogItem } from "@/lib/types";
 import ProductCard from "@/components/ProductCard";
 import Pagination from "@/components/Pagination";
 
 export default function CatalogPage() {
+  const searchParams = useSearchParams();
   const [items, setItems] = useState<CatalogItem[]>([]);
   const [sortBy, setSortBy] = useState("title-asc");
   const [page, setPage] = useState(1);
@@ -15,10 +17,23 @@ export default function CatalogPage() {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  // Читаем фильтры из URL
+  const priceMin = searchParams.get("priceMin") ? Number(searchParams.get("priceMin")) : undefined;
+  const priceMax = searchParams.get("priceMax") ? Number(searchParams.get("priceMax")) : undefined;
+  const manufacturer = searchParams.get("manufacturer") || undefined;
+
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const itemsData = await getCatalogItems({ sort: sortBy, page, pageSize });
+      const itemsData = await getCatalogItems({
+        sort: sortBy,
+        page,
+        pageSize,
+        priceMin,
+        priceMax,
+        manufacturer,
+        itemType: "product",
+      });
       setItems(itemsData.data || []);
       setTotalPages(itemsData.meta?.pagination?.pageCount || 1);
       setTotal(itemsData.meta?.pagination?.total || 0);
@@ -27,11 +42,16 @@ export default function CatalogPage() {
     } finally {
       setLoading(false);
     }
-  }, [sortBy, page, pageSize]);
+  }, [sortBy, page, pageSize, priceMin, priceMax, manufacturer]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  // Сбрасываем страницу при изменении фильтров в URL
+  useEffect(() => {
+    setPage(1);
+  }, [priceMin, priceMax, manufacturer]);
 
   const handleSortChange = (value: string) => {
     setSortBy(value);
@@ -56,6 +76,8 @@ export default function CatalogPage() {
         >
           <option value="title-asc">Сортировать: по названию (А-Я)</option>
           <option value="title-desc">Сортировать: по названию (Я-А)</option>
+          <option value="price-asc">Сортировать: сначала дешевле</option>
+          <option value="price-desc">Сортировать: сначала дороже</option>
           <option value="newest">Сортировать: сначала новые</option>
           <option value="oldest">Сортировать: сначала старые</option>
         </select>

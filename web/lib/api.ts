@@ -30,7 +30,7 @@ async function fetchAPI<T>(endpoint: string): Promise<T> {
 export async function getCategories(): Promise<Category[]> {
   try {
     const res = await fetchAPI<StrapiResponse<Category>>(
-      "/categories?populate[parent_category]=true&populate[children_categories]=true&sort[0]=category_slug:asc"
+      "/categories?populate[parent_category]=true&populate[children_categories][populate][catalog_items]=true&populate[catalog_items]=true&sort[0]=category_slug:asc"
     );
     return res.data || [];
   } catch {
@@ -56,11 +56,20 @@ export async function getCatalogItems(params?: {
   sort?: string;
   page?: number;
   pageSize?: number;
+  priceMin?: number;
+  priceMax?: number;
+  manufacturer?: string;
+  itemType?: "product" | "service";
 }): Promise<StrapiResponse<CatalogItem>> {
   try {
     const searchParams = new URLSearchParams();
     searchParams.set("populate[item_category]", "true");
     searchParams.set("populate[item_images]", "true");
+
+    // Фильтр по типу (product/service)
+    if (params?.itemType) {
+      searchParams.set("filters[item_type][$eq]", params.itemType);
+    }
 
     if (params?.category) {
       // Сначала проверяем, является ли категория родительской
@@ -86,6 +95,19 @@ export async function getCatalogItems(params?: {
       //}
     }
 
+    // Фильтр по цене
+    if (params?.priceMin !== undefined && params.priceMin !== null) {
+      searchParams.set("filters[item_price][$gte]", params.priceMin.toString());
+    }
+    if (params?.priceMax !== undefined && params.priceMax !== null) {
+      searchParams.set("filters[item_price][$lte]", params.priceMax.toString());
+    }
+
+    // Фильтр по производителю
+    if (params?.manufacturer) {
+      searchParams.set("filters[item_manufacturer][$eq]", params.manufacturer);
+    }
+
     if (params?.page) {
       searchParams.set("pagination[page]", params.page.toString());
     }
@@ -107,6 +129,12 @@ export async function getCatalogItems(params?: {
         case "oldest":
           searchParams.set("sort[0]", "createdAt:asc");
           break;
+        case "price-asc":
+          searchParams.set("sort[0]", "item_price:asc");
+          break;
+        case "price-desc":
+          searchParams.set("sort[0]", "item_price:desc");
+          break;
       }
     }
 
@@ -115,6 +143,49 @@ export async function getCatalogItems(params?: {
     );
   } catch {
     return { data: [], meta: { pagination: { page: 1, pageSize: 10, pageCount: 0, total: 0 } } };
+  }
+}
+
+export async function getFilterData(
+  categorySlug?: string
+): Promise<{ manufacturers: string[]; hasPrices: boolean }> {
+  try {
+    const searchParams = new URLSearchParams();
+    searchParams.set("fields[0]", "item_manufacturer");
+    searchParams.set("fields[1]", "item_price");
+    searchParams.set("pagination[pageSize]", "100");
+
+    if (categorySlug) {
+      searchParams.set(
+        "filters[item_category][category_slug][$eq]",
+        categorySlug
+      );
+    }
+
+    const res = await fetchAPI<StrapiResponse<CatalogItem>>(
+      `/catalog-items?${searchParams.toString()}`
+    );
+
+    const items = res.data || [];
+
+    // Извлекаем уникальные непустые значения производителей
+    const manufacturers = items
+      .map((item) => item.item_manufacturer)
+      .filter((m): m is string => !!m && m.trim() !== "");
+
+    // Проверяем наличие хотя бы одной цены
+    const hasPrices = items.some(
+      (item) => item.item_price !== undefined && item.item_price !== null
+    );
+
+    return {
+      manufacturers: [...new Set(manufacturers)].sort((a, b) =>
+        a.localeCompare(b)
+      ),
+      hasPrices,
+    };
+  } catch {
+    return { manufacturers: [], hasPrices: false };
   }
 }
 

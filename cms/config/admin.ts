@@ -10,6 +10,10 @@ interface PreviewHandlerParams {
 const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Admin => ({
   auth: {
     secret: env('ADMIN_JWT_SECRET'),
+    sessions: {
+      maxSessionLifespan: env.int('ADMIN_SESSION_LIFESPAN', 7 * 24 * 60 * 60), // 7 days in seconds
+      maxRefreshTokenLifespan: env.int('ADMIN_REFRESH_TOKEN_LIFESPAN', 30 * 24 * 60 * 60), // 30 days in seconds
+    },
   },
   apiToken: {
     salt: env('API_TOKEN_SALT'),

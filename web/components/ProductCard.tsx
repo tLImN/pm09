@@ -21,7 +21,7 @@ export default function ProductCard({
 
   return (
     <article
-      className="product-card flex gap-[18px] h-[190px] border border-[var(--border-color)] rounded-[5px] pr-[20px] transition-shadow duration-200 hover:shadow-lg"
+      className="product-card flex gap-[18px] h-[190px] border border-[var(--border-color)] rounded-[5px] pr-[20px] transition-shadow duration-200 hover:shadow-lg overflow-y-hidden"
     >
       <div
         className="image-container self-stretch w-[231px] shrink-0 overflow-hidden outline outline-[var(--border-color)] rounded-l-[5px]"
