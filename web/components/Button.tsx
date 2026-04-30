@@ -30,21 +30,13 @@ export default function Button({
       ? { fontSize: 14, padding: "8px 16px", minHeight: 0 }
       : {};
 
-  const outlinedStyles: React.CSSProperties = outlined
-    ? {
-        backgroundColor: "transparent",
-        color: "var(--text-color)",
-        border: "1px solid var(--border-color)",
-      }
-    : {};
-
   return (
     <button
-      className={`${variant === "icon" ? "expand-button" : ""} ${className}`.trim()}
+      className={`${variant === "icon" ? "expand-button" : ""} ${outlined ? "btn-outlined" : ""} ${className}`.trim()}
       type={type}
       onClick={onClick}
       disabled={disabled}
-      style={{ ...sizeStyles, ...outlinedStyles, ...style }}
+      style={{ ...sizeStyles, ...style }}
       aria-label={ariaLabel}
     >
       {children}

@@ -23,6 +23,7 @@ export default function ContactsPage() {
   const address =
     contact?.address ||
     "600033, Владимирская область, город Владимир, Мещёрская ул., д. 4, офис 36";
+  const workingHours = contact?.working_hours || "пн–пт, 9:00–18:00";
   const lat = contact?.latitude ?? 56.0967;
   const lng = contact?.longitude ?? 40.3477;
 
@@ -52,6 +53,9 @@ export default function ContactsPage() {
           </p>
           <p>
             <b>Адрес:</b> {address}
+          </p>
+          <p>
+            <b>Часы работы:</b> {workingHours}
           </p>
         </address>
         <LeafletMap lat={lat} lng={lng} popupText={address} />

@@ -81,6 +81,7 @@ export interface ContactPage {
   address?: string;
   latitude?: number;
   longitude?: number;
+  working_hours?: string;
 }
 
 // Payment Page (singleType)

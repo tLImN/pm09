@@ -145,3 +145,21 @@ h3 {
   padding: 20px 20px 20px;
   border: 1px solid var(--border-color);
 }
+
+.btn-outlined {
+  background-color: transparent;
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+}
+
+.btn-outlined:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  background-color: transparent;
+}
+
+.btn-outlined:active {
+  border-color: var(--accent-hover-color);
+  color: var(--accent-hover-color);
+  background-color: rgba(226, 0, 26, 0.05);
+}

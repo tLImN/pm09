@@ -18,6 +18,7 @@ export default function ProductCardPage({ item }: { item: CatalogItem }) {
           request_type: requestType,
           page_url: window.location.href,
           documentId: item.documentId,
+          item_title: item.item_title,
         },
       })
     );

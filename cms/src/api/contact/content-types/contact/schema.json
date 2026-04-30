@@ -28,6 +28,9 @@
     },
     "longitude": {
       "type": "float"
+    },
+    "working_hours": {
+      "type": "string"
     }
   }
 }
