@@ -579,6 +579,31 @@ export interface ApiContactContact extends Struct.SingleTypeSchema {
   };
 }
 
+export interface ApiFaqFaq extends Struct.SingleTypeSchema {
+  collectionName: 'faqs';
+  info: {
+    displayName: 'FAQ';
+    pluralName: 'faqs';
+    singularName: 'faq';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    faq_items: Schema.Attribute.Component<'faq.faq-item', true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::faq.faq'> &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiIncomingRequestIncomingRequest
   extends Struct.CollectionTypeSchema {
   collectionName: 'incoming_requests';
@@ -1197,6 +1222,7 @@ declare module '@strapi/strapi' {
       'api::catalog-item.catalog-item': ApiCatalogItemCatalogItem;
       'api::category.category': ApiCategoryCategory;
       'api::contact.contact': ApiContactContact;
+      'api::faq.faq': ApiFaqFaq;
       'api::incoming-request.incoming-request': ApiIncomingRequestIncomingRequest;
       'api::payment.payment': ApiPaymentPayment;
       'api::privacy.privacy': ApiPrivacyPrivacy;

@@ -1,0 +1,20 @@
+{
+  "kind": "singleType",
+  "collectionName": "faqs",
+  "info": {
+    "singularName": "faq",
+    "pluralName": "faqs",
+    "displayName": "FAQ"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "faq_items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "faq.faq-item"
+    }
+  }
+}

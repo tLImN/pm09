@@ -7,6 +7,7 @@ import {
   ContactPage,
   PaymentPage,
   PrivacyPage,
+  FaqPage,
 } from "./types";
 
 const STRAPI_URL =
@@ -343,6 +344,20 @@ export async function getPrivacyPage(): Promise<PrivacyPage | null> {
   try {
     const res = await fetchAPI<StrapiSingleResponse<PrivacyPage>>("/privacy");
     return res.data || null;
+  } catch {
+    return null;
+  }
+}
+
+export async function getFaqPage(): Promise<FaqPage | null> {
+  try {
+    const url = `${STRAPI_URL}/api/faq?populate=faq_items`;
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) {
+      return null;
+    }
+    const json = await res.json();
+    return json.data || null;
   } catch {
     return null;
   }

@@ -94,6 +94,18 @@ export interface PrivacyPage {
   content?: StrapiBlock[];
 }
 
+// FAQ Item
+export interface FaqItem {
+  id: number;
+  question: string;
+  answer: string;
+}
+
+// FAQ Page (singleType)
+export interface FaqPage {
+  faq_items?: FaqItem[];
+}
+
 // Contact Form Data
 export interface ContactFormData {
   name: string;
