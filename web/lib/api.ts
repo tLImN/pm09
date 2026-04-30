@@ -203,6 +203,83 @@ export async function getCatalogItemBySlug(
   }
 }
 
+export async function searchCatalogItems(
+  query: string,
+  params?: {
+    page?: number;
+    pageSize?: number;
+    category?: string;
+    sort?: string;
+    priceMin?: number;
+    priceMax?: number;
+    manufacturer?: string;
+  }
+): Promise<StrapiResponse<CatalogItem>> {
+  try {
+    const searchParams = new URLSearchParams();
+    searchParams.set("_q", query);
+    searchParams.set("populate[item_category]", "true");
+    searchParams.set("populate[item_images]", "true");
+
+    // Фильтр по категории
+    if (params?.category) {
+      searchParams.set(
+        "filters[item_category][category_slug][$eq]",
+        params.category
+      );
+    }
+
+    // Фильтр по цене
+    if (params?.priceMin !== undefined && params.priceMin !== null) {
+      searchParams.set("filters[item_price][$gte]", params.priceMin.toString());
+    }
+    if (params?.priceMax !== undefined && params.priceMax !== null) {
+      searchParams.set("filters[item_price][$lte]", params.priceMax.toString());
+    }
+
+    // Фильтр по производителю
+    if (params?.manufacturer) {
+      searchParams.set("filters[item_manufacturer][$eq]", params.manufacturer);
+    }
+
+    if (params?.page) {
+      searchParams.set("pagination[page]", params.page.toString());
+    }
+    if (params?.pageSize) {
+      searchParams.set("pagination[pageSize]", params.pageSize.toString());
+    }
+
+    if (params?.sort) {
+      switch (params.sort) {
+        case "title-asc":
+          searchParams.set("sort[0]", "item_title:asc");
+          break;
+        case "title-desc":
+          searchParams.set("sort[0]", "item_title:desc");
+          break;
+        case "newest":
+          searchParams.set("sort[0]", "createdAt:desc");
+          break;
+        case "oldest":
+          searchParams.set("sort[0]", "createdAt:asc");
+          break;
+        case "price-asc":
+          searchParams.set("sort[0]", "item_price:asc");
+          break;
+        case "price-desc":
+          searchParams.set("sort[0]", "item_price:desc");
+          break;
+      }
+    }
+
+    return await fetchAPI<StrapiResponse<CatalogItem>>(
+      `/catalog-items?${searchParams.toString()}`
+    );
+  } catch {
+    return { data: [], meta: { pagination: { page: 1, pageSize: 10, pageCount: 0, total: 0 } } };
+  }
+}
+
 export async function getRelatedItems(
   categoryId: number,
   excludeId: number

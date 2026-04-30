@@ -7,6 +7,7 @@ import { CatalogItem, Category } from "@/lib/types";
 import { formatDescription } from "@/lib/utils";
 import ProductCard from "@/components/ProductCard";
 import Pagination from "@/components/Pagination";
+import SearchBar from "@/components/SearchBar";
 
 export default function CategoryPage() {
   const params = useParams();
@@ -95,9 +96,12 @@ export default function CategoryPage() {
 
   return (
     <main style={{ maxWidth: 950, display: "flex", flexDirection: "column", gap: 20, width: "100%" }}>
-      <h1 style={{ margin: 0, fontSize: 35, fontWeight: 600 }}>
-        {category?.category_title || "Загрузка…"}
-      </h1>
+      <div style={{ display: "flex", justifyContent: "space-between", marginRight: 10 }}>
+        <h1 style={{ margin: 0, fontSize: 35, fontWeight: 600 }}>
+          {category?.category_title || "Загрузка…"}
+        </h1>
+        <SearchBar categorySlug={categorySlug} />
+      </div>
       <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
         <select value={sortBy} onChange={(e) => handleSortChange(e.target.value)}>
           <option value="title-asc">Сортировать: по названию (А-Я)</option>
@@ -122,34 +126,38 @@ export default function CategoryPage() {
           </span>
         )}
       </div>
-      {loading || redirecting ? (
-        <p className="loading-status">Загрузка...</p>
-      ) : items.length === 0 ? (
-        <p className="loading-status">Товары не найдены</p>
-      ) : (
-        <div className="product-cards-container" style={{ display: "flex", flexDirection: "column", gap: 19, marginRight: "10px" }}>
-          {items.map((item) => (
-            <ProductCard key={item.id} item={item} categorySlug={categorySlug} />
-          ))}
-        </div>
-      )}
+      {
+        loading || redirecting ? (
+          <p className="loading-status">Загрузка...</p>
+        ) : items.length === 0 ? (
+          <p className="loading-status">Товары не найдены</p>
+        ) : (
+          <div className="product-cards-container" style={{ display: "flex", flexDirection: "column", gap: 19, marginRight: "10px" }}>
+            {items.map((item) => (
+              <ProductCard key={item.id} item={item} categorySlug={categorySlug} />
+            ))}
+          </div>
+        )
+      }
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
 
       {/* description block */}
-      {descriptionHtml && (
-        <>
-          <article
-            style={{ display: "flex", flexDirection: "column", gap: 10 }}
-            dangerouslySetInnerHTML={{ __html: descriptionHtml }}
-          />
-          <style>{`
+      {
+        descriptionHtml && (
+          <>
+            <article
+              style={{ display: "flex", flexDirection: "column", gap: 10 }}
+              dangerouslySetInnerHTML={{ __html: descriptionHtml }}
+            />
+            <style>{`
               ul {
                 list-style: disc;
                 margin-left: 2em;
               }
             `}</style>
-        </>
-      )}
+          </>
+        )
+      }
       <style>{`
         @media (max-width: 900px) {
           .product-cards-container {
@@ -157,6 +165,6 @@ export default function CategoryPage() {
           }
         }
       `}</style>
-    </main>
+    </main >
   );
 }

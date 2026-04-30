@@ -6,6 +6,7 @@ import { getCatalogItems } from "@/lib/api";
 import { CatalogItem } from "@/lib/types";
 import ProductCard from "@/components/ProductCard";
 import Pagination from "@/components/Pagination";
+import SearchBar from "@/components/SearchBar";
 
 export default function CatalogPage() {
   const searchParams = useSearchParams();
@@ -68,7 +69,10 @@ export default function CatalogPage() {
 
   return (
     <main style={{ maxWidth: 950, display: "flex", flexDirection: "column", gap: 20, width: "100%" }}>
-      <h1 style={{ margin: 0, fontSize: 35, fontWeight: 600 }}>Каталог</h1>
+      <div style={{ display: "flex", justifyContent: "space-between", marginRight: 10 }}>
+        <h1 style={{ margin: 0, fontSize: 35, fontWeight: 600 }}>Каталог</h1>
+        <SearchBar />
+      </div>
       <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
         <select
           value={sortBy}

@@ -24,7 +24,7 @@ const advantages: AdvantageItem[] = [
       </svg>
     ),
     title: "Гибкая оплата",
-    description: "Рассрочка, лизинг, trade-in старой техники — удобный способ оплаты.",
+    description: "Удобный способ оплаты – рассрочка, лизинг, trade-in старой техники.",
   },
   {
     icon: (
