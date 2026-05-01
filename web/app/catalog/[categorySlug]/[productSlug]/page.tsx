@@ -3,6 +3,7 @@ import { formatDescription } from "@/lib/utils";
 //import Sidebar from "@/components/Sidebar";
 import ProductCardPage from "@/components/ProductCardPage";
 import ProductCard from "@/components/ProductCard";
+import JsonLdBreadcrumbs from "@/components/JsonLdBreadcrumbs";
 import { notFound } from "next/navigation";
 
 export default async function ProductPage({
@@ -29,6 +30,8 @@ export default async function ProductPage({
     ? formatDescription(item.item_description)
     : "";
 
+  const categoryTitle = item.item_category?.[0]?.category_title || categorySlug;
+
   return (
     // <div
     //   style={{
@@ -41,6 +44,15 @@ export default async function ProductPage({
     //   className="content-wrapper-aside"
     // >
     //   <Sidebar categories={categories} activeCategorySlug={categorySlug} />
+      <>
+        <JsonLdBreadcrumbs
+          items={[
+            { name: "Главная", url: "/" },
+            { name: "Каталог", url: "/catalog" },
+            { name: categoryTitle, url: `/catalog/${categorySlug}` },
+            { name: item.item_title, url: `/catalog/${categorySlug}/${productSlug}` },
+          ]}
+        />
       <main style={{ maxWidth: 950, display: "flex", flexDirection: "column", gap: 20 }}>
         <ProductCardPage item={item} />
 
@@ -93,6 +105,7 @@ export default async function ProductPage({
           </>
         )}
       </main>
+      </>
       /* <style>{`
         @media (max-width: 768px) {
           .content-wrapper-aside {

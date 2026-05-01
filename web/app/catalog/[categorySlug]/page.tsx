@@ -8,6 +8,7 @@ import { formatDescription } from "@/lib/utils";
 import ProductCard from "@/components/ProductCard";
 import Pagination from "@/components/Pagination";
 import SearchBar from "@/components/SearchBar";
+import JsonLdBreadcrumbs from "@/components/JsonLdBreadcrumbs";
 
 export default function CategoryPage() {
   const params = useParams();
@@ -95,6 +96,14 @@ export default function CategoryPage() {
     : "";
 
   return (
+    <>
+      <JsonLdBreadcrumbs
+        items={[
+          { name: "Главная", url: "/" },
+          { name: "Каталог", url: "/catalog" },
+          { name: category?.category_title || "Категория", url: `/catalog/${categorySlug}` },
+        ]}
+      />
     <main style={{ maxWidth: 950, display: "flex", flexDirection: "column", gap: 20, width: "100%" }}>
       <div style={{ display: "flex", justifyContent: "space-between", marginRight: 10 }}>
         <h1 style={{ margin: 0, fontSize: 35, fontWeight: 600 }}>
@@ -166,5 +175,6 @@ export default function CategoryPage() {
         }
       `}</style>
     </main >
+    </>
   );
 }
