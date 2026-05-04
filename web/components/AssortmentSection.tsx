@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback, useId, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import AssortmentCard from "./AssortmentCard";
 
 interface AssortmentItem {
@@ -38,10 +38,6 @@ export default function AssortmentSection({
 
   // Вычисляем сдвиг для одной копи элементов (ширина оригинальных карточек)
   const singleSetWidth = items.length * cardWidth;
-
-  // Генерируем уникальный ID для keyframes (стабильный для SSR)
-  const id = useId();
-  const animationName = `scroll_${id.replace(/:/g, '')}`;
 
   const scrollLeft = useCallback(() => {
     if (scrollContainerRef.current) {
@@ -104,6 +100,10 @@ export default function AssortmentSection({
         {/* Лента с карточками — непрерывная CSS-анимация */}
         <div
           className={`carousel-track flex gap-[35px] ${isPaused ? "carousel-track--paused" : ""}`}
+          style={{
+            "--carousel-offset": `${singleSetWidth}px`,
+            "--carousel-duration": `${animationDuration}s`,
+          } as React.CSSProperties}
         >
           {duplicatedItems.map((item, index) => (
             <div key={index} className="shrink-0">
@@ -117,25 +117,6 @@ export default function AssortmentSection({
         </div>
       </div>
 
-      <style>{`
-        @keyframes ${animationName} {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-${singleSetWidth}px);
-          }
-        }
-
-        .carousel-track {
-          animation: ${animationName} ${animationDuration}s linear infinite;
-          will-change: transform;
-        }
-
-        .carousel-track--paused {
-          animation-play-state: paused;
-        }
-      `}</style>
     </div>
   );
 }

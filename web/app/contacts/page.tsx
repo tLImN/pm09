@@ -28,7 +28,7 @@ export default function ContactsPage() {
   const lng = contact?.longitude ?? 40.3477;
 
   return (
-    <main>
+    <section>
       <h1 style={{ textAlign: "center", fontSize: "2.1875rem", display: "block", height: 70, margin: "0.8em 0" }}>
         Контакты
       </h1>
@@ -60,14 +60,6 @@ export default function ContactsPage() {
         </address>
         <LeafletMap lat={lat} lng={lng} popupText={address} />
       </article>
-      <style>{`
-        @media (max-width: 768px) {
-          .page-article {
-            padding: 0 20px 30px !important;
-            margin-bottom: 40px !important;
-          }
-        }
-      `}</style>
-    </main>
+    </section>
   );
 }

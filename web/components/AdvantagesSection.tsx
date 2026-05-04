@@ -89,12 +89,6 @@ export default function AdvantagesSection() {
           </div>
         ))}
       </div>
-      <style>{`
-        .advantage-card:hover {
-          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-          border-color: var(--accent-color);
-        }
-      `}</style>
     </section>
   );
 }

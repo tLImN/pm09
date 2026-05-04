@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 
 interface ButtonProps {
   variant?: "default" | "icon";
@@ -11,6 +12,7 @@ interface ButtonProps {
   className?: string;
   children?: React.ReactNode;
   "aria-label"?: string;
+  href?: string;
 }
 
 export default function Button({
@@ -24,19 +26,37 @@ export default function Button({
   className = "",
   children,
   "aria-label": ariaLabel,
+  href,
 }: ButtonProps) {
   const sizeStyles: React.CSSProperties =
     size === "small"
       ? { fontSize: 14, padding: "8px 16px", minHeight: 0 }
       : {};
 
+  const classes = `${variant === "icon" ? "expand-button" : ""} ${outlined ? "btn-outlined" : ""} ${className}`.trim();
+  const combinedStyle = { ...sizeStyles, ...style };
+
+  if (href) {
+    return (
+      <Link
+        href={href}
+        className={`btn-link${classes ? ` ${classes}` : ""}`}
+        style={combinedStyle}
+        onClick={onClick}
+        aria-label={ariaLabel}
+      >
+        {children}
+      </Link>
+    );
+  }
+
   return (
     <button
-      className={`${variant === "icon" ? "expand-button" : ""} ${outlined ? "btn-outlined" : ""} ${className}`.trim()}
+      className={classes}
       type={type}
       onClick={onClick}
       disabled={disabled}
-      style={{ ...sizeStyles, ...style }}
+      style={combinedStyle}
       aria-label={ariaLabel}
     >
       {children}

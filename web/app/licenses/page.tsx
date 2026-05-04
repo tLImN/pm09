@@ -6,7 +6,7 @@ export default async function LicensesPage() {
   const descriptionHtml = page?.content ? formatDescription(page.content) : "";
 
   return (
-    <main>
+    <section>
       <h1 style={{ textAlign: "center", fontSize: "2.1875rem", display: "block", height: 70, margin: "0.8em 0" }}>
         Соглашение на обработку персональных данных
       </h1>
@@ -111,14 +111,6 @@ export default async function LicensesPage() {
           <p>Действующая редакция Политики от 28 февраля 2026 г.</p>
         </article>
       )}
-      <style>{`
-        @media (max-width: 768px) {
-          .page-article {
-            padding: 0 20px 30px !important;
-            margin-bottom: 40px !important;
-          }
-        }
-      `}</style>
-    </main>
+    </section>
   );
 }

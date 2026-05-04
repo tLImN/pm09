@@ -143,7 +143,7 @@ function SearchContent() {
           </Suspense>
         </div>
 
-        <main
+        <section
           style={{
             maxWidth: 950,
             display: "flex",
@@ -286,33 +286,9 @@ function SearchContent() {
             />
           )}
 
-          <style>{`
-            @media (max-width: 900px) {
-              .product-cards-container {
-                margin-right: 0 !important;
-              }
-            }
-          `}</style>
-        </main>
+        </section>
       </div>
 
-      <style>{`
-        @media (max-width: 1366px) {
-          .sidebar-filters-column {
-            margin-left: 10px;
-          }
-        }
-        @media (max-width: 900px) {
-          .content-wrapper-aside {
-            flex-direction: column !important;
-          }
-          .sidebar-filters-column {
-            width: 100% !important;
-            min-width: 0 !important;
-            margin-left: 0;
-          }
-        }
-      `}</style>
     </div>
   );
 }

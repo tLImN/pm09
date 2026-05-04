@@ -355,23 +355,6 @@ export default function PopupForm() {
         )}
       </div>
 
-      <style>{`
-        @media (max-width: 640px) {
-          .popup-form {
-            padding: 20px 16px !important;
-            max-width: 95vw !important;
-            border-radius: 8px !important;
-          }
-          .popup-header {
-            font-size: 26px !important;
-            margin-bottom: 20px !important;
-          }
-          .popup-contact-method {
-            flex-wrap: wrap !important;
-            gap: 8px 16px !important;
-          }
-        }
-      `}</style>
     </div>
   );
 }

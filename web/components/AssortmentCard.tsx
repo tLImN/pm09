@@ -30,35 +30,6 @@ export default function AssortmentCard({ href, imageSrc, title }: AssortmentCard
         </div>
         <span>{title}</span>
       </div>
-      <style>{`
-        .assortment-card {
-          transition: transform 0.3s ease, box-shadow 0.3s ease;
-          cursor: pointer;
-          margin-bottom: 10px;
-          width: 100%;
-        }
-        .assortment-card:hover {
-          transform: scale(1.03);
-          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-          border-radius: 15px;
-        }
-        .assortment-card__image-container {
-          transition: border-color 0.3s ease;
-        }
-        .assortment-card:hover .assortment-card__image-container {
-          border-color: var(--accent-color, #007bff);
-        }
-        @media (min-width: 769px) {
-          .assortment-card {
-            width: 366px;
-            height: 336px;
-          }
-          .assortment-card__image-container {
-            height: 270px !important;
-            aspect-ratio: auto !important;
-          }
-        }
-      `}</style>
     </Link>
   );
 }

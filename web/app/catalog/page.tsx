@@ -76,7 +76,7 @@ export default function CatalogPage() {
           { name: "Каталог", url: "/catalog" },
         ]}
       />
-    <main style={{ maxWidth: 950, display: "flex", flexDirection: "column", gap: 20, width: "100%" }}>
+    <section style={{ maxWidth: 950, display: "flex", flexDirection: "column", gap: 20, width: "100%" }}>
       <div style={{ display: "flex", justifyContent: "space-between", marginRight: 10 }}>
         <h1 style={{ margin: 0, fontSize: 35, fontWeight: 600 }}>Каталог</h1>
         <SearchBar />
@@ -120,14 +120,7 @@ export default function CatalogPage() {
         </div>
       )}
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
-      <style>{`
-        @media (max-width: 900px) {
-          .product-cards-container {
-            margin-right: 0 !important;
-          }
-        }
-      `}</style>
-    </main>
+    </section>
     </>
   );
 }

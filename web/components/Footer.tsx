@@ -34,7 +34,7 @@ export default async function Footer() {
         }}
       >
         <div className="footer-column" style={{ flex: 1 }}>
-          <h3 style={{ fontSize: 26, margin: "1em 0" }}>Информация</h3>
+          <span style={{ fontSize: 26, fontWeight: 700, display: "block", margin: "1em 0" }}>Информация</span>
           <ul
             style={{
               listStyle: "none",
@@ -63,7 +63,7 @@ export default async function Footer() {
           </ul>
         </div>
         <div className="footer-column" style={{ flex: 1 }}>
-          <h3 style={{ fontSize: 26, margin: "1em 0" }}>Каталог</h3>
+          <span style={{ fontSize: 26, fontWeight: 700, display: "block", margin: "1em 0" }}>Каталог</span>
           <ul
             style={{
               listStyle: "none",
@@ -92,7 +92,7 @@ export default async function Footer() {
           </ul>
         </div>
         <div className="footer-column" style={{ flex: 1 }}>
-          <h3 style={{ fontSize: 26, margin: "1em 0"}}>Наши контакты</h3>
+          <span style={{ fontSize: 26, fontWeight: 700, display: "block", margin: "1em 0" }}>Наши контакты</span>
           <address
             style={{
               fontStyle: "normal",
@@ -131,36 +131,12 @@ export default async function Footer() {
       </div>
       <span
         id="copyright"
-        style={{
-          display: "block",
-          margin: "20px 0 0",
-          textAlign: "left",
-        }}
+        className="block text-left mt-5"
       >
         © «Альтернатива Форклифт» {new Date().getFullYear()}<br />
         Информация на сайте имеет исключительно информационный характер и не может быть определена как публичная оферта ни при каких обстоятельствах.
       </span>
       </div>
-      <style>{`
-        footer a:hover {
-          text-decoration: underline;
-        }
-        #copyright {
-          color: #a09aa4;
-          font-size: 0.95rem;
-          padding-top: 1rem;
-        }
-        @media (max-width: 768px) {
-          #footer-columns {
-            flex-direction: column !important;
-            gap: 30px !important;
-          }
-          .footer-column {
-            flex: none !important;
-            width: 100% !important;
-          }
-        }
-      `}</style>
     </footer>
   );
 }

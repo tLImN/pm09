@@ -53,7 +53,7 @@ export default async function ProductPage({
             { name: item.item_title, url: `/catalog/${categorySlug}/${productSlug}` },
           ]}
         />
-      <main style={{ maxWidth: 950, display: "flex", flexDirection: "column", gap: 20 }}>
+      <section style={{ maxWidth: 950, display: "flex", flexDirection: "column", gap: 20 }}>
         <ProductCardPage item={item} />
 
         {descriptionHtml && (
@@ -69,15 +69,10 @@ export default async function ProductPage({
               Описание
             </h2>
             <article
+              className="description-content"
               style={{ display: "flex", flexDirection: "column", gap: 10 }}
               dangerouslySetInnerHTML={{ __html: descriptionHtml }}
             />
-            <style>{`
-              ul {
-                list-style: disc;
-                margin-left: 2em;
-              }
-            `}</style>
           </>
         )}
 
@@ -104,7 +99,7 @@ export default async function ProductPage({
             </div>
           </>
         )}
-      </main>
+      </section>
       </>
       /* <style>{`
         @media (max-width: 768px) {

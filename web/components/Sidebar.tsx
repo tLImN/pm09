@@ -279,17 +279,6 @@ export default function Sidebar({
           </div>
         ))}
 
-      <style>{`
-        aside a:hover {
-          color: var(--accent-hover-color) !important;
-        }
-        @media (max-width: 900px) {
-          aside {
-            width: 100% !important;
-            margin-left: 0;
-          }
-        }
-      `}</style>
     </aside>
   );
 }

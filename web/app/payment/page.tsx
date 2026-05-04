@@ -6,7 +6,7 @@ export default async function PaymentPage() {
   const descriptionHtml = page?.content ? formatDescription(page.content) : "";
 
   return (
-    <main>
+    <section>
       <h1 style={{ textAlign: "center", fontSize: "2.1875rem", display: "block", height: 70, margin: "0.8em 0" }}>
         Доставка и оплата
       </h1>
@@ -97,23 +97,6 @@ export default async function PaymentPage() {
           </p>
         </article>
       )}
-      <style>{`
-        h2 {
-          font-size: 26px;
-          font-weight: 600;
-          text-align: left;
-          margin: 0;
-          height: 50px;
-          margin-top: 1em;
-          margin-bottom: 0.5em;
-        }
-        @media (max-width: 768px) {
-          .page-article {
-            padding: 0 20px 30px !important;
-            margin-bottom: 40px !important;
-          }
-        }
-      `}</style>
-    </main>
+    </section>
   );
 }

@@ -62,31 +62,9 @@ export default function ProductCard({
               Позвоните, чтобы рассчитать цену
             </span>
           </div>
-          <Link href={href}>
-            <Button>Подробнее</Button>
-          </Link>
+          <Button href={href}>Подробнее</Button>
         </div>
       </div>
-      <style>{`
-        @media (max-width: 876px) {
-          .product-card {
-            flex-direction: column !important;
-            height: auto !important;
-            padding-right: 0 !important;
-          }
-          .card-info-wrapper {
-            margin-left: 10px;
-            margin-right: 10px;
-            padding-top: 0 !important;
-          }
-          .product-card .image-container {
-            width: 100% !important;
-            height: 200px !important;
-            border-bottom-left-radius: 0 !important;
-            border-top-right-radius: 5px !important;
-          }
-        }
-      `}</style>
     </article>
   );
 }

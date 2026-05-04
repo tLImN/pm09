@@ -55,9 +55,7 @@ export default async function Home() {
         subtitle="ООО «Альтернатива Форклифт» предлагаем проверенное оборудование от надёжных производителей, индивидуальный подбор решений и полный цикл сопровождения."
         backgroundImage="/img/banner-background.webp"
       >
-        <Link href="/catalog">
-          <Button>Перейти в каталог</Button>
-        </Link>
+        <Button href="/catalog">Перейти в каталог</Button>
       </HeroBanner>
 
       <section className="py-[33px] px-[100px] max-md:px-5 max-md:py-5">

@@ -70,23 +70,6 @@ export default function CatalogLayout({
         )}
       </div>
       {children}
-      <style>{`
-        @media (max-width: 1366px) {
-          .sidebar-filters-column {
-            margin-left: 10px;
-          }
-        }
-        @media (max-width: 900px) {
-          .content-wrapper-aside {
-            flex-direction: column !important;
-          }
-          .sidebar-filters-column {
-            width: 100% !important;
-            min-width: 0 !important;
-            margin-left: 0;
-          }
-        }
-      `}</style>
     </div>
     </div>
   );
