@@ -9,9 +9,9 @@ set -e
 
 # ── Configuration ──────────────────────────
 # CHANGE THESE to your actual values:
-DOMAIN="your-domain.ru"          # your main domain
-API_DOMAIN="api.your-domain.ru"  # subdomain for Strapi CMS
-EMAIL="admin@your-domain.ru"     # email for Let's Encrypt
+DOMAIN="7829960-zf629738.twc1.net"          # your main domain
+API_DOMAIN="api.7829960-zf629738.twc1.net"  # subdomain for Strapi CMS
+EMAIL="admin@7829960-zf629738.twc1.net"     # email for Let's Encrypt
 # ───────────────────────────────────────────
 
 PROJECT_DIR="/opt/project"
