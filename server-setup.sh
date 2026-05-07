@@ -10,7 +10,6 @@ set -e
 # ── Configuration ──────────────────────────
 # CHANGE THESE to your actual values:
 DOMAIN="7829960-zf629738.twc1.net"          # your main domain
-API_DOMAIN="api.7829960-zf629738.twc1.net"  # subdomain for Strapi CMS
 EMAIL="admin@7829960-zf629738.twc1.net"     # email for Let's Encrypt
 # ───────────────────────────────────────────
 
@@ -56,7 +55,7 @@ sed -i "s|FRONTEND_URL=.*|FRONTEND_URL=https://$DOMAIN|" "$CMS_DIR/.env"
 
 # 7. Update web/.env.local
 echo "📝 Updating web/.env.local for production..."
-sed -i "s|NEXT_PUBLIC_STRAPI_URL=.*|NEXT_PUBLIC_STRAPI_URL=https://$API_DOMAIN|" "$WEB_DIR/.env.local"
+sed -i "s|NEXT_PUBLIC_STRAPI_URL=.*|NEXT_PUBLIC_STRAPI_URL=https://$DOMAIN|" "$WEB_DIR/.env.local"
 
 # 8. Build for production
 echo "🔨 Building CMS..."
@@ -110,15 +109,16 @@ EOF
 # 11. Create Nginx config
 echo "⚙️  Configuring Nginx..."
 cat > /etc/nginx/sites-available/project << EOF
-# Strapi CMS — api subdomain
+# Main domain — Strapi API (/api/) + Next.js frontend (/)
 server {
     listen 80;
-    server_name $API_DOMAIN;
+    server_name $DOMAIN www.$DOMAIN;
 
     client_max_body_size 50M;
 
-    location / {
-        proxy_pass http://127.0.0.1:1337;
+    # Strapi API — proxied under /api/
+    location /api/ {
+        proxy_pass http://127.0.0.1:1337/api/;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -128,13 +128,31 @@ server {
         proxy_set_header X-Forwarded-Proto \$scheme;
         proxy_cache_bypass \$http_upgrade;
     }
-}
 
-# Next.js Frontend — main domain
-server {
-    listen 80;
-    server_name $DOMAIN www.$DOMAIN;
+    # Strapi admin panel — proxied under /admin/
+    location /admin/ {
+        proxy_pass http://127.0.0.1:1337/admin/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_cache_bypass \$http_upgrade;
+    }
 
+    # Strapi uploads
+    location /uploads/ {
+        proxy_pass http://127.0.0.1:1337/uploads/;
+        proxy_http_version 1.1;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
+
+    # Next.js Frontend — everything else
     location / {
         proxy_pass http://127.0.0.1:3000;
         proxy_http_version 1.1;
@@ -163,7 +181,7 @@ systemctl start strapi nextjs
 # 13. Install SSL
 echo "🔒 Installing SSL certificate..."
 apt install -y certbot python3-certbot-nginx
-certbot --nginx -d "$DOMAIN" -d "www.$DOMAIN" -d "$API_DOMAIN" --non-interactive --agree-tos -m "$EMAIL"
+certbot --nginx -d "$DOMAIN" -d "www.$DOMAIN" --non-interactive --agree-tos -m "$EMAIL"
 
 # 14. Firewall
 echo "🛡️  Configuring firewall..."
@@ -178,7 +196,7 @@ echo "✅ Server setup complete!"
 echo "==========================================="
 echo ""
 echo "  Frontend:  https://$DOMAIN"
-echo "  CMS Admin: https://$API_DOMAIN/admin"
+echo "  CMS Admin: https://$DOMAIN/admin"
 echo ""
 echo "Services:"
 echo "  sudo systemctl status strapi"
