@@ -3,7 +3,21 @@ import type { Core } from '@strapi/strapi';
 const config: Core.Config.Middlewares = [
   'strapi::logger',
   'strapi::errors',
-  'strapi::security',
+  {
+    name: 'strapi::security',
+    config: {
+      contentSecurityPolicy: {
+        useDefaults: true,
+        directives: {
+          'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+          'connect-src': ["'self'", 'http:', 'https:'],
+          'img-src': ["'self'", 'data:', 'blob:', 'http:', 'https:'],
+          'style-src': ["'self'", "'unsafe-inline'"],
+        },
+        upgradeInsecureRequests: null,
+      },
+    },
+  },
   {
     name: 'strapi::cors',
     config: {

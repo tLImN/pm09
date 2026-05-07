@@ -47,12 +47,11 @@ cd project
 
 > ⚠️ Сначала отредактируйте переменные в начале `server-setup.sh`:
 > - `DOMAIN` — ваш домен (например `aforklift.ru`)
-> - `API_DOMAIN` — поддомен для CMS (например `api.aforklift.ru`)
 > - `EMAIL` — email для SSL-сертификата
 
 ```bash
 nano server-setup.sh
-# Измените DOMAIN, API_DOMAIN, EMAIL в начале файла
+# Измените DOMAIN, EMAIL в начале файла
 # Ctrl+O → Enter → Ctrl+X
 
 chmod +x server-setup.sh
@@ -79,7 +78,6 @@ sudo ./server-setup.sh
 |---|---|---|
 | A | `@` | `<IP_СЕРВЕРА>` |
 | A | `www` | `<IP_СЕРВЕРА>` |
-| A | `api` | `<IP_СЕРВЕРА>` |
 
 > ⚠️ DNS-записи могут обновляться до 24 часов, обычно 1-2 часа.
 
@@ -89,7 +87,7 @@ sudo ./server-setup.sh
 
 После запуска сервера откройте:
 ```
-https://api.ваш-домен.ru/admin
+http://<IP_СЕРВЕРА>:1337/admin
 ```
 
 Создайте первого администратора (логин/пароль).
@@ -235,4 +233,4 @@ sudo systemctl status nextjs   # запущен ли Next.js?
 ### SSL не работает
 ```bash
 sudo certbot renew --dry-run
-sudo certbot --nginx -d your-domain.ru -d www.your-domain.ru -d api.your-domain.ru
+sudo certbot --nginx -d your-domain.ru -d www.your-domain.ru
