@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { getCatalogItems } from "@/lib/api";
 import { CatalogItem } from "@/lib/types";
@@ -10,6 +10,14 @@ import SearchBar from "@/components/SearchBar";
 import JsonLdBreadcrumbs from "@/components/JsonLdBreadcrumbs";
 
 export default function CatalogPage() {
+  return (
+    <Suspense fallback={<p className="loading-status">Загрузка...</p>}>
+      <CatalogInner />
+    </Suspense>
+  );
+}
+
+function CatalogInner() {
   const searchParams = useSearchParams();
   const [items, setItems] = useState<CatalogItem[]>([]);
   const [sortBy, setSortBy] = useState("title-asc");

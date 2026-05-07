@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getAboutPage } from "@/lib/api";
 import { formatDescription } from "@/lib/utils";
 

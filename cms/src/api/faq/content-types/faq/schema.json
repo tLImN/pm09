@@ -13,8 +13,11 @@
   "attributes": {
     "faq_items": {
       "type": "component",
-      "repeatable": true,
-      "component": "faq.faq-item"
+      "component": "faq.faq-item",
+      "repeatable": true
+    },
+    "faq_title": {
+      "type": "string"
     }
   }
 }

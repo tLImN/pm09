@@ -12,6 +12,17 @@ const nextConfig: NextConfig = {
         port: "1337",
         pathname: "/uploads/**",
       },
+      {
+        protocol: "https",
+        hostname: "*.twc1.net",
+        pathname: "/uploads/**",
+      },
+      {
+        protocol: "https",
+        hostname: "*.twc1.net",
+        port: "1337",
+        pathname: "/uploads/**",
+      },
     ],
   },
 };

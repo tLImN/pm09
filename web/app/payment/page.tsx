@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getPaymentPage } from "@/lib/api";
 import { formatDescription } from "@/lib/utils";
 

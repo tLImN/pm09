@@ -4,7 +4,7 @@ services:
     container_name: project_db
     environment:
       POSTGRES_USER: strapi
-      POSTGRES_PASSWORD: BeC9AL2l
+      POSTGRES_PASSWORD: strapi
       POSTGRES_DB: strapi
     ports:
       - "5432:5432"
@@ -12,4 +12,4 @@ services:
       - pgdata:/var/lib/postgresql/data
 
 volumes:
-  pgdata:
+  pgdata: project_pgdata
