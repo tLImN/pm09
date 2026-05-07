@@ -129,19 +129,6 @@ server {
         proxy_cache_bypass \$http_upgrade;
     }
 
-    # Strapi admin panel — proxied under /admin/
-    location /admin/ {
-        proxy_pass http://127.0.0.1:1337/admin/;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade \$http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host \$host;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto \$scheme;
-        proxy_cache_bypass \$http_upgrade;
-    }
-
     # Strapi uploads
     location /uploads/ {
         proxy_pass http://127.0.0.1:1337/uploads/;
@@ -196,7 +183,7 @@ echo "✅ Server setup complete!"
 echo "==========================================="
 echo ""
 echo "  Frontend:  https://$DOMAIN"
-echo "  CMS Admin: https://$DOMAIN/admin"
+echo "  CMS Admin: http://$DOMAIN:1337/admin  (direct, no SSL)"
 echo ""
 echo "Services:"
 echo "  sudo systemctl status strapi"
