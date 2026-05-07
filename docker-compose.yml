@@ -4,7 +4,7 @@ services:
     container_name: project_db
     environment:
       POSTGRES_USER: strapi
-      POSTGRES_PASSWORD: strapi
+      POSTGRES_PASSWORD: BeC9AL2l
       POSTGRES_DB: strapi
     ports:
       - "5432:5432"
