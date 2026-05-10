@@ -17,44 +17,62 @@ export default function LeafletMap({
   const mapInstanceRef = useRef<unknown>(null);
 
   useEffect(() => {
-    let map: unknown;
-      const initMap = async () => {
+    const initMap = async () => {
       const L = await import("leaflet");
 
-      // Динамически добавляем CSS Leaflet и ждём его полной загрузки
+      // Динамически добавляем локальный CSS Leaflet
       await new Promise<void>((resolve) => {
-        if (document.querySelector('link[href*="leaflet.css"]')) {
+        if (document.querySelector('link[href*="/css/leaflet.css"]')) {
           resolve();
           return;
         }
         const link = document.createElement("link");
         link.rel = "stylesheet";
-        link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+        link.href = "/css/leaflet.css";
         link.onload = () => resolve();
         document.head.appendChild(link);
       });
 
       if (mapRef.current && !mapInstanceRef.current) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        map = (L as any).map(mapRef.current, { 
-          attributionControl: false
-        }).setView(
-          [lat, lng],
-          18
-        );
+        const map = (L as any).map(mapRef.current, {
+          attributionControl: false,
+          // EPSG:3395 — проекция Яндекс-тайлов (Mercator на эллипсоиде)
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          crs: (L as any).CRS.EPSG3395,
+        }).setView([lat, lng], 16);
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (L as any)
-          .tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-            maxZoom: 18,
-            attribution:
-              '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-          })
-          .addTo(map);
+        const apiKey = process.env.NEXT_PUBLIC_YANDEX_TILES_API_KEY || "";
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // Кастомная атрибуция Leaflet (без флага «Leaflet»)
         const myAttrControl = (L as any).control.attribution().addTo(map);
         myAttrControl.setPrefix('<a href="https://leafletjs.com/">Leaflet</a>');
+
+        // Яндекс Tiles API (core-renderer)
+        (L as any)
+          .tileLayer(
+            `https://core-renderer-tiles.maps.yandex.net/tiles?l=map&lang=ru_RU&x={x}&y={y}&z={z}&apikey=${apiKey}`,
+            {
+              maxZoom: 23,
+              attribution:
+                '&copy; <a href="https://yandex.ru/maps/">Яндекс</a>',
+            }
+          )
+          .addTo(map);
+
+        // Логотип Яндекс.Карт (обязательно по правилам Tiles API)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const yandexLogo = (L as any).control({ position: "bottomleft" });
+        yandexLogo.onAdd = function () {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const div = (L as any).DomUtil.create("div");
+          div.innerHTML =
+            '<a href="https://yandex.ru/maps/" target="_blank" rel="noopener noreferrer">' +
+            '<img src="/yndex_logo_ru.svg" alt="Яндекс.Карты" style="height:72px;" />' +
+            "</a>";
+          return div;
+        };
+        yandexLogo.addTo(map);
 
         const markerIcon = (L as any).icon({
           iconUrl: "/img/markers/marker-icon-red.png",
@@ -66,8 +84,9 @@ export default function LeafletMap({
           shadowSize: [41, 41],
         });
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const marker = (L as any).marker([lat, lng], { icon: markerIcon }).addTo(map);
+        const marker = (L as any)
+          .marker([lat, lng], { icon: markerIcon })
+          .addTo(map);
         marker.bindPopup(popupText);
 
         mapInstanceRef.current = map;
@@ -75,8 +94,7 @@ export default function LeafletMap({
         // Открываем popup после того как браузер применит стили и пересчитает layout
         requestAnimationFrame(() => {
           setTimeout(() => {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (map as any).invalidateSize();
+            (map as { invalidateSize: () => void }).invalidateSize();
             marker.openPopup();
           }, 100);
         });
