@@ -247,10 +247,10 @@ export default function FilterPanel({
             </div>
           </div>
 
-          {/* Фильтр по стране производителя */}
+          {/* Фильтр по производителю */}
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             <span style={{ fontSize: 15, fontWeight: 600, color: "var(--text-color)" }}>
-              Страна производителя
+              Производитель
             </span>
             {loadingData ? (
               <span style={{ fontSize: 14, color: "var(--subtext-color)" }}>

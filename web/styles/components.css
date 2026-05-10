@@ -76,6 +76,16 @@
   }
 }
 
+@media (max-width: 513px) {
+  .product-card-bottom {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+  .product-card-bottom .self-end {
+    align-self: flex-start !important;
+  }
+}
+
 /* ========================================
    AdvantagesSection component styles
    ======================================== */

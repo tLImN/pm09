@@ -9,7 +9,7 @@ export default async function PaymentPage() {
 
   return (
     <section>
-      <h1 style={{ textAlign: "center", fontSize: "2.1875rem", display: "block", height: 70, margin: "0.8em 0" }}>
+      <h1 style={{ textAlign: "center", fontSize: "2.1875rem", display: "block", margin: "0.8em 0" }}>
         Доставка и оплата
       </h1>
       {descriptionHtml ? (
