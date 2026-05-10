@@ -121,7 +121,7 @@ server {
     client_max_body_size 50M;
 
     # Next.js API routes (ДОЛЖНЫ идти ПЕРЕД Strapi /api/)
-    location /api/contact {
+    location /api/send-contact {
         proxy_pass http://127.0.0.1:3000;
         proxy_http_version 1.1;
         proxy_set_header Host \$host;
