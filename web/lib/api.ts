@@ -10,8 +10,10 @@ import {
   FaqPage,
 } from "./types";
 
+// На сервере используем прямой URL (localhost:1337), на клиенте — публичный.
+// STRAPI_INTERNAL_URL не имеет префикса NEXT_PUBLIC_, поэтому доступен только на сервере.
 const STRAPI_URL =
-  process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
+  process.env.STRAPI_INTERNAL_URL || process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
 
 async function fetchAPI<T>(endpoint: string): Promise<T> {
   const url = `${STRAPI_URL}/api${endpoint}`;

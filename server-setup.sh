@@ -56,6 +56,10 @@ sed -i "s|FRONTEND_URL=.*|FRONTEND_URL=https://$DOMAIN|" "$CMS_DIR/.env"
 # 7. Update web/.env.local
 echo "📝 Updating web/.env.local for production..."
 sed -i "s|NEXT_PUBLIC_STRAPI_URL=.*|NEXT_PUBLIC_STRAPI_URL=https://$DOMAIN|" "$WEB_DIR/.env.local"
+# STRAPI_INTERNAL_URL всегда localhost — серверные API-роуты ходят напрямую
+if ! grep -q "STRAPI_INTERNAL_URL" "$WEB_DIR/.env.local"; then
+    echo "STRAPI_INTERNAL_URL=http://127.0.0.1:1337" >> "$WEB_DIR/.env.local"
+fi
 
 # 8. Build for production
 echo "🔨 Building CMS..."
@@ -115,6 +119,34 @@ server {
     server_name $DOMAIN www.$DOMAIN;
 
     client_max_body_size 50M;
+
+    # Next.js API routes (ДОЛЖНЫ идти ПЕРЕД Strapi /api/)
+    location /api/contact {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
+
+    location /api/preview {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
+
+    location /api/disable-draft {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
 
     # Strapi API — proxied under /api/
     location /api/ {
