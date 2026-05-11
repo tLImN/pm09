@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { getCategoryBySlug, getCatalogItems } from "@/lib/api";
 import { CatalogItem, Category } from "@/lib/types";
@@ -39,7 +39,10 @@ export default function CategoryPage() {
   // Читаем фильтры из URL
   const priceMin = searchParams.get("priceMin") ? Number(searchParams.get("priceMin")) : undefined;
   const priceMax = searchParams.get("priceMax") ? Number(searchParams.get("priceMax")) : undefined;
-  const manufacturer = searchParams.get("manufacturer") || undefined;
+  const manufacturer = useMemo(() => {
+    const arr = searchParams.get("manufacturer")?.split(",").filter(Boolean) || [];
+    return arr.length > 0 ? arr : undefined;
+  }, [searchParams]);
 
   const fetchData = useCallback(async () => {
     setLoading(true);

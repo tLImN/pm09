@@ -5,6 +5,8 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { getFilterData } from "@/lib/api";
 import Button from "@/components/Button";
 
+const VISIBLE_MANUFACTURERS_COUNT = 6;
+
 export default function FilterPanel({
   categorySlug,
 }: {
@@ -19,6 +21,7 @@ export default function FilterPanel({
   const [manufacturers, setManufacturers] = useState<string[]>([]);
   const [loadingData, setLoadingData] = useState(true);
   const [hasPrices, setHasPrices] = useState(false);
+  const [manufacturersExpanded, setManufacturersExpanded] = useState(false);
 
   // Локальные состояния для полей (до применения)
   const [priceMin, setPriceMin] = useState(
@@ -27,8 +30,8 @@ export default function FilterPanel({
   const [priceMax, setPriceMax] = useState(
     searchParams.get("priceMax") || ""
   );
-  const [selectedManufacturer, setSelectedManufacturer] = useState(
-    searchParams.get("manufacturer") || ""
+  const [selectedManufacturers, setSelectedManufacturers] = useState<string[]>(
+    searchParams.get("manufacturer")?.split(",").filter(Boolean) || []
   );
 
   // Отслеживаем размер экрана
@@ -68,8 +71,17 @@ export default function FilterPanel({
   useEffect(() => {
     setPriceMin(searchParams.get("priceMin") || "");
     setPriceMax(searchParams.get("priceMax") || "");
-    setSelectedManufacturer(searchParams.get("manufacturer") || "");
+    setSelectedManufacturers(
+      searchParams.get("manufacturer")?.split(",").filter(Boolean) || []
+    );
   }, [searchParams]);
+
+  // Переключить выбор производителя
+  const toggleManufacturer = (m: string) => {
+    setSelectedManufacturers((prev) =>
+      prev.includes(m) ? prev.filter((x) => x !== m) : [...prev, m]
+    );
+  };
 
   // Применить фильтры
   const applyFilters = () => {
@@ -87,8 +99,8 @@ export default function FilterPanel({
       params.delete("priceMax");
     }
 
-    if (selectedManufacturer) {
-      params.set("manufacturer", selectedManufacturer);
+    if (selectedManufacturers.length > 0) {
+      params.set("manufacturer", selectedManufacturers.join(","));
     } else {
       params.delete("manufacturer");
     }
@@ -103,7 +115,7 @@ export default function FilterPanel({
   const resetFilters = () => {
     setPriceMin("");
     setPriceMax("");
-    setSelectedManufacturer("");
+    setSelectedManufacturers([]);
 
     const params = new URLSearchParams(searchParams.toString());
     params.delete("priceMin");
@@ -121,10 +133,19 @@ export default function FilterPanel({
     searchParams.has("manufacturer");
 
   // Скрываем панель если нет данных для фильтрации и нет активных фильтров
-  // Для расширяемости: добавляйте новые условия через ||
   if (!loadingData && !hasPrices && manufacturers.length === 0 && !hasActiveFilters) {
     return null;
   }
+
+  // Определяем, нужно ли показывать "Посмотреть все" / "Свернуть"
+  const hasManyManufacturers = manufacturers.length > VISIBLE_MANUFACTURERS_COUNT;
+  const visibleManufacturers = manufacturersExpanded
+    ? manufacturers
+    : manufacturers.slice(0, VISIBLE_MANUFACTURERS_COUNT);
+
+  // Высота одного элемента списка (чекбокс + gap) ≈ 40px
+  const manufacturerItemHeight = 45;
+  const collapsedManufacturersHeight = VISIBLE_MANUFACTURERS_COUNT * manufacturerItemHeight;
 
   return (
     <div
@@ -138,9 +159,6 @@ export default function FilterPanel({
         height: "fit-content",
         boxSizing: "border-box",
         position: "relative",
-        overflow: "hidden",
-        maxHeight: collapsed ? 56 : 600,
-        transition: "max-height 0.3s ease, padding 0.3s ease",
       }}
     >
       {/* Заголовок и кнопка сворачивания */}
@@ -261,30 +279,62 @@ export default function FilterPanel({
                 Нет данных
               </span>
             ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                {manufacturers.map((m) => (
-                  <label
-                    key={m}
+              <>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 6,
+                    maxHeight: hasManyManufacturers && manufacturersExpanded
+                      ? collapsedManufacturersHeight
+                      : "none",
+                    overflowY: hasManyManufacturers && manufacturersExpanded
+                      ? "auto"
+                      : "visible",
+                  }}
+                >
+                  {visibleManufacturers.map((m) => (
+                    <label
+                      key={m}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 8,
+                        cursor: "pointer",
+                        fontSize: 15,
+                      }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedManufacturers.includes(m)}
+                        onChange={() => toggleManufacturer(m)}
+                        style={{ margin: 0 }}
+                      />
+                      <span>{m}</span>
+                    </label>
+                  ))}
+                </div>
+                {hasManyManufacturers && (
+                  <a
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setManufacturersExpanded(!manufacturersExpanded);
+                    }}
                     style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 8,
-                      cursor: "pointer",
-                      fontSize: 15,
+                      fontSize: 14,
+                      textAlign: "left",
+                      color: "var(--link-color)",
+                      textDecoration: "none",
+                      textUnderlineOffset: 2,
                     }}
                   >
-                    <input
-                      type="checkbox"
-                      checked={selectedManufacturer === m}
-                      onChange={() =>
-                        setSelectedManufacturer(selectedManufacturer === m ? "" : m)
-                      }
-                      style={{ margin: 0 }}
-                    />
-                    <span>{m}</span>
-                  </label>
-                ))}
-              </div>
+                    {manufacturersExpanded
+                      ? "Свернуть"
+                      : `Посмотреть все (${manufacturers.length})`}
+                  </a>
+                )}
+              </>
             )}
           </div>
 

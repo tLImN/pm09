@@ -61,7 +61,7 @@ export async function getCatalogItems(params?: {
   pageSize?: number;
   priceMin?: number;
   priceMax?: number;
-  manufacturer?: string;
+  manufacturer?: string | string[];
   itemType?: "product" | "service";
 }): Promise<StrapiResponse<CatalogItem>> {
   try {
@@ -106,9 +106,16 @@ export async function getCatalogItems(params?: {
       searchParams.set("filters[item_price][$lte]", params.priceMax.toString());
     }
 
-    // Фильтр по производителю
+    // Фильтр по производителю (один или несколько)
     if (params?.manufacturer) {
-      searchParams.set("filters[item_manufacturer][$eq]", params.manufacturer);
+      const mfrs = Array.isArray(params.manufacturer) ? params.manufacturer : [params.manufacturer];
+      if (mfrs.length === 1) {
+        searchParams.set("filters[item_manufacturer][$eq]", mfrs[0]);
+      } else {
+        mfrs.forEach((m) => {
+          searchParams.append("filters[item_manufacturer][$in][]", m);
+        });
+      }
     }
 
     if (params?.page) {
@@ -156,7 +163,8 @@ export async function getFilterData(
     const searchParams = new URLSearchParams();
     searchParams.set("fields[0]", "item_manufacturer");
     searchParams.set("fields[1]", "item_price");
-    searchParams.set("pagination[pageSize]", "100");
+    searchParams.set("pagination[pageSize]", "250");
+    searchParams.set("filters[item_type][$eq]", "product");
 
     if (categorySlug) {
       searchParams.set(
@@ -215,7 +223,7 @@ export async function searchCatalogItems(
     sort?: string;
     priceMin?: number;
     priceMax?: number;
-    manufacturer?: string;
+    manufacturer?: string | string[];
   }
 ): Promise<StrapiResponse<CatalogItem>> {
   try {
@@ -240,9 +248,16 @@ export async function searchCatalogItems(
       searchParams.set("filters[item_price][$lte]", params.priceMax.toString());
     }
 
-    // Фильтр по производителю
+    // Фильтр по производителю (один или несколько)
     if (params?.manufacturer) {
-      searchParams.set("filters[item_manufacturer][$eq]", params.manufacturer);
+      const mfrs = Array.isArray(params.manufacturer) ? params.manufacturer : [params.manufacturer];
+      if (mfrs.length === 1) {
+        searchParams.set("filters[item_manufacturer][$eq]", mfrs[0]);
+      } else {
+        mfrs.forEach((m) => {
+          searchParams.append("filters[item_manufacturer][$in][]", m);
+        });
+      }
     }
 
     if (params?.page) {

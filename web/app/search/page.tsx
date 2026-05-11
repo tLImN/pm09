@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState, useEffect, useCallback } from "react";
+import { Suspense, useState, useEffect, useCallback, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { searchCatalogItems, getCategories } from "@/lib/api";
 import { CatalogItem, Category } from "@/lib/types";
@@ -38,7 +38,10 @@ function SearchContent() {
   const priceMax = searchParams.get("priceMax")
     ? Number(searchParams.get("priceMax"))
     : undefined;
-  const manufacturer = searchParams.get("manufacturer") || undefined;
+  const manufacturer = useMemo(() => {
+    const arr = searchParams.get("manufacturer")?.split(",").filter(Boolean) || [];
+    return arr.length > 0 ? arr : undefined;
+  }, [searchParams]);
 
   const [items, setItems] = useState<CatalogItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -243,7 +246,7 @@ function SearchContent() {
             <p className="loading-status">Загрузка...</p>
           ) : items.length === 0 ? (
             <div
-              style={{ display: "flex", flexDirection: "column", gap: 16, marginRight: 10 }}
+              style={{ display: "flex", flexDirection: "column", gap: 16 }}
             >
               <p className="loading-status">
                 По запросу «{query}» ничего не найдено
@@ -253,9 +256,8 @@ function SearchContent() {
                 <Link
                   href="/catalog"
                   style={{
-                    color: "var(--accent-color)",
+                    color: "var(--link-color)",
                   }}
-                  className="header-link"
                 >
                   перейти в каталог
                 </Link>

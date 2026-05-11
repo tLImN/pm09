@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, Suspense } from "react";
+import { useState, useEffect, useCallback, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { getCatalogItems } from "@/lib/api";
 import { CatalogItem } from "@/lib/types";
@@ -40,7 +40,10 @@ function CatalogInner() {
   // Читаем фильтры из URL
   const priceMin = searchParams.get("priceMin") ? Number(searchParams.get("priceMin")) : undefined;
   const priceMax = searchParams.get("priceMax") ? Number(searchParams.get("priceMax")) : undefined;
-  const manufacturer = searchParams.get("manufacturer") || undefined;
+  const manufacturer = useMemo(() => {
+    const arr = searchParams.get("manufacturer")?.split(",").filter(Boolean) || [];
+    return arr.length > 0 ? arr : undefined;
+  }, [searchParams]);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
