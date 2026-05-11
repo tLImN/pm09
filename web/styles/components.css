@@ -87,6 +87,187 @@
 }
 
 /* ========================================
+   Product cards grid mode (2 columns)
+   ======================================== */
+@media (max-width: 768px) {
+  .product-cards-container--grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+    margin-right: 0 !important;
+  }
+
+  /* В сеточном режиме — компактная карточка */
+  .product-cards-container--grid .product-card {
+    flex-direction: column !important;
+    height: auto !important;
+    padding-right: 0 !important;
+  }
+
+  .product-cards-container--grid .product-card .image-container {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 1 / 1 !important;
+    border-bottom-left-radius: 0 !important;
+    border-top-right-radius: 5px !important;
+  }
+
+  .product-cards-container--grid .card-info-wrapper {
+    margin-left: 8px !important;
+    margin-right: 8px !important;
+    padding-top: 0 !important;
+    padding-bottom: 8px !important;
+    gap: 6px !important;
+  }
+
+  .product-cards-container--grid .product-card a {
+    font-size: 14px !important;
+    line-height: 1.25 !important;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Скрываем производитель и "позвоните" в сетке */
+  .product-cards-container--grid .product-card__manufacturer {
+    display: none !important;
+  }
+
+  .product-cards-container--grid .product-card__call-price {
+    display: none !important;
+  }
+
+  /* Цена в сетке — компактнее */
+  .product-cards-container--grid .product-card-bottom {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+  }
+
+  .product-cards-container--grid .product-card-bottom .self-end {
+    align-self: stretch !important;
+  }
+
+  .product-cards-container--grid .product-card-bottom span.text-\[20px\] {
+    font-size: 15px !important;
+  }
+
+  /* Кнопка "Подробнее" в сетке — на всю ширину */
+  .product-cards-container--grid .product-card {
+    gap: 8px !important;
+  }
+
+  .product-cards-container--grid .product-card .btn-link {
+    width: 100% !important;
+    text-align: center !important;
+    font-size: 13px !important;
+    padding: 6px 10px !important;
+    transition: background-color 0.2s !important;
+  }
+}
+
+/* Кнопка "Подробнее" — без анимации размеров при переключении (режим список) */
+@media (max-width: 768px) {
+  .product-cards-container--list .product-card .btn-link {
+    transition: background-color 0.2s !important;
+  }
+}
+
+/* Адаптив для очень узких экранов в сетке */
+@media (max-width: 350px) {
+  .product-cards-container--grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Десктопный режим сетки */
+@media (min-width: 600px) {
+  .product-cards-container--grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr 1fr !important;
+    gap: 16px !important;
+    margin-right: 0 !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .product-cards-container--grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr 1fr !important;
+    gap: 16px !important;
+    margin-right: 0 !important;
+  }
+
+  .product-cards-container--grid .product-card {
+    flex-direction: column !important;
+    height: auto !important;
+    padding-right: 0 !important;
+    gap: 8px !important;
+  }
+
+  .product-cards-container--grid .product-card .image-container {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 1 / 1 !important;
+    border-bottom-left-radius: 0 !important;
+    border-top-right-radius: 5px !important;
+  }
+
+  .product-cards-container--grid .card-info-wrapper {
+    margin-left: 10px !important;
+    margin-right: 10px !important;
+    padding-top: 0 !important;
+    padding-bottom: 10px !important;
+  }
+
+  .product-cards-container--grid .product-card a {
+    font-size: 16px !important;
+  }
+
+  .product-cards-container--grid .product-card__manufacturer {
+    display: none !important;
+  }
+
+  .product-cards-container--grid .product-card__call-price {
+    display: none !important;
+  }
+
+  .product-cards-container--grid .product-card-bottom {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+  }
+
+  .product-cards-container--grid .product-card-bottom .self-end {
+    align-self: stretch !important;
+  }
+
+  .product-cards-container--grid .product-card .btn-link {
+    width: 100% !important;
+    text-align: center !important;
+    transition: background-color 0.2s !important;
+  }
+}
+
+@media (min-width: 1360px) {
+  .product-cards-container--grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr 1fr 1fr !important;
+    gap: 16px !important;
+    margin-right: 0 !important;
+  }
+}
+
+/* Кнопка "Подробнее" — без анимации размеров при переключении (десктоп, список) */
+@media (min-width: 769px) {
+  .product-cards-container--list .product-card .btn-link {
+    transition: background-color 0.2s !important;
+  }
+}
+
+/* ========================================
    AdvantagesSection component styles
    ======================================== */
 .advantage-card {

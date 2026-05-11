@@ -7,6 +7,7 @@ import { CatalogItem } from "@/lib/types";
 import ProductCard from "@/components/ProductCard";
 import Pagination from "@/components/Pagination";
 import SearchBar from "@/components/SearchBar";
+import ViewModeToggle from "@/components/ViewModeToggle";
 import JsonLdBreadcrumbs from "@/components/JsonLdBreadcrumbs";
 
 export default function CatalogPage() {
@@ -26,6 +27,15 @@ function CatalogInner() {
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [viewMode, setViewMode] = useState<"list" | "grid">("list");
+
+  // Определяем режим по умолчанию при монтировании
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth <= 768) {
+      setViewMode("grid");
+      setPageSize(10);
+    }
+  }, []);
 
   // Читаем фильтры из URL
   const priceMin = searchParams.get("priceMin") ? Number(searchParams.get("priceMin")) : undefined;
@@ -89,7 +99,7 @@ function CatalogInner() {
         <h1 style={{ margin: 0, fontSize: 35, fontWeight: 600 }}>Каталог</h1>
         <SearchBar />
       </div>
-      <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+      <div className="catalog-controls" style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap", marginRight: 10 }}>
         <select
           value={sortBy}
           onChange={(e) => handleSortChange(e.target.value)}
@@ -115,13 +125,14 @@ function CatalogInner() {
             {startItem}–{endItem} из {total}
           </span>
         )}
+        <ViewModeToggle viewMode={viewMode} onChange={setViewMode} />
       </div>
       {loading ? (
         <p className="loading-status">Загрузка...</p>
       ) : items.length === 0 ? (
         <p className="loading-status">Товары не найдены</p>
       ) : (
-        <div className="product-cards-container" style={{ display: "flex", flexDirection: "column", gap: 19, marginRight: "10px" }}>
+        <div className={`product-cards-container product-cards-container--${viewMode}`} style={{ display: "flex", flexDirection: "column", gap: 19, marginRight: "10px" }}>
           {items.map((item) => (
             <ProductCard key={item.id} item={item} />
           ))}

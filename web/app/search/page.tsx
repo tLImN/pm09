@@ -9,6 +9,7 @@ import Pagination from "@/components/Pagination";
 import Sidebar from "@/components/Sidebar";
 import FilterPanel from "@/components/FilterPanel";
 import SearchBar from "@/components/SearchBar";
+import ViewModeToggle from "@/components/ViewModeToggle";
 import Link from "next/link";
 
 export default function SearchPage() {
@@ -47,6 +48,15 @@ function SearchContent() {
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [viewMode, setViewMode] = useState<"list" | "grid">("list");
+
+  // Определяем режим по умолчанию при монтировании
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth <= 768) {
+      setViewMode("grid");
+      setPageSize(10);
+    }
+  }, []);
 
   // Загружаем категории один раз
   useEffect(() => {
@@ -195,7 +205,8 @@ function SearchContent() {
               display: "flex",
               gap: 10,
               alignItems: "center",
-              flexWrap: "wrap",
+              flexWrap: "wrap", 
+              marginRight: 10,
             }}
           >
             <select
@@ -223,6 +234,7 @@ function SearchContent() {
                 {startItem}–{endItem} из {total}
               </span>
             )}
+            <ViewModeToggle viewMode={viewMode} onChange={setViewMode} />
           </div>
 
           {!query.trim() ? (
@@ -231,7 +243,7 @@ function SearchContent() {
             <p className="loading-status">Загрузка...</p>
           ) : items.length === 0 ? (
             <div
-              style={{ display: "flex", flexDirection: "column", gap: 16 }}
+              style={{ display: "flex", flexDirection: "column", gap: 16, marginRight: 10 }}
             >
               <p className="loading-status">
                 По запросу «{query}» ничего не найдено
@@ -252,7 +264,7 @@ function SearchContent() {
             </div>
           ) : (
             <div
-              className="product-cards-container"
+              className={`product-cards-container product-cards-container--${viewMode}`}
               style={{
                 display: "flex",
                 flexDirection: "column",

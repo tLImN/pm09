@@ -46,19 +46,19 @@ export default function ProductCard({
             {item.item_title}
           </Link>
           {item.item_manufacturer && (
-            <p className="m-0 text-[var(--subtext-color)]">
+            <p className="product-card__manufacturer m-0 text-[var(--subtext-color)]">
               Производитель: {item.item_manufacturer}
             </p>
           )}
         </div>
         <div className="product-card-bottom flex gap-[20px] justify-between">
-          <div className="flex flex-col gap-[3px]">
+          <div className="flex flex-col gap-[3px] self-end">
             {item.item_price && item.item_price > 0 && (
               <span className="text-[20px] font-semibold">
                 от {Number(item.item_price).toLocaleString("ru-RU")} ₽
               </span>
             )}
-            <span className="text-[var(--subtext-color)] line-clamp-2">
+            <span className="product-card__call-price text-[var(--subtext-color)] line-clamp-2">
               Позвоните, чтобы рассчитать цену
             </span>
           </div>

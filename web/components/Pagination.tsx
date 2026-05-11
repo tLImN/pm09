@@ -35,8 +35,6 @@ function getPageRange(page: number, totalPages: number, siblingCount: number): (
 }
 
 export default function Pagination({ page, totalPages, onPageChange }: PaginationProps) {
-  if (totalPages <= 1) return null;
-
   const [siblingCount, setSiblingCount] = useState(2);
 
   useEffect(() => {
@@ -48,6 +46,8 @@ export default function Pagination({ page, totalPages, onPageChange }: Paginatio
     mq.addEventListener("change", handler);
     return () => mq.removeEventListener("change", handler);
   }, []);
+
+  if (totalPages <= 1) return null;
 
   const pages = getPageRange(page, totalPages, siblingCount);
 
