@@ -36,22 +36,19 @@
 /* ========================================
    AssortmentSection carousel styles
    ======================================== */
-@keyframes carousel-scroll {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(calc(-1 * var(--carousel-offset)));
-  }
-}
-
 .carousel-track {
-  animation: carousel-scroll var(--carousel-duration) linear infinite;
   will-change: transform;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
 }
 
-.carousel-track--paused {
-  animation-play-state: paused;
+.carousel--dragging {
+  cursor: grabbing;
+}
+
+.carousel--dragging .carousel-track {
+  cursor: grabbing;
 }
 
 /* ========================================
