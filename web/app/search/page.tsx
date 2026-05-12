@@ -10,6 +10,7 @@ import Sidebar from "@/components/Sidebar";
 import FilterPanel from "@/components/FilterPanel";
 import SearchBar from "@/components/SearchBar";
 import ViewModeToggle from "@/components/ViewModeToggle";
+import { useViewMode } from "@/lib/useViewMode";
 import Link from "next/link";
 
 export default function SearchPage() {
@@ -51,12 +52,11 @@ function SearchContent() {
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [viewMode, setViewMode] = useState<"list" | "grid">("list");
+  const { viewMode, setViewMode } = useViewMode();
 
-  // Определяем режим по умолчанию при монтировании
+  // Определяем pageSize по умолчанию при монтировании
   useEffect(() => {
     if (typeof window !== "undefined" && window.innerWidth <= 768) {
-      setViewMode("grid");
       setPageSize(10);
     }
   }, []);

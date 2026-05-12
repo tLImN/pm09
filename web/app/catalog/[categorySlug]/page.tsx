@@ -10,6 +10,7 @@ import Pagination from "@/components/Pagination";
 import SearchBar from "@/components/SearchBar";
 import ViewModeToggle from "@/components/ViewModeToggle";
 import JsonLdBreadcrumbs from "@/components/JsonLdBreadcrumbs";
+import { useViewMode } from "@/lib/useViewMode";
 
 export default function CategoryPage() {
   const params = useParams();
@@ -26,12 +27,11 @@ export default function CategoryPage() {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [redirecting, setRedirecting] = useState(false);
-  const [viewMode, setViewMode] = useState<"list" | "grid">("list");
+  const { viewMode, setViewMode } = useViewMode();
 
-  // Определяем режим по умолчанию при монтировании
+  // Определяем pageSize по умолчанию при монтировании
   useEffect(() => {
     if (typeof window !== "undefined" && window.innerWidth <= 768) {
-      setViewMode("grid");
       setPageSize(10);
     }
   }, []);
