@@ -91,12 +91,25 @@ export default function LeafletMap({
 
         mapInstanceRef.current = map;
 
-        // Открываем popup после того как браузер применит стили и пересчитает layout
-        requestAnimationFrame(() => {
-          setTimeout(() => {
-            (map as { invalidateSize: () => void }).invalidateSize();
-            marker.openPopup();
-          }, 100);
+        // Открываем popup после полной инициализации карты
+        // Двойная стратегия: rAF для production + setTimeout для dev-mode
+        // (в dev-режиме CSS грузится асинхронно и layout нестабилен при rAF)
+        const refreshAndOpenPopup = () => {
+          (map as { invalidateSize: () => void }).invalidateSize();
+          (map as { setView: (center: [number, number], zoom: number, options?: { animate: boolean }) => void }).setView(
+            [lat, lng],
+            16,
+            { animate: false }
+          );
+          marker.openPopup();
+        };
+
+        (map as { whenReady: (fn: () => void) => void }).whenReady(() => {
+          requestAnimationFrame(() => {
+            refreshAndOpenPopup();
+          });
+          // Страховка для dev-mode: CSS может загрузиться после rAF
+          setTimeout(refreshAndOpenPopup, 300);
         });
       }
     };
