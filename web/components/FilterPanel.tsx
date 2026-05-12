@@ -1,11 +1,145 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { getFilterData } from "@/lib/api";
 import Button from "@/components/Button";
 
 const VISIBLE_MANUFACTURERS_COUNT = 6;
+
+function PriceInput({
+  value,
+  onChange,
+  placeholder,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  placeholder: string;
+}) {
+  const measureRef = useRef<HTMLSpanElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [textWidth, setTextWidth] = useState(0);
+
+  const formatNumber = (digits: string): string => {
+    if (!digits) return "";
+    return Number(digits).toLocaleString("ru-RU");
+  };
+
+  const displayValue = formatNumber(value);
+
+  useEffect(() => {
+    if (measureRef.current) {
+      measureRef.current.textContent = displayValue;
+      setTextWidth(measureRef.current.offsetWidth);
+    }
+  }, [displayValue]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    // Считаем пробелы до курсора в старом значении
+    const cursorPos = e.target.selectionStart ?? raw.length;
+    
+    const digits = raw.replace(/[^\d]/g, "");
+    onChange(digits);
+
+    // Восстанавливаем позицию курсора после форматирования
+    requestAnimationFrame(() => {
+      const input = inputRef.current;
+      if (!input) return;
+      const newFormatted = formatNumber(digits);
+      // Считаем количество пробелов до курсора в новом значении
+      const spacesBeforeOld = (raw.slice(0, cursorPos).match(/\s/g) || []).length;
+      const digitsBeforeCursor = cursorPos - spacesBeforeOld;
+      // Находим позицию в новой строке после digitsBeforeCursor цифр
+      let newPos = 0;
+      let digitCount = 0;
+      for (let i = 0; i < newFormatted.length; i++) {
+        if (digitCount === digitsBeforeCursor) break;
+        if (/\d/.test(newFormatted[i])) digitCount++;
+        newPos = i + 1;
+      }
+      if (digitsBeforeCursor === 0) newPos = 0;
+      if (digitsBeforeCursor >= digits.length) newPos = newFormatted.length;
+      input.setSelectionRange(newPos, newPos);
+    });
+  };
+
+  return (
+    <div style={{ position: "relative", width: "100%" }}>
+      {/* Hidden measurer — same font as input */}
+      <span
+        ref={measureRef}
+        style={{
+          position: "absolute",
+          visibility: "hidden",
+          whiteSpace: "pre",
+          fontSize: 14,
+          fontFamily: "inherit",
+          fontWeight: "inherit",
+          letterSpacing: "inherit",
+          padding: 0,
+          margin: 0,
+        }}
+      />
+      <input
+        ref={inputRef}
+        type="text"
+        inputMode="numeric"
+        placeholder={placeholder}
+        value={displayValue}
+        onChange={handleChange}
+        style={{
+          width: "100%",
+          fontSize: 14,
+          padding: value ? "0 32px 0 10px" : "0 10px",
+          minHeight: 36,
+          boxSizing: "border-box",
+        }}
+      />
+      {value && (
+        <span
+          style={{
+            position: "absolute",
+            left: 10 + textWidth + 4,
+            top: "50%",
+            transform: "translateY(-51%)",
+            fontSize: 14,
+            color: "var(--text-color)",
+            pointerEvents: "none",
+            whiteSpace: "nowrap",
+          }}
+        >
+          ₽
+        </span>
+      )}
+      {value && (
+        <button
+          type="button"
+          onClick={() => onChange("")}
+          style={{
+            position: "absolute",
+            right: 6,
+            top: "50%",
+            transform: "translateY(-50%)",
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            padding: 2,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "var(--subtext-color)",
+            fontSize: 22,
+            lineHeight: 1,
+          }}
+          aria-label="Очистить"
+        >
+          ×
+        </button>
+      )}
+    </div>
+  );
+}
 
 export default function FilterPanel({
   categorySlug,
@@ -21,7 +155,10 @@ export default function FilterPanel({
   const [manufacturers, setManufacturers] = useState<string[]>([]);
   const [loadingData, setLoadingData] = useState(true);
   const [hasPrices, setHasPrices] = useState(false);
+  const [minPrice, setMinPrice] = useState<number | null>(null);
+  const [maxPrice, setMaxPrice] = useState<number | null>(null);
   const [manufacturersExpanded, setManufacturersExpanded] = useState(false);
+  const [priceError, setPriceError] = useState<string | null>(null);
 
   // Локальные состояния для полей (до применения)
   const [priceMin, setPriceMin] = useState(
@@ -63,6 +200,8 @@ export default function FilterPanel({
       .then((data) => {
         setManufacturers(data.manufacturers);
         setHasPrices(data.hasPrices);
+        setMinPrice(data.minPrice);
+        setMaxPrice(data.maxPrice);
       })
       .finally(() => setLoadingData(false));
   }, [categorySlug]);
@@ -83,8 +222,22 @@ export default function FilterPanel({
     );
   };
 
+  // Форматирование цены с пробелами (1000 → "1 000")
+  const formatPrice = (price: number): string => {
+    return price.toLocaleString("ru-RU");
+  };
+
   // Применить фильтры
   const applyFilters = () => {
+    // Валидация: минимальная цена не может быть больше максимальной
+    const minVal = priceMin.trim() ? Number(priceMin) : null;
+    const maxVal = priceMax.trim() ? Number(priceMax) : null;
+    if (minVal !== null && maxVal !== null && minVal > maxVal) {
+      setPriceError("Минимальная цена не может быть больше максимальной");
+      return;
+    }
+    setPriceError(null);
+
     const params = new URLSearchParams(searchParams.toString());
 
     if (priceMin.trim()) {
@@ -116,6 +269,7 @@ export default function FilterPanel({
     setPriceMin("");
     setPriceMax("");
     setSelectedManufacturers([]);
+    setPriceError(null);
 
     const params = new URLSearchParams(searchParams.toString());
     params.delete("priceMin");
@@ -234,35 +388,26 @@ export default function FilterPanel({
           {/* Фильтр по цене */}
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             <span style={{ fontSize: 15, fontWeight: 600, color: "var(--text-color)" }}>
-              Цена, ₽
+              Цена
             </span>
             <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-              <input
-                type="number"
-                placeholder="от"
+              <PriceInput
                 value={priceMin}
-                onChange={(e) => setPriceMin(e.target.value)}
-                style={{
-                  width: "100%",
-                  fontSize: 14,
-                  padding: "0 10px",
-                  minHeight: 36,
-                }}
+                onChange={(v) => { setPriceMin(v); setPriceError(null); }}
+                placeholder={minPrice !== null ? `от ${formatPrice(minPrice)} ₽` : "от"}
               />
               <span style={{ color: "var(--subtext-color)", flexShrink: 0 }}>—</span>
-              <input
-                type="number"
-                placeholder="до"
+              <PriceInput
                 value={priceMax}
-                onChange={(e) => setPriceMax(e.target.value)}
-                style={{
-                  width: "100%",
-                  fontSize: 14,
-                  padding: "0 10px",
-                  minHeight: 36,
-                }}
+                onChange={(v) => { setPriceMax(v); setPriceError(null); }}
+                placeholder={maxPrice !== null ? `до ${formatPrice(maxPrice)} ₽` : "до"}
               />
             </div>
+            {priceError && (
+              <span style={{ fontSize: 13, color: "var(--error-color, #e53935)" }}>
+                {priceError}
+              </span>
+            )}
           </div>
 
           {/* Фильтр по производителю */}

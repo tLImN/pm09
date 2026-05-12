@@ -158,7 +158,7 @@ export async function getCatalogItems(params?: {
 
 export async function getFilterData(
   categorySlug?: string
-): Promise<{ manufacturers: string[]; hasPrices: boolean }> {
+): Promise<{ manufacturers: string[]; hasPrices: boolean; minPrice: number | null; maxPrice: number | null }> {
   try {
     const searchParams = new URLSearchParams();
     searchParams.set("fields[0]", "item_manufacturer");
@@ -189,14 +189,23 @@ export async function getFilterData(
       (item) => item.item_price !== undefined && item.item_price !== null
     );
 
+    // Вычисляем min и max цены
+    const prices = items
+      .map((item) => item.item_price)
+      .filter((p): p is number => p !== undefined && p !== null && p > 0);
+    const minPrice = prices.length > 0 ? Math.min(...prices) : null;
+    const maxPrice = prices.length > 0 ? Math.max(...prices) : null;
+
     return {
       manufacturers: [...new Set(manufacturers)].sort((a, b) =>
         a.localeCompare(b)
       ),
       hasPrices,
+      minPrice,
+      maxPrice,
     };
   } catch {
-    return { manufacturers: [], hasPrices: false };
+    return { manufacturers: [], hasPrices: false, minPrice: null, maxPrice: null };
   }
 }
 
