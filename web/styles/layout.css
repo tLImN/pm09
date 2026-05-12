@@ -199,9 +199,8 @@ aside a:hover {
 }
 
 .search-form {
-  display: flex;
+  display: none;
   align-items: center;
-  animation: searchSlideIn 0.2s ease;
 }
 
 .search-input {
@@ -255,6 +254,20 @@ aside a:hover {
   display: none;
 }
 
+/* ========================================
+   Десктоп: форма поиска всегда видна, иконка скрыта
+   ======================================== */
+@media (min-width: 551px) {
+  .search-toggle-btn {
+    display: none !important;
+  }
+
+  .search-form {
+    display: flex !important;
+    animation: searchSlideIn 0.2s ease;
+  }
+}
+
 @keyframes searchSlideIn {
   from {
     opacity: 0;
@@ -272,6 +285,11 @@ aside a:hover {
   }
 
   .search-form {
+    display: none;
+  }
+
+  .search-form.search-form--open {
+    display: flex;
     position: fixed;
     top: 0;
     left: 0;
