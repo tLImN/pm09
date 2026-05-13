@@ -2,9 +2,18 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const pathname = usePathname();
+
+  const isActive = (href: string) => {
+    if (href === "/catalog") {
+      return pathname === "/catalog" || pathname.startsWith("/catalog/");
+    }
+    return pathname === href;
+  };
 
   const handlePopupOpen = () => {
     window.dispatchEvent(new CustomEvent("open-popup"));
@@ -71,7 +80,7 @@ export default function Header() {
               <Link
                 href="/catalog"
                 style={{ color: "var(--text-color)" }}
-                className="header-link"
+                className={`header-link${isActive("/catalog") ? " active" : ""}`}
                 onClick={closeMenu}
               >
                 Каталог
@@ -81,7 +90,7 @@ export default function Header() {
               <Link
                 href="/about"
                 style={{ color: "var(--text-color)" }}
-                className="header-link"
+                className={`header-link${isActive("/about") ? " active" : ""}`}
                 onClick={closeMenu}
               >
                 О нас
@@ -91,7 +100,7 @@ export default function Header() {
               <Link
                 href="/payment"
                 style={{ color: "var(--text-color)" }}
-                className="header-link"
+                className={`header-link${isActive("/payment") ? " active" : ""}`}
                 onClick={closeMenu}
               >
                 Доставка и оплата
@@ -101,7 +110,7 @@ export default function Header() {
               <Link
                 href="/contacts"
                 style={{ color: "var(--text-color)" }}
-                className="header-link"
+                className={`header-link${isActive("/contacts") ? " active" : ""}`}
                 onClick={closeMenu}
               >
                 Контакты

@@ -10,6 +10,10 @@ header {
   transition-duration: 0.2s;
 }
 
+.header-link.active {
+  color: var(--accent-hover-color) !important;
+}
+
 .hamburger-btn {
   display: none;
   background: none;
