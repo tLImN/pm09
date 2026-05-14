@@ -244,7 +244,7 @@ export default function AssortmentSection({
   // На мобильных устройствах показываем адаптивную сетку
   if (isMobile) {
     return (
-      <div className="assortment-grid-mobile grid grid-cols-2 gap-4 px-4 max-w-[600px] mx-auto max-[360px]:grid-cols-1">
+      <div className="assortment-grid-mobile grid grid-cols-2 gap-2 px-4 max-w-[600px] mx-auto max-[315px]:grid-cols-1">
         {items.map((item, index) => (
           <AssortmentCard
             key={index}

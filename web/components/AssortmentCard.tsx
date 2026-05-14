@@ -10,7 +10,7 @@ interface AssortmentCardProps {
 export default function AssortmentCard({ href, imageSrc, title }: AssortmentCardProps) {
   return (
     <Link href={href} style={{ color: "var(--text-color)" }}>
-      <div className="assortment-card text-center flex flex-col gap-[16px] md:gap-[24px] text-[1.1rem] sm:text-[1.3rem] md:text-[1.625rem]">
+      <div className="assortment-card text-center flex flex-col gap-[16px] md:gap-[24px] text-[0.95rem] sm:text-[1.3rem] md:text-[1.625rem]">
         <div
           className="assortment-card__image-container relative"
           style={{

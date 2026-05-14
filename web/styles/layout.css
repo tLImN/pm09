@@ -5,9 +5,11 @@ header {
   max-height: 122px;
 }
 
-.header-link:hover {
-  color: var(--accent-hover-color) !important;
-  transition-duration: 0.2s;
+@media (hover: hover) {
+  .header-link:hover {
+    color: var(--accent-hover-color) !important;
+    transition-duration: 0.2s;
+  }
 }
 
 .header-link.active {
@@ -63,6 +65,7 @@ header {
     display: flex !important;
     align-items: center;
     justify-content: center;
+    z-index: 10001 !important;
   }
 
   .hamburger-btn:hover {
@@ -78,7 +81,7 @@ header {
     right: 0 !important;
     bottom: 0 !important;
     background: white !important;
-    z-index: 1000 !important;
+    z-index: 9999 !important;
     padding: 80px 20px 20px !important;
     overflow-y: auto !important;
   }
@@ -113,7 +116,7 @@ header {
     right: 0 !important;
     bottom: 0 !important;
     background: rgba(0, 0, 0, 0.5) !important;
-    z-index: 999 !important;
+    z-index: 9998 !important;
     animation: fadeIn 0.3s ease;
   }
 

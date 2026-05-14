@@ -186,9 +186,10 @@ input[type="number"] {
 }
 
 /* Адаптив для очень узких экранов в сетке */
-@media (max-width: 350px) {
+@media (max-width: 315px) {
   .product-cards-container--grid {
     grid-template-columns: 1fr !important;
+    margin-right: 10px !important;
   }
 }
 
@@ -198,7 +199,7 @@ input[type="number"] {
     display: grid !important;
     grid-template-columns: 1fr 1fr 1fr !important;
     gap: 16px !important;
-    margin-right: 0 !important;
+    margin-right: 10px !important;
   }
 }
 
@@ -207,7 +208,7 @@ input[type="number"] {
     display: grid !important;
     grid-template-columns: 1fr 1fr 1fr !important;
     gap: 16px !important;
-    margin-right: 0 !important;
+    margin-right: 10px !important;
   }
 
   .product-cards-container--grid .product-card {
@@ -266,7 +267,6 @@ input[type="number"] {
     display: grid !important;
     grid-template-columns: 1fr 1fr 1fr 1fr !important;
     gap: 16px !important;
-    margin-right: 0 !important;
   }
 }
 
@@ -513,6 +513,49 @@ input[type="number"] {
 }
 
 /* ========================================
+   Catalog controls (sort selects) responsive
+   ======================================== */
+@media (max-width: 500px) {
+  .catalog-controls {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+    margin-right: 0 !important;
+  }
+  .catalog-selects {
+    flex-direction: column !important;
+    gap: 6px !important;
+  }
+  .catalog-selects select {
+    width: 100%;
+  }
+  .catalog-info {
+    justify-content: space-between !important;
+    margin-left: 0 !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .catalog-controls {
+    margin-right: 0 !important;
+  }
+}
+
+/* ========================================
+   Leaflet popup responsive
+   ======================================== */
+@media (max-width: 640px) {
+  .leaflet-popup-content-wrapper {
+    max-width: calc(100vw - 40px) !important;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  .leaflet-popup {
+    max-width: calc(100vw - 20px) !important;
+  }
+}
+
+/* ========================================
    Description content styles
    ======================================== */
 .description-content ul {
@@ -537,5 +580,16 @@ input[type="number"] {
   .page-article {
     padding: 0 20px 30px !important;
     margin-bottom: 40px !important;
+  }
+}
+
+/* Contacts page responsive padding */
+.contacts-article {
+  padding: 0 60px 30px;
+}
+
+@media (max-width: 640px) {
+  .contacts-article {
+    padding: 0 20px 30px !important;
   }
 }

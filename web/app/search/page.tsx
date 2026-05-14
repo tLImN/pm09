@@ -204,6 +204,7 @@ function SearchContent() {
           )}
 
           <div
+            className="catalog-controls"
             style={{
               display: "flex",
               gap: 10,
@@ -212,32 +213,36 @@ function SearchContent() {
               marginRight: 10,
             }}
           >
-            <select
-              value={sortBy}
-              onChange={(e) => handleSortChange(e.target.value)}
-            >
-              <option value="title-asc">Сортировать: по названию (А-Я)</option>
-              <option value="title-desc">Сортировать: по названию (Я-А)</option>
-              <option value="price-asc">Сортировать: сначала дешевле</option>
-              <option value="price-desc">Сортировать: сначала дороже</option>
-              <option value="newest">Сортировать: сначала новые</option>
-              <option value="oldest">Сортировать: сначала старые</option>
-            </select>
-            <select
-              value={pageSize}
-              onChange={(e) => handlePageSizeChange(Number(e.target.value))}
-            >
-              <option value={5}>Показывать: 5</option>
-              <option value={10}>Показывать: 10</option>
-              <option value={20}>Показывать: 20</option>
-              <option value={50}>Показывать: 50</option>
-            </select>
-            {!loading && total > 0 && (
-              <span style={{ fontSize: 14, color: "#666" }}>
-                {startItem}–{endItem} из {total}
-              </span>
-            )}
-            <ViewModeToggle viewMode={viewMode} onChange={setViewMode} />
+            <div className="catalog-selects" style={{ display: "flex", gap: 6 }}>
+              <select
+                value={sortBy}
+                onChange={(e) => handleSortChange(e.target.value)}
+              >
+                <option value="title-asc">Сортировать: по названию (А-Я)</option>
+                <option value="title-desc">Сортировать: по названию (Я-А)</option>
+                <option value="price-asc">Сортировать: сначала дешевле</option>
+                <option value="price-desc">Сортировать: сначала дороже</option>
+                <option value="newest">Сортировать: сначала новые</option>
+                <option value="oldest">Сортировать: сначала старые</option>
+              </select>
+              <select
+                value={pageSize}
+                onChange={(e) => handlePageSizeChange(Number(e.target.value))}
+              >
+                <option value={5}>Показывать: 5</option>
+                <option value={10}>Показывать: 10</option>
+                <option value={20}>Показывать: 20</option>
+                <option value={50}>Показывать: 50</option>
+              </select>
+            </div>
+            <div className="catalog-info" style={{ display: "flex", gap: 8, alignItems: "center", marginLeft: "auto" }}>
+              {!loading && total > 0 && (
+                <span style={{ fontSize: 14, color: "#666" }}>
+                  {startItem}–{endItem} из {total}
+                </span>
+              )}
+              <ViewModeToggle viewMode={viewMode} onChange={setViewMode} />
+            </div>
           </div>
 
           {!query.trim() ? (
