@@ -36,9 +36,13 @@ npm run build
 echo "🔄 Restarting Next.js..."
 sudo systemctl restart nextjs
 
-# 4. Reload Nginx (in case config changed)
+# 4. Reload Nginx
 echo "🔄 Reloading Nginx..."
-sudo systemctl reload nginx
+sudo nginx -t && sudo systemctl reload nginx
+
+# NOTE: If Nginx config was changed in server-setup.sh, re-apply it manually:
+#   sudo bash -c 'DOMAIN="7829960-zf629738.twc1.net" EMAIL="admin@7829960-zf629738.twc1.net" source <(sed -n "/# 11. Create Nginx config/,/^# 12/p" /opt/project/server-setup.sh | head -n -1 | tail -n +2)'
+# Or re-run server-setup.sh if this is a fresh deploy.
 
 echo ""
 echo "==========================================="

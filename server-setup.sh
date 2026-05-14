@@ -112,13 +112,30 @@ EOF
 
 # 11. Create Nginx config
 echo "⚙️  Configuring Nginx..."
-cat > /etc/nginx/sites-available/project << EOF
+cat > /etc/nginx/sites-available/project << 'MAINEOF'
+
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    ''      close;
+}
+
+MAINEOF
+
+cat >> /etc/nginx/sites-available/project << EOF
 # Main domain — Strapi API (/api/) + Next.js frontend (/)
 server {
     listen 80;
     server_name $DOMAIN www.$DOMAIN;
 
     client_max_body_size 50M;
+
+    # Timeouts & buffers для стабильной работы админки
+    proxy_connect_timeout 60s;
+    proxy_send_timeout    120s;
+    proxy_read_timeout    120s;
+    proxy_buffer_size     128k;
+    proxy_buffers         4 256k;
+    proxy_busy_buffers_size 256k;
 
     # Next.js API routes (ДОЛЖНЫ идти ПЕРЕД Strapi /api/)
     location /api/send-contact {
@@ -148,12 +165,13 @@ server {
         proxy_set_header X-Forwarded-Proto \$scheme;
     }
 
-    # Strapi API — proxied under /api/
-    location /api/ {
-        proxy_pass http://127.0.0.1:1337/api/;
+    # Strapi Admin Panel — proxied through standard port 80
+    # ДОЛЖЕН идти ПЕРЕД /api/ чтобы /admin/content-type-builder и т.п. работали
+    location /admin {
+        proxy_pass http://127.0.0.1:1337/admin;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
-        proxy_set_header Connection 'upgrade';
+        proxy_set_header Connection \$connection_upgrade;
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
@@ -161,7 +179,34 @@ server {
         proxy_cache_bypass \$http_upgrade;
     }
 
-    # Strapi uploads
+    # Strapi internal API paths (content-type-builder, upload, users-permissions, i18n и т.д.)
+    # Эти пути вызываются админкой напрямую, НЕ через /api/
+    location ~ ^/(content-type-builder|upload|users-permissions|i18n|content-manager|email|documentation|graphql) {
+        proxy_pass http://127.0.0.1:1337;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection \$connection_upgrade;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_cache_bypass \$http_upgrade;
+    }
+
+    # Strapi API — proxied under /api/
+    location /api/ {
+        proxy_pass http://127.0.0.1:1337/api/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection \$connection_upgrade;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_cache_bypass \$http_upgrade;
+    }
+
+    # Strapi uploads (public files)
     location /uploads/ {
         proxy_pass http://127.0.0.1:1337/uploads/;
         proxy_http_version 1.1;
@@ -171,25 +216,12 @@ server {
         proxy_set_header X-Forwarded-Proto \$scheme;
     }
 
-    # Strapi Admin Panel — proxied through standard port 80
-    location /admin {
-        proxy_pass http://127.0.0.1:1337/admin;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade \$http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host \$host;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto \$scheme;
-        proxy_cache_bypass \$http_upgrade;
-    }
-
     # Next.js Frontend — everything else
     location / {
         proxy_pass http://127.0.0.1:3000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
-        proxy_set_header Connection 'upgrade';
+        proxy_set_header Connection \$connection_upgrade;
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
