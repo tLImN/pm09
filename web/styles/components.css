@@ -513,6 +513,20 @@ input[type="number"] {
 }
 
 /* ========================================
+   Pagination responsive
+   ======================================== */
+@media (max-width: 360px) {
+  .pagination-container {
+    gap: 4px !important;
+  }
+  .pagination-container button,
+  .pagination-container span {
+    padding: 5px 8px !important;
+    font-size: 1rem !important;
+  }
+}
+
+/* ========================================
    Catalog controls (sort selects) responsive
    ======================================== */
 @media (max-width: 500px) {

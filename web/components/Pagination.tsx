@@ -47,14 +47,19 @@ export default function Pagination({ page, totalPages, onPageChange }: Paginatio
     return () => mq.removeEventListener("change", handler);
   }, []);
 
+  const handlePageChange = (newPage: number) => {
+    onPageChange(newPage);
+    window.scrollTo({ top: 0, behavior: "auto" });
+  };
+
   if (totalPages <= 1) return null;
 
   const pages = getPageRange(page, totalPages, siblingCount);
 
   return (
-    <div style={{ display: "flex", gap: 6, justifyContent: "center", flexWrap: "wrap", padding: "10px 0" }}>
+    <div className="pagination-container" style={{ display: "flex", gap: 6, justifyContent: "center", flexWrap: "nowrap", padding: "10px 0", overflowX: "auto" }}>
       <button
-        onClick={() => onPageChange(Math.max(1, page - 1))}
+        onClick={() => handlePageChange(Math.max(1, page - 1))}
         disabled={page === 1}
         style={{
           padding: "6px 12px",
@@ -83,7 +88,7 @@ export default function Pagination({ page, totalPages, onPageChange }: Paginatio
         ) : (
           <button
             key={p}
-            onClick={() => onPageChange(p)}
+            onClick={() => handlePageChange(p)}
             style={{
               padding: "6px 12px",
               cursor: "pointer",
@@ -99,7 +104,7 @@ export default function Pagination({ page, totalPages, onPageChange }: Paginatio
         )
       )}
       <button
-        onClick={() => onPageChange(Math.min(totalPages, page + 1))}
+        onClick={() => handlePageChange(Math.min(totalPages, page + 1))}
         disabled={page === totalPages}
         style={{
           padding: "6px 12px",
