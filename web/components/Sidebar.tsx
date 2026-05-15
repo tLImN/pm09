@@ -123,6 +123,7 @@ export default function Sidebar({
 
   return (
     <aside
+      className={collapsed ? "sidebar sidebar--collapsed" : "sidebar sidebar--expanded"}
       onClick={collapsed ? () => setCollapsed(false) : undefined}
       style={{
         border: "1px solid var(--border-color)",
@@ -151,7 +152,7 @@ export default function Sidebar({
           style={{
             position: "absolute",
             top: 18,
-            right: 18,
+            right: 20,
             background: "none",
             border: "none",
             cursor: "pointer",

@@ -108,12 +108,12 @@ function CatalogInner() {
             value={sortBy}
             onChange={(e) => handleSortChange(e.target.value)}
           >
-            <option value="title-asc">Сортировать: по названию (А-Я)</option>
-            <option value="title-desc">Сортировать: по названию (Я-А)</option>
-            <option value="price-asc">Сортировать: сначала дешевле</option>
-            <option value="price-desc">Сортировать: сначала дороже</option>
-            <option value="newest">Сортировать: сначала новые</option>
-            <option value="oldest">Сортировать: сначала старые</option>
+            <option value="title-asc">По названию (А-Я)</option>
+            <option value="title-desc">По названию (Я-А)</option>
+            <option value="price-asc">Сначала дешевле</option>
+            <option value="price-desc">Сначала дороже</option>
+            <option value="newest">Сначала новые</option>
+            <option value="oldest">Сначала старые</option>
           </select>
           <select
             value={pageSize}

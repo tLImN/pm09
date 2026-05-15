@@ -177,6 +177,37 @@ aside a:hover {
     width: 100% !important;
     margin-left: 0;
   }
+
+  /* Родительские категории — ellipsis сразу при появлении */
+  aside.sidebar--expanded > div > a {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    display: block !important;
+  }
+
+  /* Подкатегории и услуги — ellipsis сразу при появлении */
+  aside.sidebar--expanded > div > ul > li > a {
+    white-space: nowrap !important;
+    display: block !important;
+  }
+}
+
+@media (max-width: 360px) {
+  /* Развёрнутый сайдбар: увеличенный padding-right для выравнивания с кнопкой */
+  aside.sidebar--expanded {
+    padding-right: 46px !important;
+  }
+
+  /* Родительские категории — чуть меньше шрифт */
+  aside.sidebar--expanded > div > a {
+    font-size: 20px !important;
+    margin-top: -4px !important;
+  }
+
+  /* Подкатегории и услуги — чуть меньше шрифт */
+  aside.sidebar--expanded > div > ul > li > a {
+    font-size: 15px !important;
+  }
 }
 
 /* ========================================

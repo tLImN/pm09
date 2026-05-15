@@ -313,6 +313,9 @@ export default function FilterPanel({
         height: "fit-content",
         boxSizing: "border-box",
         position: "relative",
+        overflow: "hidden",
+        maxHeight: collapsed ? 60 : 2000,
+        transition: "max-height 0.3s ease, padding 0.3s ease",
       }}
     >
       {/* Заголовок и кнопка сворачивания */}
