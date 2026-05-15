@@ -24,18 +24,11 @@ function CatalogInner() {
   const [items, setItems] = useState<CatalogItem[]>([]);
   const [sortBy, setSortBy] = useState("title-asc");
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(8);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const { viewMode, setViewMode } = useViewMode();
-
-  // Определяем pageSize по умолчанию при монтировании
-  useEffect(() => {
-    if (typeof window !== "undefined" && window.innerWidth <= 768) {
-      setPageSize(10);
-    }
-  }, []);
 
   // Читаем фильтры из URL
   const priceMin = searchParams.get("priceMin") ? Number(searchParams.get("priceMin")) : undefined;
@@ -119,10 +112,9 @@ function CatalogInner() {
             value={pageSize}
             onChange={(e) => handlePageSizeChange(Number(e.target.value))}
           >
-            <option value={5}>Показывать: 5</option>
-            <option value={10}>Показывать: 10</option>
-            <option value={20}>Показывать: 20</option>
-            <option value={50}>Показывать: 50</option>
+                <option value={8}>Показывать: 8</option>
+                <option value={12}>Показывать: 12</option>
+                <option value={24}>Показывать: 24</option>
           </select>
         </div>
         <div className="catalog-info" style={{ display: "flex", gap: 8, alignItems: "center", marginLeft: "auto" }}>
