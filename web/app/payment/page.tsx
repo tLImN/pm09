@@ -1,7 +1,12 @@
 export const dynamic = "force-dynamic";
 
+import type { Metadata } from "next";
 import { getPaymentPage } from "@/lib/api";
 import { formatDescription } from "@/lib/utils";
+
+export const metadata: Metadata = {
+  title: "Доставка и оплата",
+};
 
 export default async function PaymentPage() {
   const page = await getPaymentPage();

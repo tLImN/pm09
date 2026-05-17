@@ -1,7 +1,12 @@
 export const dynamic = "force-dynamic";
 
+import type { Metadata } from "next";
 import { getPrivacyPage } from "@/lib/api";
 import { formatDescription } from "@/lib/utils";
+
+export const metadata: Metadata = {
+  title: "Соглашение на обработку персональных данных",
+};
 
 export default async function LicensesPage() {
   const page = await getPrivacyPage();

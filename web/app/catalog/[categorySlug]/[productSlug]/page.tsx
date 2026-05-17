@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { getCatalogItemBySlug, getRelatedItems, getCategories } from "@/lib/api";
 import { formatDescription } from "@/lib/utils";
 //import Sidebar from "@/components/Sidebar";
@@ -5,6 +6,20 @@ import ProductCardPage from "@/components/ProductCardPage";
 import ProductCard from "@/components/ProductCard";
 import JsonLdBreadcrumbs from "@/components/JsonLdBreadcrumbs";
 import { notFound } from "next/navigation";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ categorySlug: string; productSlug: string }>;
+}): Promise<Metadata> {
+  const { productSlug } = await params;
+  const item = await getCatalogItemBySlug(productSlug);
+  const title = item?.item_title || "Товар";
+
+  return {
+    title,
+  };
+}
 
 export default async function ProductPage({
   params,

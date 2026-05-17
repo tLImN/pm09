@@ -1,7 +1,12 @@
 export const dynamic = "force-dynamic";
 
+import type { Metadata } from "next";
 import { getAboutPage } from "@/lib/api";
 import { formatDescription } from "@/lib/utils";
+
+export const metadata: Metadata = {
+  title: "О нас",
+};
 
 export default async function AboutPage() {
   const page = await getAboutPage();

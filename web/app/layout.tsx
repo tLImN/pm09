@@ -7,7 +7,10 @@ import Footer from "@/components/Footer";
 import PopupForm from "@/components/PopupForm";
 
 export const metadata: Metadata = {
-  title: "Альтернатива Форклифт — складское оборудование и техника",
+  title: {
+    default: "Альтернатива Форклифт — складское оборудование и техника",
+    template: "%s — Альтернатива Форклифт",
+  },
   description:
     "ООО «Альтернатива Форклифт» — надёжный поставщик складского оборудования и техники. Стеллажи, погрузчики, штабелеры, гидравлические тележки. Доставка по Владимиру и области.",
   openGraph: {

@@ -1,5 +1,11 @@
 export const dynamic = "force-dynamic";
 
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Страница не найдена",
+};
+
 export default function NotFound() {
   return (
     <section

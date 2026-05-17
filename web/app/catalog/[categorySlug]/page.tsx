@@ -1,178 +1,21 @@
-"use client";
+import type { Metadata } from "next";
+import { getCategoryBySlug } from "@/lib/api";
+import CategoryPageClient from "@/components/CategoryPageClient";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { getCategoryBySlug, getCatalogItems } from "@/lib/api";
-import { CatalogItem, Category } from "@/lib/types";
-import { formatDescription } from "@/lib/utils";
-import ProductCard from "@/components/ProductCard";
-import Pagination from "@/components/Pagination";
-import SearchBar from "@/components/SearchBar";
-import ViewModeToggle from "@/components/ViewModeToggle";
-import JsonLdBreadcrumbs from "@/components/JsonLdBreadcrumbs";
-import { useViewMode } from "@/lib/useViewMode";
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ categorySlug: string }>;
+}): Promise<Metadata> {
+  const { categorySlug } = await params;
+  const category = await getCategoryBySlug(categorySlug);
+  const title = category?.category_title || "Категория";
+
+  return {
+    title,
+  };
+}
 
 export default function CategoryPage() {
-  const params = useParams();
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const categorySlug = params.categorySlug as string;
-
-  const [category, setCategory] = useState<Category | null>(null);
-  const [items, setItems] = useState<CatalogItem[]>([]);
-  const [sortBy, setSortBy] = useState("title-asc");
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(8);
-  const [totalPages, setTotalPages] = useState(1);
-  const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [redirecting, setRedirecting] = useState(false);
-  const { viewMode, setViewMode } = useViewMode();
-
-  // Читаем фильтры из URL
-  const priceMin = searchParams.get("priceMin") ? Number(searchParams.get("priceMin")) : undefined;
-  const priceMax = searchParams.get("priceMax") ? Number(searchParams.get("priceMax")) : undefined;
-  const manufacturer = useMemo(() => {
-    const arr = searchParams.get("manufacturer")?.split(",").filter(Boolean) || [];
-    return arr.length > 0 ? arr : undefined;
-  }, [searchParams]);
-
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    try {
-      const [cat, itemsData] = await Promise.all([
-        getCategoryBySlug(categorySlug),
-        getCatalogItems({
-          category: categorySlug,
-          sort: sortBy,
-          page,
-          pageSize,
-          priceMin,
-          priceMax,
-          manufacturer,
-        }),
-      ]);
-      setCategory(cat);
-
-      const fetchedItems = itemsData.data || [];
-      const fetchedTotal = itemsData.meta?.pagination?.total || 0;
-
-      // Редирект: если в категории только один элемент и это услуга (service)
-      if (fetchedTotal === 1 && fetchedItems.length === 1 && fetchedItems[0].item_type === "service" && !priceMin && !priceMax && !manufacturer) {
-        setRedirecting(true);
-        router.push(`/catalog/${categorySlug}/${fetchedItems[0].item_slug}`);
-        return;
-      }
-
-      setItems(fetchedItems);
-      setTotalPages(itemsData.meta?.pagination?.pageCount || 1);
-      setTotal(fetchedTotal);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  }, [categorySlug, sortBy, page, pageSize, router, priceMin, priceMax, manufacturer]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  // Сбрасываем страницу при изменении фильтров в URL
-  useEffect(() => {
-    setPage(1);
-  }, [priceMin, priceMax, manufacturer]);
-
-  const handleSortChange = (value: string) => {
-    setSortBy(value);
-    setPage(1);
-  };
-
-  const handlePageSizeChange = (value: number) => {
-    setPageSize(value);
-    setPage(1);
-  };
-
-  const startItem = total === 0 ? 0 : (page - 1) * pageSize + 1;
-  const endItem = Math.min(page * pageSize, total);
-
-  // description block
-  const descriptionHtml = category?.category_description
-    ? formatDescription(category.category_description)
-    : "";
-
-  return (
-    <>
-      <JsonLdBreadcrumbs
-        items={[
-          { name: "Главная", url: "/" },
-          { name: "Каталог", url: "/catalog" },
-          { name: category?.category_title || "Категория", url: `/catalog/${categorySlug}` },
-        ]}
-      />
-    <section style={{ maxWidth: 950, display: "flex", flexDirection: "column", gap: 20, width: "100%" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", marginRight: 10 }}>
-        <h1 style={{ margin: 0, fontSize: 35, fontWeight: 600 }}>
-          {category?.category_title || "Загрузка…"}
-        </h1>
-        <SearchBar categorySlug={categorySlug} />
-      </div>
-      <div className="catalog-controls" style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap", marginRight: 10 }}>
-        <div className="catalog-selects" style={{ display: "flex", gap: 6 }}>
-          <select value={sortBy} onChange={(e) => handleSortChange(e.target.value)}>
-            <option value="title-asc">По названию (А-Я)</option>
-            <option value="title-desc">По названию (Я-А)</option>
-            <option value="price-asc">Сначала дешевле</option>
-            <option value="price-desc">Сначала дороже</option>
-            <option value="newest">Сначала новые</option>
-            <option value="oldest">Сначала старые</option>
-          </select>
-          <select
-            value={pageSize}
-            onChange={(e) => handlePageSizeChange(Number(e.target.value))}
-          >
-            <option value={8}>Показывать: 8</option>
-            <option value={12}>Показывать: 12</option>
-            <option value={24}>Показывать: 24</option>
-          </select>
-        </div>
-        <div className="catalog-info" style={{ display: "flex", gap: 8, alignItems: "center", marginLeft: "auto" }}>
-          {!loading && total > 0 && (
-            <span style={{ fontSize: 14, color: "#666" }}>
-              {startItem}–{endItem} из {total}
-            </span>
-          )}
-          <ViewModeToggle viewMode={viewMode} onChange={setViewMode} />
-        </div>
-      </div>
-      {
-        loading || redirecting ? (
-          <p className="loading-status">Загрузка...</p>
-        ) : items.length === 0 ? (
-          <p className="loading-status">Товары не найдены</p>
-        ) : (
-          <div className={`product-cards-container product-cards-container--${viewMode}`} style={{ display: "flex", flexDirection: "column", gap: 19, marginRight: "10px" }}>
-            {items.map((item) => (
-              <ProductCard key={item.id} item={item} categorySlug={categorySlug} />
-            ))}
-          </div>
-        )
-      }
-      <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
-
-      {/* description block */}
-      {
-        descriptionHtml && (
-          <>
-            <article
-              className="description-content"
-              style={{ display: "flex", flexDirection: "column", gap: 10 }}
-              dangerouslySetInnerHTML={{ __html: descriptionHtml }}
-            />
-          </>
-        )
-      }
-    </section>
-    </>
-  );
+  return <CategoryPageClient />;
 }
