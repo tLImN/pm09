@@ -21,10 +21,10 @@ export default function ProductCard({
 
   return (
     <article
-      className="product-card flex gap-[18px] h-[190px] border border-[var(--border-color)] rounded-[5px] pr-[20px] transition-shadow duration-200 hover:shadow-lg overflow-y-hidden"
+      className="product-card flex gap-[18px] h-[190px] border border-(--border-color) rounded-[5px] pr-[20px] transition-shadow duration-200 hover:shadow-lg overflow-y-hidden"
     >
       <div
-        className="image-container self-stretch w-[231px] shrink-0 overflow-hidden outline outline-[var(--border-color)] rounded-l-[5px]"
+        className="image-container self-stretch w-[231px] shrink-0 overflow-hidden outline outline-(--border-color) rounded-l-[5px]"
       >
         <Link href={href}>
           <img
@@ -46,7 +46,7 @@ export default function ProductCard({
             {item.item_title}
           </Link>
           {item.item_manufacturer && (
-            <p className="product-card__manufacturer m-0 text-[var(--subtext-color)]">
+            <p className="product-card__manufacturer m-0 text-(--subtext-color)">
               Производитель: {item.item_manufacturer}
             </p>
           )}
@@ -58,7 +58,7 @@ export default function ProductCard({
                 от {Number(item.item_price).toLocaleString("ru-RU")} ₽
               </span>
             )}
-            <span className="product-card__call-price text-[var(--subtext-color)] line-clamp-2">
+            <span className="product-card__call-price text-(--subtext-color) line-clamp-2">
               Позвоните, чтобы рассчитать цену
             </span>
           </div>

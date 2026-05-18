@@ -16,7 +16,7 @@ export default function HeroBanner({
   return (
     <section
       id="banner"
-      className="relative min-h-[453px] bg-[var(--text-color)] text-[var(--inverted-text-color)] bg-center bg-cover bg-fixed"
+      className="relative min-h-[453px] bg-(--text-color) text-(--inverted-text-color) bg-center bg-cover bg-fixed"
       style={backgroundImage ? { backgroundImage: `url(${backgroundImage})` } : undefined}
     >
       <div className="absolute inset-0 bg-[rgba(26,23,27,0.8)]" />
@@ -25,7 +25,7 @@ export default function HeroBanner({
           {title}
         </h1>
         {subtitle && (
-          <p className="text-[1.375rem] m-0 max-w-[1440px] leading-[1.5] max-sm:text-[1.1rem]">
+          <p className="text-[1.375rem] m-0 max-w-[1440px] leading-normal max-sm:text-[1.1rem]">
             {subtitle}
           </p>
         )}
