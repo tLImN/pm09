@@ -21,11 +21,11 @@ export default function HeroBanner({
     >
       <div className="absolute inset-0 bg-[rgba(26,23,27,0.8)]" />
       <div className="relative p-[30px] max-w-[1440px] mx-auto flex flex-col items-baseline justify-center gap-[30px] min-h-[453px] max-md:p-5">
-        <h1 className="text-[4rem] m-0 max-w-[884px] leading-[1.2] max-md:text-[2rem]">
+        <h1 className="text-[4rem] m-0 max-w-[884px] leading-[1.2] max-md:text-[3rem] max-sm:text-[2rem]">
           {title}
         </h1>
         {subtitle && (
-          <p className="text-[1.375rem] m-0 max-w-[1440px] leading-[1.5]">
+          <p className="text-[1.375rem] m-0 max-w-[1440px] leading-[1.5] max-sm:text-[1.1rem]">
             {subtitle}
           </p>
         )}

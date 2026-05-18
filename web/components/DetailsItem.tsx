@@ -12,11 +12,11 @@ export default function DetailsItem({ question, children }: DetailsItemProps) {
 
   return (
     <div
-      className="border border-[var(--border-color)] rounded-[5px] px-[31px] py-[28px] cursor-pointer"
+      className="border border-[var(--border-color)] rounded-[5px] px-[31px] max-md:px-[21px] py-[28px] cursor-pointer"
       onClick={() => setIsOpen(!isOpen)}
     >
-      <div className="flex justify-between cursor-pointer text-[1.375rem] font-semibold">
-        {question}
+      <div className="flex justify-between cursor-pointer text-[1.375rem] max-md:text-[1.25rem] font-semibold gap-[6px]">
+        <div>{question}</div>
         <Button
           variant="icon"
           className={isOpen ? 'open' : ''}

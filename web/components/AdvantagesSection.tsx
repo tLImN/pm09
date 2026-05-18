@@ -79,13 +79,17 @@ export default function AdvantagesSection() {
         {advantages.map((item, index) => (
           <div
             key={index}
-            className="advantage-card flex flex-col items-center text-center gap-[16px] p-[30px] border border-[var(--border-color)] rounded-[5px] transition-all duration-300"
+            className="advantage-card flex overflow-hidden flex-col max-sm:flex-row items-center max-sm:items-start 
+            text-center max-sm:text-left gap-[16px] max-sm:gap-[8px] p-[30px] max-sm:p-[20px] max-sm:px-[12px] border border-(--border-color) 
+            rounded-[5px] transition-all duration-300"
           >
-            <div className="flex-shrink-0">{item.icon}</div>
-            <h3 className="text-[1.25rem] font-bold">{item.title}</h3>
-            <p className="text-[var(--subtext-color)] leading-relaxed">
-              {item.description}
-            </p>
+            <div className="shrink-0 max-sm:scale-[90%]">{item.icon}</div>
+            <div className="flex gap-[16px] flex-col">
+              <h3 className="text-[1.25rem] max-sm:text-[1.2rem] font-bold text-balance max-sm:wrap-anywhere" lang="ru">{item.title}</h3>
+              <p className="text-(--subtext-color) leading-relaxed">
+                {item.description}
+              </p>
+            </div>
           </div>
         ))}
       </div>
