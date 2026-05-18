@@ -35,12 +35,14 @@ export default function LeafletMap({
 
       if (mapRef.current && !mapInstanceRef.current) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const map = (L as any).map(mapRef.current, {
-          attributionControl: false,
-          // EPSG:3395 — проекция Яндекс-тайлов (Mercator на эллипсоиде)
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          crs: (L as any).CRS.EPSG3395,
-        }).setView([lat, lng], 16);
+        const map = (L as any)
+          .map(mapRef.current, {
+            attributionControl: false,
+            // EPSG:3395 — проекция Яндекс-тайлов (Mercator на эллипсоиде)
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            crs: (L as any).CRS.EPSG3395,
+          })
+          .setView([lat, lng], 16);
 
         const apiKey = process.env.NEXT_PUBLIC_YANDEX_TILES_API_KEY || "";
 
@@ -56,7 +58,7 @@ export default function LeafletMap({
               maxZoom: 23,
               attribution:
                 '&copy; <a href="https://yandex.ru/maps/">Яндекс</a>',
-            }
+            },
           )
           .addTo(map);
 
@@ -96,11 +98,15 @@ export default function LeafletMap({
         // (в dev-режиме CSS грузится асинхронно и layout нестабилен при rAF)
         const refreshAndOpenPopup = () => {
           (map as { invalidateSize: () => void }).invalidateSize();
-          (map as { setView: (center: [number, number], zoom: number, options?: { animate: boolean }) => void }).setView(
-            [lat, lng],
-            16,
-            { animate: false }
-          );
+          (
+            map as {
+              setView: (
+                center: [number, number],
+                zoom: number,
+                options?: { animate: boolean },
+              ) => void;
+            }
+          ).setView([lat, lng], 16, { animate: false });
           marker.openPopup();
         };
 

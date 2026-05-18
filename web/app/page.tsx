@@ -104,8 +104,8 @@ export default async function Home() {
           ))}
           <span>
             Не нашли ответ на свой вопрос?{" "}
-            <PopupTrigger>Оставьте заявку</PopupTrigger>
-            , и наш специалист свяжется и ответит на ваш вопрос.
+            <PopupTrigger>Оставьте заявку</PopupTrigger>, и наш специалист
+            свяжется и ответит на ваш вопрос.
           </span>
         </div>
       </section>

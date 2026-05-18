@@ -40,7 +40,8 @@ function SearchContent() {
     ? Number(searchParams.get("priceMax"))
     : undefined;
   const manufacturer = useMemo(() => {
-    const arr = searchParams.get("manufacturer")?.split(",").filter(Boolean) || [];
+    const arr =
+      searchParams.get("manufacturer")?.split(",").filter(Boolean) || [];
     return arr.length > 0 ? arr : undefined;
   }, [searchParams]);
 
@@ -83,7 +84,16 @@ function SearchContent() {
     } finally {
       setLoading(false);
     }
-  }, [query, page, pageSize, categorySlug, sortBy, priceMin, priceMax, manufacturer]);
+  }, [
+    query,
+    page,
+    pageSize,
+    categorySlug,
+    sortBy,
+    priceMin,
+    priceMax,
+    manufacturer,
+  ]);
 
   // Сбрасываем страницу при изменении query или фильтров
   useEffect(() => {
@@ -140,10 +150,7 @@ function SearchContent() {
             height: "fit-content",
           }}
         >
-          <Sidebar
-            categories={categories}
-            activeCategorySlug={categorySlug}
-          />
+          <Sidebar categories={categories} activeCategorySlug={categorySlug} />
           <Suspense fallback={null}>
             <FilterPanel categorySlug={categorySlug} />
           </Suspense>
@@ -206,7 +213,10 @@ function SearchContent() {
               marginRight: 10,
             }}
           >
-            <div className="catalog-selects" style={{ display: "flex", gap: 6 }}>
+            <div
+              className="catalog-selects"
+              style={{ display: "flex", gap: 6 }}
+            >
               <select
                 value={sortBy}
                 onChange={(e) => handleSortChange(e.target.value)}
@@ -227,7 +237,15 @@ function SearchContent() {
                 <option value={24}>Показывать: 24</option>
               </select>
             </div>
-            <div className="catalog-info" style={{ display: "flex", gap: 8, alignItems: "center", marginLeft: "auto" }}>
+            <div
+              className="catalog-info"
+              style={{
+                display: "flex",
+                gap: 8,
+                alignItems: "center",
+                marginLeft: "auto",
+              }}
+            >
               {!loading && total > 0 && (
                 <span style={{ fontSize: 14, color: "#666" }}>
                   {startItem}–{endItem} из {total}
@@ -242,9 +260,7 @@ function SearchContent() {
           ) : loading ? (
             <p className="loading-status">Загрузка...</p>
           ) : items.length === 0 ? (
-            <div
-              style={{ display: "flex", flexDirection: "column", gap: 16 }}
-            >
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <p className="loading-status">
                 По запросу «{query}» ничего не найдено
               </p>
@@ -274,8 +290,8 @@ function SearchContent() {
               {items.map((item) => {
                 const catSlug =
                   !categorySlug &&
-                    item.item_category &&
-                    item.item_category.length > 0
+                  item.item_category &&
+                  item.item_category.length > 0
                     ? item.item_category[0].category_slug
                     : categorySlug;
                 return (
@@ -296,10 +312,8 @@ function SearchContent() {
               onPageChange={setPage}
             />
           )}
-
         </section>
       </div>
-
     </div>
   );
 }

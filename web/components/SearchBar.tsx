@@ -3,11 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-export default function SearchBar({
-  categorySlug,
-}: {
-  categorySlug?: string;
-}) {
+export default function SearchBar({ categorySlug }: { categorySlug?: string }) {
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -147,7 +143,6 @@ export default function SearchBar({
           </svg>
         </button>
       </form>
-
     </div>
   );
 }

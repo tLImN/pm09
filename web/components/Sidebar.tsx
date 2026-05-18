@@ -40,7 +40,7 @@ export default function Sidebar({
 
   // Группируем категории: только родительские (parent_category === null)
   const parentCategories = categories.filter(
-    (c) => c.parent_category === null || c.parent_category === undefined
+    (c) => c.parent_category === null || c.parent_category === undefined,
   );
 
   // Подсвечивать родительскую категорию только когда выбрана именно она
@@ -52,15 +52,14 @@ export default function Sidebar({
   // Условие: все catalog_items (собранные из родительской + дочерних) — услуги
   const shouldShowServicesDirectly = (parent: Category): boolean => {
     // Собираем все услуги из дочерних категорий
-    const childServices = (parent.children_categories || []).flatMap(
-      (child) =>
-        (child.catalog_items || []).filter(
-          (item) => item.item_type === "service"
-        )
+    const childServices = (parent.children_categories || []).flatMap((child) =>
+      (child.catalog_items || []).filter(
+        (item) => item.item_type === "service",
+      ),
     );
     // Собираем услуги, привязанные напрямую к родительской категории
     const parentServices = (parent.catalog_items || []).filter(
-      (item) => item.item_type === "service"
+      (item) => item.item_type === "service",
     );
 
     const allServices = [...childServices, ...parentServices];
@@ -70,14 +69,13 @@ export default function Sidebar({
 
     // Проверяем наличие товаров (не услуг) — если есть, не показываем услуги напрямую
     const nonServiceItems = [
-      ...(parent.children_categories || []).flatMap(
-        (child) =>
-          (child.catalog_items || []).filter(
-            (item) => item.item_type !== "service"
-          )
+      ...(parent.children_categories || []).flatMap((child) =>
+        (child.catalog_items || []).filter(
+          (item) => item.item_type !== "service",
+        ),
       ),
       ...(parent.catalog_items || []).filter(
-        (item) => item.item_type !== "service"
+        (item) => item.item_type !== "service",
       ),
     ];
 
@@ -117,13 +115,15 @@ export default function Sidebar({
       });
 
     return services.sort((a, b) =>
-      a.service.item_title.localeCompare(b.service.item_title)
+      a.service.item_title.localeCompare(b.service.item_title),
     );
   };
 
   return (
     <aside
-      className={collapsed ? "sidebar sidebar--collapsed" : "sidebar sidebar--expanded"}
+      className={
+        collapsed ? "sidebar sidebar--collapsed" : "sidebar sidebar--expanded"
+      }
       onClick={collapsed ? () => setCollapsed(false) : undefined}
       style={{
         border: "1px solid var(--border-color)",
@@ -145,43 +145,43 @@ export default function Sidebar({
     >
       {/* Кнопка свернуть */}
       <button
-          onClick={(e) => {
-            e.stopPropagation();
-            setCollapsed(!collapsed);
-          }}
+        onClick={(e) => {
+          e.stopPropagation();
+          setCollapsed(!collapsed);
+        }}
+        style={{
+          position: "absolute",
+          top: 18,
+          right: 20,
+          background: "none",
+          border: "none",
+          cursor: "pointer",
+          padding: 4,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "var(--text-color)",
+          zIndex: 1,
+        }}
+        aria-label={collapsed ? "Развернуть" : "Свернуть"}
+      >
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
           style={{
-            position: "absolute",
-            top: 18,
-            right: 20,
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            padding: 4,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "var(--text-color)",
-            zIndex: 1,
+            transition: "transform 0.3s ease",
+            transform: collapsed ? "rotate(180deg)" : "rotate(0deg)",
           }}
-          aria-label={collapsed ? "Развернуть" : "Свернуть"}
         >
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            style={{
-              transition: "transform 0.3s ease",
-              transform: collapsed ? "rotate(180deg)" : "rotate(0deg)",
-            }}
-          >
-            <polyline points="18 15 12 9 6 15" />
-          </svg>
-        </button>
+          <polyline points="18 15 12 9 6 15" />
+        </svg>
+      </button>
       {/* Заголовок в свернутом виде */}
       {collapsed && (
         <span
@@ -227,19 +227,21 @@ export default function Sidebar({
                   gap: 8,
                 }}
               >
-                {collectServices(parent).map(({ parentCategorySlug, service }) => (
-                  <li key={service.id}>
-                    <Link
-                      href={`/catalog/${parentCategorySlug}/${service.item_slug}`}
-                      scroll={false}
-                      style={{
-                        color: "var(--text-color)",
-                      }}
-                    >
-                      {service.item_title}
-                    </Link>
-                  </li>
-                ))}
+                {collectServices(parent).map(
+                  ({ parentCategorySlug, service }) => (
+                    <li key={service.id}>
+                      <Link
+                        href={`/catalog/${parentCategorySlug}/${service.item_slug}`}
+                        scroll={false}
+                        style={{
+                          color: "var(--text-color)",
+                        }}
+                      >
+                        {service.item_title}
+                      </Link>
+                    </li>
+                  ),
+                )}
               </ul>
             ) : (
               parent.children_categories &&
@@ -256,7 +258,7 @@ export default function Sidebar({
                 >
                   {[...parent.children_categories]
                     .sort((a, b) =>
-                      a.category_slug.localeCompare(b.category_slug)
+                      a.category_slug.localeCompare(b.category_slug),
                     )
                     .map((child) => (
                       <li key={child.id}>
@@ -279,7 +281,6 @@ export default function Sidebar({
             )}
           </div>
         ))}
-
     </aside>
   );
 }

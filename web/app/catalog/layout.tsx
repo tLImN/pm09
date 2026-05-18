@@ -41,36 +41,39 @@ export default function CatalogLayout({
         padding: "30px 20px",
       }}
     >
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        gap: 40,
-        marginBottom: 40,
-      }}
-      className="content-wrapper-aside"
-    >
       <div
-        className="sidebar-filters-column"
         style={{
           display: "flex",
-          flexDirection: "column",
-          gap: 16,
-          width: 344,
-          minWidth: 200,
-          flexShrink: 0,
-          height: "fit-content",
+          justifyContent: "center",
+          gap: 40,
+          marginBottom: 40,
         }}
+        className="content-wrapper-aside"
       >
-        <Sidebar categories={categories} activeCategorySlug={activeCategorySlug} />
-        {!isProductPage && (
-          <Suspense fallback={null}>
-            <FilterPanel categorySlug={activeCategorySlug} />
-          </Suspense>
-        )}
+        <div
+          className="sidebar-filters-column"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 16,
+            width: 344,
+            minWidth: 200,
+            flexShrink: 0,
+            height: "fit-content",
+          }}
+        >
+          <Sidebar
+            categories={categories}
+            activeCategorySlug={activeCategorySlug}
+          />
+          {!isProductPage && (
+            <Suspense fallback={null}>
+              <FilterPanel categorySlug={activeCategorySlug} />
+            </Suspense>
+          )}
+        </div>
+        {children}
       </div>
-      {children}
-    </div>
     </div>
   );
 }

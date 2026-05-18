@@ -10,22 +10,17 @@ export default function ProductCard({
   item: CatalogItem;
   categorySlug?: string;
 }) {
-  const imageUrl =
-    item.item_images?.[0]?.url
-      ? getStrapiImageUrl(item.item_images[0].url)
-      : "/img/ki_image-placeholder.webp";
+  const imageUrl = item.item_images?.[0]?.url
+    ? getStrapiImageUrl(item.item_images[0].url)
+    : "/img/ki_image-placeholder.webp";
 
   const href = categorySlug
     ? `/catalog/${categorySlug}/${item.item_slug}`
     : `/catalog/item/${item.item_slug}`;
 
   return (
-    <article
-      className="product-card flex gap-[18px] h-[190px] border border-(--border-color) rounded-[5px] pr-[20px] transition-shadow duration-200 hover:shadow-lg overflow-y-hidden"
-    >
-      <div
-        className="image-container self-stretch w-[231px] shrink-0 overflow-hidden outline outline-(--border-color) rounded-l-[5px]"
-      >
+    <article className="product-card flex gap-[18px] h-[190px] border border-(--border-color) rounded-[5px] pr-[20px] transition-shadow duration-200 hover:shadow-lg overflow-y-hidden">
+      <div className="image-container self-stretch w-[231px] shrink-0 overflow-hidden outline outline-(--border-color) rounded-l-[5px]">
         <Link href={href}>
           <img
             src={imageUrl}
@@ -62,7 +57,9 @@ export default function ProductCard({
               Позвоните, чтобы рассчитать цену
             </span>
           </div>
-          <Button href={href} className="self-end shrink-0">Подробнее</Button>
+          <Button href={href} className="self-end shrink-0">
+            Подробнее
+          </Button>
         </div>
       </div>
     </article>

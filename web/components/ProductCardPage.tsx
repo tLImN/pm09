@@ -20,16 +20,15 @@ export default function ProductCardPage({ item }: { item: CatalogItem }) {
           documentId: item.documentId,
           item_title: item.item_title,
         },
-      })
+      }),
     );
   };
 
   const allImages = (item.item_images ?? []).map((img) =>
-    getStrapiImageUrl(img.url)
+    getStrapiImageUrl(img.url),
   );
-  const images = allImages.length > 0
-    ? allImages
-    : ["/img/ki_image-placeholder.webp"];
+  const images =
+    allImages.length > 0 ? allImages : ["/img/ki_image-placeholder.webp"];
 
   const [activeIndex, setActiveIndex] = useState(0);
   const currentImage = images[activeIndex] ?? images[0];
@@ -64,7 +63,9 @@ export default function ProductCardPage({ item }: { item: CatalogItem }) {
               <div
                 key={i}
                 className={`product-card-page__thumbnail ${
-                  i === activeIndex ? "product-card-page__thumbnail--active" : ""
+                  i === activeIndex
+                    ? "product-card-page__thumbnail--active"
+                    : ""
                 }`}
                 onClick={() => setActiveIndex(i)}
               >
@@ -106,10 +107,12 @@ export default function ProductCardPage({ item }: { item: CatalogItem }) {
           <Button onClick={handlePopupOpen} style={{ width: "fit-content" }}>
             Оставить заявку
           </Button>
-          <span style={{
-            color: "var(--subtext-color)",
-            paddingRight: 20
-            }}>
+          <span
+            style={{
+              color: "var(--subtext-color)",
+              paddingRight: 20,
+            }}
+          >
             С подробной информацией об условиях сотрудничества можете
             ознакомиться в разделе «Доставка и оплата».
           </span>
@@ -124,7 +127,6 @@ export default function ProductCardPage({ item }: { item: CatalogItem }) {
           onNavigate={(i) => setLightboxIndex(i)}
         />
       )}
-
     </div>
   );
 }
