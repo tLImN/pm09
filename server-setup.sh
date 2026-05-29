@@ -11,6 +11,8 @@ set -e
 # CHANGE THESE to your actual values:
 DOMAIN="7829960-zf629738.twc1.net"          # your main domain
 EMAIL="admin@7829960-zf629738.twc1.net"     # email for Let's Encrypt
+# === ВРЕМЕННО: поставить true при покупке домена с поддержкой SSL ===
+ENABLE_SSL=false
 # ───────────────────────────────────────────
 
 PROJECT_DIR="/opt/project"
@@ -51,11 +53,21 @@ chmod +x setup.sh
 
 # 6. Update FRONTEND_URL in cms/.env
 echo "📝 Updating cms/.env for production..."
-sed -i "s|FRONTEND_URL=.*|FRONTEND_URL=https://$DOMAIN|" "$CMS_DIR/.env"
+if [ "$ENABLE_SSL" = "false" ]; then
+    # === ВРЕМЕННО: http:// вместо https:// (удалить при покупке домена) ===
+    sed -i "s|FRONTEND_URL=.*|FRONTEND_URL=http://$DOMAIN|" "$CMS_DIR/.env"
+else
+    sed -i "s|FRONTEND_URL=.*|FRONTEND_URL=https://$DOMAIN|" "$CMS_DIR/.env"
+fi
 
 # 7. Update web/.env.local
 echo "📝 Updating web/.env.local for production..."
-sed -i "s|NEXT_PUBLIC_STRAPI_URL=.*|NEXT_PUBLIC_STRAPI_URL=https://$DOMAIN|" "$WEB_DIR/.env.local"
+if [ "$ENABLE_SSL" = "false" ]; then
+    # === ВРЕМЕННО: http:// вместо https:// (удалить при покупке домена) ===
+    sed -i "s|NEXT_PUBLIC_STRAPI_URL=.*|NEXT_PUBLIC_STRAPI_URL=http://$DOMAIN|" "$WEB_DIR/.env.local"
+else
+    sed -i "s|NEXT_PUBLIC_STRAPI_URL=.*|NEXT_PUBLIC_STRAPI_URL=https://$DOMAIN|" "$WEB_DIR/.env.local"
+fi
 # STRAPI_INTERNAL_URL всегда localhost — серверные API-роуты ходят напрямую
 if ! grep -q "STRAPI_INTERNAL_URL" "$WEB_DIR/.env.local"; then
     echo "STRAPI_INTERNAL_URL=http://127.0.0.1:1337" >> "$WEB_DIR/.env.local"
@@ -112,6 +124,17 @@ EOF
 
 # 11. Create Nginx config
 echo "⚙️  Configuring Nginx..."
+
+# === ВРЕМЕННО: генерация самоподписанного сертификата (удалить при покупке домена) ===
+if [ "$ENABLE_SSL" = "false" ]; then
+    echo "🔒 Generating self-signed certificate for HTTPS redirect..."
+    mkdir -p /etc/nginx/ssl
+    openssl req -x509 -nodes -days 3650 -newkey rsa:2048 \
+        -keyout /etc/nginx/ssl/self-signed.key \
+        -out /etc/nginx/ssl/self-signed.crt \
+        -subj "/CN=$DOMAIN"
+fi
+
 cat > /etc/nginx/sites-available/project << 'MAINEOF'
 
 map $http_upgrade $connection_upgrade {
@@ -229,7 +252,30 @@ server {
         proxy_cache_bypass \$http_upgrade;
     }
 }
+
 EOF
+
+# === ВРЕМЕННО: добавить HTTPS→HTTP redirect (удалить при покупке домена) ===
+if [ "$ENABLE_SSL" = "false" ]; then
+    cat >> /etc/nginx/sites-available/project << 'SSLEOF'
+
+# === ВРЕМЕННО: HTTPS→HTTP redirect (удалить при покупке домена) ===
+# Слушаем 443 с самоподписанным сертификатом и редиректим на http://
+SSLEOF
+
+    cat >> /etc/nginx/sites-available/project << EOF
+server {
+    listen 443 ssl;
+    server_name $DOMAIN www.$DOMAIN;
+
+    ssl_certificate     /etc/nginx/ssl/self-signed.crt;
+    ssl_certificate_key /etc/nginx/ssl/self-signed.key;
+
+    # Редирект всех HTTPS-запросов на HTTP
+    return 301 http://\$host\$request_uri;
+}
+EOF
+fi
 
 # Enable site, remove default
 ln -sf /etc/nginx/sites-available/project /etc/nginx/sites-enabled/project
@@ -243,9 +289,14 @@ systemctl enable strapi nextjs
 systemctl start strapi nextjs
 
 # 13. Install SSL
-echo "🔒 Installing SSL certificate..."
-apt install -y certbot python3-certbot-nginx
-certbot --nginx -d "$DOMAIN" -d "www.$DOMAIN" --non-interactive --agree-tos -m "$EMAIL"
+if [ "$ENABLE_SSL" = "true" ]; then
+    echo "🔒 Installing SSL certificate..."
+    apt install -y certbot python3-certbot-nginx
+    certbot --nginx -d "$DOMAIN" -d "www.$DOMAIN" --non-interactive --agree-tos -m "$EMAIL"
+else
+    # === ВРЕМЕННО: пропускаем certbot (удалить при покупке домена) ===
+    echo "⏭️  Skipping SSL certificate (ENABLE_SSL=false)"
+fi
 
 # 14. Firewall
 echo "🛡️  Configuring firewall..."
@@ -258,9 +309,18 @@ echo ""
 echo "==========================================="
 echo "✅ Server setup complete!"
 echo "==========================================="
-echo ""
-echo "  Frontend:  https://$DOMAIN"
-echo "  CMS Admin: http://$DOMAIN:1337/admin  (direct, no SSL)"
+if [ "$ENABLE_SSL" = "false" ]; then
+    echo ""
+    echo "  ⚠️  SSL отключён (ENABLE_SSL=false)"
+    echo "  Frontend:  http://$DOMAIN"
+    echo "  CMS Admin: http://$DOMAIN/admin"
+    echo ""
+    echo "  При покупке домена: поставьте ENABLE_SSL=true и перезапустите скрипт"
+else
+    echo ""
+    echo "  Frontend:  https://$DOMAIN"
+    echo "  CMS Admin: https://$DOMAIN/admin"
+fi
 echo ""
 echo "Services:"
 echo "  sudo systemctl status strapi"
