@@ -101,7 +101,7 @@ export default async function ProductPage({
                 margin: 0,
               }}
             >
-              Товары из этой категории
+              {item.item_type === "service" ? "Услуги из этой категории" : "Товары из этой категории"}
             </h2>
             <div style={{ display: "flex", flexDirection: "column", gap: 19 }}>
               {relatedItems.map((relItem) => (
