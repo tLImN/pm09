@@ -396,7 +396,8 @@ input[type="number"] {
   border-color: var(--border-color);
 }
 
-.product-card-page__thumbnail--active {
+.product-card-page__thumbnail--active,
+.product-card-page__thumbnail--active:hover {
   border-color: var(--primary-color, #0070f3);
 }
 
