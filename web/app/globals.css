@@ -159,12 +159,52 @@ input[type="checkbox"]:checked:hover {
   accent-color: var(--accent-hover-color);
 }
 
+/* Radio-кнопки: кастомный рендеринг для единообразия во всех браузерах (особенно Safari) */
 input[type="radio"] {
-  accent-color: var(--accent-color);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  min-height: 16px;
+  border: 2px solid var(--border-color);
+  border-radius: 50%;
+  background: transparent;
+  position: relative;
+  flex-shrink: 0;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  vertical-align: middle;
+}
+
+input[type="radio"]:checked {
+  border-color: var(--accent-color);
+}
+
+input[type="radio"]:checked::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-color);
+}
+
+input[type="radio"]:hover {
+  border-color: var(--accent-color);
 }
 
 input[type="radio"]:checked:hover {
-  accent-color: var(--accent-hover-color);
+  border-color: var(--accent-hover-color);
+}
+
+input[type="radio"]:checked:hover::after {
+  background: var(--accent-hover-color);
 }
 
 select {

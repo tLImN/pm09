@@ -102,6 +102,18 @@ input[type="number"] {
   }
 }
 
+/* Средние десктопные экраны (iPad Mini landscape ~1133px и подобные) */
+@media (min-width: 877px) and (max-width: 1200px) {
+  .product-card .card-info-wrapper {
+    padding-top: 10px !important;
+    padding-bottom: 15px !important;
+  }
+
+  .product-card__call-price {
+    display: none !important;
+  }
+}
+
 /* ========================================
    Product cards grid mode (2 columns)
    ======================================== */
@@ -360,8 +372,9 @@ input[type="number"] {
 .product-card-page__main-image {
   width: 100%;
   max-width: 406px;
-  height: fit-content;
-  object-fit: cover;
+  max-height: 406px;
+  height: auto;
+  object-fit: contain;
   margin: 0 auto;
   transition: opacity 0.2s;
 }
