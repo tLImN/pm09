@@ -5,20 +5,26 @@ import { CatalogItem } from "@/lib/types";
 import { getStrapiImageUrl } from "@/lib/utils";
 import Button from "@/components/Button";
 import ImageLightbox from "@/components/ImageLightbox";
+import { useRequestCart } from "@/lib/RequestCartContext";
 
 export default function ProductCardPage({ item }: { item: CatalogItem }) {
+  const { addItem } = useRequestCart();
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
 
   const handlePopupOpen = () => {
+    // Добавляем товар в корзину заявок
+    addItem({
+      documentId: item.documentId,
+      item_title: item.item_title,
+      item_type: item.item_type || "product",
+    });
     const requestType = item.item_type === "service" ? "service" : "quote";
     window.dispatchEvent(
       new CustomEvent("open-popup", {
         detail: {
           request_type: requestType,
           page_url: window.location.href,
-          documentId: item.documentId,
-          item_title: item.item_title,
         },
       }),
     );

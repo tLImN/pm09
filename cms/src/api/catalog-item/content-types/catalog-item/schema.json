@@ -57,12 +57,6 @@
       "type": "component",
       "repeatable": true,
       "component": "characteristics.characteristic-value"
-    },
-    "incoming_requests": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::incoming-request.incoming-request",
-      "mappedBy": "item"
     }
   }
 }

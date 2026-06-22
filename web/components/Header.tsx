@@ -3,10 +3,13 @@
 import Link from "next/link";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
+import { useRequestCart } from "@/lib/RequestCartContext";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
+  const { items } = useRequestCart();
+  const totalItems = items.reduce((sum, i) => sum + i.quantity, 0);
 
   const isActive = (href: string) => {
     if (href === "/catalog") {
@@ -115,6 +118,60 @@ export default function Header() {
               >
                 Контакты
               </Link>
+            </li>
+            <li style={{ padding: "22px 15px", display: "flex", alignItems: "center" }}>
+              <button
+                onClick={handlePopupOpen}
+                aria-label="Открыть заявку"
+                style={{
+                  position: "relative",
+                  background: "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                  padding: 4,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "var(--text-color)",
+                }}
+              >
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="var(--text-color)"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+                  <line x1="3" y1="6" x2="21" y2="6" />
+                  <path d="M16 10a4 4 0 0 1-8 0" />
+                </svg>
+                {totalItems > 0 && (
+                  <span
+                    style={{
+                      position: "absolute",
+                      top: -4,
+                      right: -6,
+                      backgroundColor: "#e63946",
+                      color: "#fff",
+                      fontSize: 10,
+                      fontWeight: 700,
+                      width: 18,
+                      height: 18,
+                      borderRadius: "50%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      lineHeight: 1,
+                    }}
+                  >
+                    {totalItems > 99 ? "99" : totalItems}
+                  </span>
+                )}
+              </button>
             </li>
           </ul>
         </nav>

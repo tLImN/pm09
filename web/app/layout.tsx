@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PopupForm from "@/components/PopupForm";
+import { RequestCartProvider } from "@/lib/RequestCartContext";
 
 export const metadata: Metadata = {
   title: {
@@ -32,10 +33,12 @@ export default function RootLayout({
     <html lang="ru">
       <head></head>
       <body className="min-h-screen flex flex-col overflow-y-scroll">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
-        <PopupForm />
+        <RequestCartProvider>
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+          <PopupForm />
+        </RequestCartProvider>
       </body>
     </html>
   );

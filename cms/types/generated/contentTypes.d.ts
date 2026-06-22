@@ -658,10 +658,8 @@ export interface ApiIncomingRequestIncomingRequest
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     email: Schema.Attribute.Email;
-    item: Schema.Attribute.Relation<
-      'manyToOne',
-      'api::catalog-item.catalog-item'
-    >;
+    items: Schema.Attribute.JSON;
+    items_summary: Schema.Attribute.Text;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',

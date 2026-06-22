@@ -6,7 +6,7 @@ const STRAPI_URL =
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, tel, email, message, contact_method, request_type, page_url, documentId } = body;
+    const { name, tel, email, message, contact_method, request_type, page_url, items } = body;
 
     // Валидация обязательных полей
     if (!name || !tel || !contact_method) {
@@ -52,7 +52,20 @@ export async function POST(request: Request) {
             contact_method,
             request_type: request_type || "callback",
             page_url: page_url || "",
-            ...(documentId ? { item: documentId } : {}),
+            ...(items && items.length > 0
+              ? {
+                  items: items.map((i: { documentId: string; quantity: number; item_title: string }) => ({
+                    documentId: i.documentId,
+                    item_title: i.item_title,
+                    quantity: i.quantity,
+                  })),
+                  items_summary: items
+                    .map((i: { item_title: string; quantity: number }) =>
+                      `${i.item_title} — ${i.quantity} шт.`
+                    )
+                    .join("\n"),
+                }
+              : {}),
           },
         }),
       });

@@ -45,11 +45,11 @@
         "service"
       ]
     },
-    "item": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::catalog-item.catalog-item",
-      "inversedBy": "incoming_requests"
+    "items": {
+      "type": "json"
+    },
+    "items_summary": {
+      "type": "text"
     },
     "page_url": {
       "type": "string"

@@ -3,8 +3,11 @@
 import { useState, useEffect } from "react";
 import Button from "@/components/Button";
 import { getContactPage } from "@/lib/api";
+import { useRequestCart } from "@/lib/RequestCartContext";
 
 export default function PopupForm() {
+  const { items, addItem, removeItem, updateQuantity, clearCart } =
+    useRequestCart();
   const [isOpen, setIsOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [isOpening, setIsOpening] = useState(false);
@@ -22,8 +25,6 @@ export default function PopupForm() {
   >("idle");
   const [requestType, setRequestType] = useState("callback");
   const [pageUrl, setPageUrl] = useState("");
-  const [documentId, setDocumentId] = useState<string | null>(null);
-  const [itemTitle, setItemTitle] = useState<string | null>(null);
   const [companyPhone, setCompanyPhone] = useState<string>("+7 (905) 617-98-52");
   const [workingHours, setWorkingHours] = useState<string>("пн–пт, 9:00–18:00");
 
@@ -36,8 +37,6 @@ export default function PopupForm() {
       setStatus("idle");
       setPhoneError(null);
       setFormData({ name: "", tel: "", email: "", message: "", contact_method: "phone" });
-      setItemTitle(null);
-      setDocumentId(null);
       setRequestType("callback");
       setPageUrl("");
     }, 300);
@@ -56,8 +55,17 @@ export default function PopupForm() {
       const detail = (e as CustomEvent).detail || {};
       setRequestType(detail.request_type || "callback");
       setPageUrl(detail.page_url || window.location.href);
-      setDocumentId(detail.documentId || null);
-      setItemTitle(detail.item_title || null);
+
+      // Если передан конкретный товар — добавляем его в корзину
+      if (detail.documentId) {
+        addItem({
+          documentId: detail.documentId,
+          item_title: detail.item_title || "",
+          item_type:
+            detail.request_type === "service" ? "service" : "product",
+        });
+      }
+
       setIsOpen(true);
       setIsClosing(false);
       setIsOpening(true);
@@ -76,13 +84,11 @@ export default function PopupForm() {
       window.removeEventListener("open-popup", handleOpen);
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [addItem]);
 
   // Функция форматирования номера телефона: +7 (XXX) XXX-XX-XX
   const formatPhoneNumber = (value: string): string => {
-    // Извлекаем только цифры
     const digits = value.replace(/\D/g, "");
-    // Убираем ведущую 8 или 7 (код страны), оставляем максимум 10 цифр
     let local = digits;
     if (local.length > 0 && (local[0] === "8" || local[0] === "7")) {
       local = local.substring(1);
@@ -108,7 +114,6 @@ export default function PopupForm() {
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
-    // Если пользователь стирает всё (включая +7) — очищаем
     const digits = raw.replace(/\D/g, "");
     if (digits.length === 0) {
       setFormData({ ...formData, tel: "" });
@@ -158,7 +163,14 @@ export default function PopupForm() {
           ...formData,
           request_type: requestType,
           page_url: pageUrl,
-          documentId: documentId,
+          items:
+            items.length > 0
+              ? items.map((i) => ({
+                  documentId: i.documentId,
+                  item_title: i.item_title,
+                  quantity: i.quantity,
+                }))
+              : [],
         }),
       });
       const data = await res.json();
@@ -167,6 +179,7 @@ export default function PopupForm() {
         setFormData({ name: "", tel: "", email: "", message: "", contact_method: "phone" });
         setAgreed(false);
         setPhoneError(null);
+        clearCart();
       } else {
         setStatus("error");
       }
@@ -177,9 +190,7 @@ export default function PopupForm() {
 
   if (!isOpen && !isClosing) return null;
 
-  const requestTypeLabel =
-    requestType === "service" ? "Услуга" :
-      requestType === "quote" ? "Товар" : null;
+  const hasItems = items.length > 0;
 
   return (
     <div
@@ -195,7 +206,7 @@ export default function PopupForm() {
         height: "100vh",
         backgroundColor: `rgba(0,0,0,${isClosing ? 0 : isOpening ? 0 : 0.5})`,
         display: "flex",
-        alignItems: "flex-start",
+        alignItems: "center",
         justifyContent: "center",
         zIndex: 1000,
         transition: "background-color 0.2s ease, opacity 0.2s ease",
@@ -210,7 +221,7 @@ export default function PopupForm() {
           maxWidth: 600,
           padding: "20px 40px",
           borderRadius: 5,
-          marginBottom: "20px",
+          margin: "auto 0",
           border: "1px solid var(--border-color)",
           backgroundColor: "var(--inverted-text-color)",
           transition: "transform 0.3s ease, opacity 0.3s ease",
@@ -265,22 +276,153 @@ export default function PopupForm() {
                 fontSize: 35,
                 textAlign: "center",
                 display: "block",
-                marginBottom: itemTitle ? 5 : 30,
+                marginBottom: hasItems ? 5 : 30,
               }}
             >
               Оставить заявку
             </span>
 
-            {/* Название товара/услуги */}
-            {itemTitle && requestTypeLabel && (
-              <p style={{
-                textAlign: "center",
-                margin: "0 0 20px",
-                color: "var(--subtext-color)",
-                fontSize: 15,
-              }}>
-                {requestTypeLabel}: <strong>{itemTitle}</strong>
-              </p>
+            {/* Список товаров в заявке */}
+            {hasItems && (
+              <div style={{ marginBottom: 20 }}>
+                <p
+                  style={{
+                    textAlign: "center",
+                    margin: "0 0 12px",
+                    color: "var(--subtext-color)",
+                    fontSize: 15,
+                  }}
+                >
+                  {items.length === 1 ? "Товар в заявке:" : "Товары в заявке:"}
+                </p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {items.map((item) => (
+                    <div
+                      key={item.documentId}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 8,
+                        padding: "8px 12px",
+                        border: "1px solid var(--border-color)",
+                        borderRadius: 5,
+                        backgroundColor: "var(--bg-color, #f9f9f9)",
+                      }}
+                    >
+                      <span
+                        style={{
+                          flex: 1,
+                          fontSize: 14,
+                          fontWeight: 500,
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                        title={item.item_title}
+                      >
+                        {item.item_title || "Товар"}
+                      </span>
+
+                      {/* Количество — только для товаров, не для услуг */}
+                      {item.item_type !== "service" && (
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 4,
+                            flexShrink: 0,
+                          }}
+                        >
+                          <button
+                            type="button"
+                            onClick={() =>
+                              updateQuantity(item.documentId, item.quantity - 1)
+                            }
+                            disabled={item.quantity <= 1}
+                            style={{
+                              width: 28,
+                              height: 28,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              border: "1px solid var(--border-color)",
+                              borderRadius: 4,
+                              background: "transparent",
+                              cursor:
+                                item.quantity <= 1 ? "not-allowed" : "pointer",
+                              fontSize: 16,
+                              fontWeight: 600,
+                              lineHeight: 1,
+                              opacity: item.quantity <= 1 ? 0.4 : 1,
+                              color: "var(--text-color)",
+                            }}
+                          >
+                            −
+                          </button>
+                          <span
+                            style={{
+                              minWidth: 24,
+                              textAlign: "center",
+                              fontSize: 14,
+                              fontWeight: 600,
+                            }}
+                          >
+                            {item.quantity}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              updateQuantity(item.documentId, item.quantity + 1)
+                            }
+                            style={{
+                              width: 28,
+                              height: 28,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              border: "1px solid var(--border-color)",
+                              borderRadius: 4,
+                              background: "transparent",
+                              cursor: "pointer",
+                              fontSize: 16,
+                              fontWeight: 600,
+                              lineHeight: 1,
+                              color: "var(--text-color)",
+                            }}
+                          >
+                            +
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Кнопка удаления */}
+                      <button
+                        type="button"
+                        onClick={() => removeItem(item.documentId)}
+                        style={{
+                          width: 28,
+                          height: 28,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          border: "none",
+                          borderRadius: 4,
+                          background: "transparent",
+                          cursor: "pointer",
+                          fontSize: 18,
+                          color: "#999",
+                          flexShrink: 0,
+                          padding: 0,
+                          lineHeight: 1,
+                        }}
+                        title="Убрать из заявки"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
             )}
 
             <form onSubmit={handleSubmit}>
