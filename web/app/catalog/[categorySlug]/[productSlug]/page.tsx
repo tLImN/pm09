@@ -91,6 +91,62 @@ export default async function ProductPage({
           </>
         )}
 
+        {/* Таблица характеристик */}
+        {item.characteristics && item.characteristics.length > 0 && (
+          <>
+            <h2
+              style={{
+                textAlign: "left",
+                fontSize: 26,
+                fontWeight: 600,
+                margin: 0,
+              }}
+            >
+              Характеристики
+            </h2>
+            <table
+              style={{
+                width: "100%",
+                borderCollapse: "collapse",
+                fontSize: 15,
+              }}
+            >
+              <tbody>
+                {item.characteristics.map((cv) => (
+                  <tr
+                    key={cv.id}
+                    style={{ borderBottom: "1px solid var(--border-color)" }}
+                  >
+                    <td
+                      style={{
+                        padding: "10px 16px 10px 0",
+                        color: "var(--subtext-color)",
+                        whiteSpace: "nowrap",
+                        verticalAlign: "top",
+                        width: "50%",
+                      }}
+                    >
+                      {cv.characteristic?.characteristic_name || "—"}
+                    </td>
+                    <td
+                      style={{
+                        padding: "10px 0",
+                        fontWeight: 500,
+                        verticalAlign: "top",
+                      }}
+                    >
+                      {cv.value}
+                      {cv.characteristic?.characteristic_unit
+                        ? ` ${cv.characteristic.characteristic_unit}`
+                        : ""}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
+        )}
+
         {relatedItems.length > 0 && (
           <>
             <h2

@@ -104,6 +104,7 @@ export default function ProductCardPage({ item }: { item: CatalogItem }) {
               от {Number(item.item_price).toLocaleString("ru-RU")} ₽
             </span>
           )}
+
           <Button onClick={handlePopupOpen} style={{ width: "fit-content" }}>
             Оставить заявку
           </Button>

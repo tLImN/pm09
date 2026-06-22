@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_characteristics_characteristic_values",
+  "info": {
+    "displayName": "Значение характеристики",
+    "icon": "bulletList",
+    "description": "Пара характеристика-значение для товара"
+  },
+  "attributes": {
+    "characteristic": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::characteristic.characteristic"
+    },
+    "value": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

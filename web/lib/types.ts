@@ -55,6 +55,36 @@ export interface Category {
   category_description?: StrapiBlock[];
 }
 
+// Characteristic (справочник характеристик)
+export interface Characteristic {
+  id: number;
+  documentId: string;
+  characteristic_name: string;
+  characteristic_slug: string;
+  characteristic_unit?: string;
+}
+
+// Значение характеристики (component)
+export interface CharacteristicValue {
+  id: number;
+  characteristic?: Characteristic;
+  value: string;
+}
+
+// Данные для фильтров
+export interface FilterData {
+  manufacturers: string[];
+  hasPrices: boolean;
+  minPrice: number | null;
+  maxPrice: number | null;
+  characteristics: {
+    name: string;
+    slug: string;
+    unit: string | null;
+    values: string[];
+  }[];
+}
+
 // Catalog Item
 export interface CatalogItem {
   id: number;
@@ -67,6 +97,7 @@ export interface CatalogItem {
   item_manufacturer?: string;
   item_description?: StrapiBlock[];
   item_images?: StrapiMedia[];
+  characteristics?: CharacteristicValue[];
 }
 
 // About Page (singleType)

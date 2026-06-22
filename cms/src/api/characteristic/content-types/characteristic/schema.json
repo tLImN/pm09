@@ -1,0 +1,26 @@
+{
+  "kind": "collectionType",
+  "collectionName": "characteristics",
+  "info": {
+    "singularName": "characteristic",
+    "pluralName": "characteristics",
+    "displayName": "Характеристики"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "characteristic_name": {
+      "type": "string",
+      "required": true
+    },
+    "characteristic_slug": {
+      "type": "uid",
+      "required": true
+    },
+    "characteristic_unit": {
+      "type": "string"
+    }
+  }
+}

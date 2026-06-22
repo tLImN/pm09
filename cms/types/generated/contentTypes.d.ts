@@ -467,6 +467,10 @@ export interface ApiCatalogItemCatalogItem extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    characteristics: Schema.Attribute.Component<
+      'characteristics.characteristic-value',
+      true
+    >;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -538,6 +542,37 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
       'manyToOne',
       'api::category.category'
     >;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiCharacteristicCharacteristic
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'characteristics';
+  info: {
+    displayName: '\u0425\u0430\u0440\u0430\u043A\u0442\u0435\u0440\u0438\u0441\u0442\u0438\u043A\u0438';
+    pluralName: 'characteristics';
+    singularName: 'characteristic';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    characteristic_name: Schema.Attribute.String & Schema.Attribute.Required;
+    characteristic_slug: Schema.Attribute.UID & Schema.Attribute.Required;
+    characteristic_unit: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::characteristic.characteristic'
+    > &
+      Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -1222,6 +1257,7 @@ declare module '@strapi/strapi' {
       'api::about.about': ApiAboutAbout;
       'api::catalog-item.catalog-item': ApiCatalogItemCatalogItem;
       'api::category.category': ApiCategoryCategory;
+      'api::characteristic.characteristic': ApiCharacteristicCharacteristic;
       'api::contact.contact': ApiContactContact;
       'api::faq.faq': ApiFaqFaq;
       'api::incoming-request.incoming-request': ApiIncomingRequestIncomingRequest;

@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { getFilterData } from "@/lib/api";
+import { FilterData } from "@/lib/types";
 import Button from "@/components/Button";
 
 const VISIBLE_MANUFACTURERS_COUNT = 6;
@@ -159,8 +160,20 @@ export default function FilterPanel({
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
   const [manufacturersExpanded, setManufacturersExpanded] = useState(false);
   const [priceError, setPriceError] = useState<string | null>(null);
+  const [characteristics, setCharacteristics] = useState<FilterData["characteristics"]>([]);
+  const [charExpanded, setCharExpanded] = useState<Record<string, boolean>>({});
 
   // Локальные состояния для полей (до применения)
+  const [selectedCharValues, setSelectedCharValues] = useState<Record<string, string[]>>(() => {
+    const result: Record<string, string[]> = {};
+    for (const [key, value] of searchParams.entries()) {
+      if (key.startsWith("char_")) {
+        const slug = key.replace("char_", "");
+        result[slug] = value.split(",").filter(Boolean);
+      }
+    }
+    return result;
+  });
   const [priceMin, setPriceMin] = useState(
     searchParams.get("priceMin") || ""
   );
@@ -202,6 +215,7 @@ export default function FilterPanel({
         setHasPrices(data.hasPrices);
         setMinPrice(data.minPrice);
         setMaxPrice(data.maxPrice);
+        setCharacteristics(data.characteristics || []);
       })
       .finally(() => setLoadingData(false));
   }, [categorySlug]);
@@ -213,6 +227,15 @@ export default function FilterPanel({
     setSelectedManufacturers(
       searchParams.get("manufacturer")?.split(",").filter(Boolean) || []
     );
+    // Синхронизация характеристик из URL
+    const charValues: Record<string, string[]> = {};
+    for (const [key, value] of searchParams.entries()) {
+      if (key.startsWith("char_")) {
+        const slug = key.replace("char_", "");
+        charValues[slug] = value.split(",").filter(Boolean);
+      }
+    }
+    setSelectedCharValues(charValues);
   }, [searchParams]);
 
   // Переключить выбор производителя
@@ -258,6 +281,19 @@ export default function FilterPanel({
       params.delete("manufacturer");
     }
 
+    // Фильтры по характеристикам
+    // Сначала удаляем все старые char_ параметры
+    for (const key of [...params.keys()]) {
+      if (key.startsWith("char_")) {
+        params.delete(key);
+      }
+    }
+    Object.entries(selectedCharValues).forEach(([slug, values]) => {
+      if (values.length > 0) {
+        params.set(`char_${slug}`, values.join(","));
+      }
+    });
+
     // Сбрасываем на первую страницу при изменении фильтров
     params.delete("page");
 
@@ -269,25 +305,33 @@ export default function FilterPanel({
     setPriceMin("");
     setPriceMax("");
     setSelectedManufacturers([]);
+    setSelectedCharValues({});
     setPriceError(null);
 
     const params = new URLSearchParams(searchParams.toString());
     params.delete("priceMin");
     params.delete("priceMax");
     params.delete("manufacturer");
+    for (const key of [...params.keys()]) {
+      if (key.startsWith("char_")) {
+        params.delete(key);
+      }
+    }
     params.delete("page");
 
     router.push(`${pathname}?${params.toString()}`);
   };
 
   // Есть ли активные фильтры
+  const hasCharacteristicFilters = [...searchParams.keys()].some((k) => k.startsWith("char_"));
   const hasActiveFilters =
     searchParams.has("priceMin") ||
     searchParams.has("priceMax") ||
-    searchParams.has("manufacturer");
+    searchParams.has("manufacturer") ||
+    hasCharacteristicFilters;
 
   // Скрываем панель если нет данных для фильтрации и нет активных фильтров
-  if (!loadingData && !hasPrices && manufacturers.length === 0 && !hasActiveFilters) {
+  if (!loadingData && !hasPrices && manufacturers.length === 0 && characteristics.length === 0 && !hasActiveFilters) {
     return null;
   }
 
@@ -485,6 +529,71 @@ export default function FilterPanel({
               </>
             )}
           </div>
+
+          {/* Динамические характеристики */}
+          {characteristics.map((char) => {
+            const VISIBLE_VALUES_COUNT = 6;
+            const isExpanded = charExpanded[char.slug] || false;
+            const hasMany = char.values.length > VISIBLE_VALUES_COUNT;
+            const visible = isExpanded ? char.values : char.values.slice(0, VISIBLE_VALUES_COUNT);
+
+            return (
+              <div key={char.slug} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                <span style={{ fontSize: 15, fontWeight: 600, color: "var(--text-color)" }}>
+                  {char.name}
+                  {char.unit ? ` (${char.unit})` : ""}
+                </span>
+                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                  {visible.map((v) => (
+                    <label
+                      key={v}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 8,
+                        cursor: "pointer",
+                        fontSize: 15,
+                      }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={(selectedCharValues[char.slug] || []).includes(v)}
+                        onChange={() => {
+                          setSelectedCharValues((prev) => {
+                            const current = prev[char.slug] || [];
+                            const next = current.includes(v)
+                              ? current.filter((x) => x !== v)
+                              : [...current, v];
+                            return { ...prev, [char.slug]: next };
+                          });
+                        }}
+                        style={{ margin: 0 }}
+                      />
+                      <span>{v}</span>
+                    </label>
+                  ))}
+                </div>
+                {hasMany && (
+                  <a
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setCharExpanded((prev) => ({ ...prev, [char.slug]: !isExpanded }));
+                    }}
+                    style={{
+                      fontSize: 14,
+                      textAlign: "left",
+                      color: "var(--link-color)",
+                      textDecoration: "none",
+                      textUnderlineOffset: 2,
+                    }}
+                  >
+                    {isExpanded ? "Свернуть" : `Посмотреть все (${char.values.length})`}
+                  </a>
+                )}
+              </div>
+            );
+          })}
 
           {/* Кнопки */}
           <div style={{ display: "flex", gap: 8, marginTop: 4 }}>

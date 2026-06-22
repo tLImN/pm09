@@ -8,6 +8,7 @@ import {
   PaymentPage,
   PrivacyPage,
   FaqPage,
+  FilterData,
 } from "./types";
 
 // На сервере используем прямой URL (localhost:1337), на клиенте — публичный.
@@ -63,11 +64,13 @@ export async function getCatalogItems(params?: {
   priceMax?: number;
   manufacturer?: string | string[];
   itemType?: "product" | "service";
+  characteristicFilters?: Record<string, string[]>;
 }): Promise<StrapiResponse<CatalogItem>> {
   try {
     const searchParams = new URLSearchParams();
     searchParams.set("populate[item_category]", "true");
     searchParams.set("populate[item_images]", "true");
+    searchParams.set("populate[characteristics][populate]", "characteristic");
 
     // Фильтр по типу (product/service)
     if (params?.itemType) {
@@ -118,6 +121,26 @@ export async function getCatalogItems(params?: {
       }
     }
 
+    // Фильтр по характеристикам
+    if (params?.characteristicFilters) {
+      Object.entries(params.characteristicFilters).forEach(([charSlug, values]) => {
+        if (values.length > 0) {
+          // Фильтр: товары, у которых есть хотя бы одно совпадение characteristic+value
+          searchParams.set(
+            "filters[characteristics][characteristic][characteristic_slug][$eq]",
+            charSlug
+          );
+          if (values.length === 1) {
+            searchParams.set("filters[characteristics][value][$eq]", values[0]);
+          } else {
+            values.forEach((v) => {
+              searchParams.append("filters[characteristics][value][$in][]", v);
+            });
+          }
+        }
+      });
+    }
+
     if (params?.page) {
       searchParams.set("pagination[page]", params.page.toString());
     }
@@ -158,7 +181,38 @@ export async function getCatalogItems(params?: {
 
 export async function getFilterData(
   categorySlug?: string
-): Promise<{ manufacturers: string[]; hasPrices: boolean; minPrice: number | null; maxPrice: number | null }> {
+): Promise<FilterData> {
+  const emptyResult: FilterData = {
+    manufacturers: [],
+    hasPrices: false,
+    minPrice: null,
+    maxPrice: null,
+    characteristics: [],
+  };
+
+  try {
+    const searchParams = new URLSearchParams();
+    if (categorySlug) {
+      searchParams.set("categorySlug", categorySlug);
+    }
+
+    const url = `${STRAPI_URL}/api/catalog-items/filter-data${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) {
+      // Fallback: используем старую логику
+      return await getFilterDataFallback(categorySlug);
+    }
+    return await res.json();
+  } catch {
+    // Fallback: используем старую логику
+    return await getFilterDataFallback(categorySlug);
+  }
+}
+
+/** Fallback — старая логика получения данных для фильтров напрямую из товаров */
+async function getFilterDataFallback(
+  categorySlug?: string
+): Promise<FilterData> {
   try {
     const searchParams = new URLSearchParams();
     searchParams.set("fields[0]", "item_manufacturer");
@@ -179,17 +233,14 @@ export async function getFilterData(
 
     const items = res.data || [];
 
-    // Извлекаем уникальные непустые значения производителей
     const manufacturers = items
       .map((item) => item.item_manufacturer)
       .filter((m): m is string => !!m && m.trim() !== "");
 
-    // Проверяем наличие хотя бы одной цены
     const hasPrices = items.some(
       (item) => item.item_price !== undefined && item.item_price !== null
     );
 
-    // Вычисляем min и max цены
     const prices = items
       .map((item) => item.item_price)
       .filter((p): p is number => p !== undefined && p !== null && p > 0);
@@ -203,9 +254,16 @@ export async function getFilterData(
       hasPrices,
       minPrice,
       maxPrice,
+      characteristics: [],
     };
   } catch {
-    return { manufacturers: [], hasPrices: false, minPrice: null, maxPrice: null };
+    return {
+      manufacturers: [],
+      hasPrices: false,
+      minPrice: null,
+      maxPrice: null,
+      characteristics: [],
+    };
   }
 }
 
@@ -214,8 +272,7 @@ export async function getCatalogItemBySlug(
 ): Promise<CatalogItem | null> {
   try {
     const res = await fetchAPI<StrapiResponse<CatalogItem>>(
-      // `/catalog-items?filters[item_slug][$eq]=${slug}&populate[item_category]=true&populate[item_images]=true&populate[item_description]=true`
-      `/catalog-items?filters[item_slug][$eq]=${slug}&populate[item_category]=true&populate[item_images]=true`
+      `/catalog-items?filters[item_slug][$eq]=${slug}&populate[item_category]=true&populate[item_images]=true&populate[characteristics][populate]=characteristic`
     );
     return res.data?.[0] || null;
   } catch {

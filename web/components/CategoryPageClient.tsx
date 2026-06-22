@@ -37,6 +37,21 @@ export default function CategoryPageClient() {
     return arr.length > 0 ? arr : undefined;
   }, [searchParams]);
 
+  // Читаем фильтры по характеристикам из URL (char_xxx=value1,value2)
+  const characteristicFilters = useMemo(() => {
+    const result: Record<string, string[]> = {};
+    for (const [key, value] of searchParams.entries()) {
+      if (key.startsWith("char_")) {
+        const slug = key.replace("char_", "");
+        const values = value.split(",").filter(Boolean);
+        if (values.length > 0) {
+          result[slug] = values;
+        }
+      }
+    }
+    return Object.keys(result).length > 0 ? result : undefined;
+  }, [searchParams]);
+
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
@@ -50,6 +65,7 @@ export default function CategoryPageClient() {
           priceMin,
           priceMax,
           manufacturer,
+          characteristicFilters,
         }),
       ]);
       setCategory(cat);
@@ -72,7 +88,7 @@ export default function CategoryPageClient() {
     } finally {
       setLoading(false);
     }
-  }, [categorySlug, sortBy, page, pageSize, router, priceMin, priceMax, manufacturer]);
+  }, [categorySlug, sortBy, page, pageSize, router, priceMin, priceMax, manufacturer, characteristicFilters]);
 
   useEffect(() => {
     fetchData();
@@ -81,7 +97,7 @@ export default function CategoryPageClient() {
   // Сбрасываем страницу при изменении фильтров в URL
   useEffect(() => {
     setPage(1);
-  }, [priceMin, priceMax, manufacturer]);
+  }, [priceMin, priceMax, manufacturer, characteristicFilters]);
 
   const handleSortChange = (value: string) => {
     setSortBy(value);
