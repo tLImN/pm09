@@ -16,6 +16,7 @@ export default function PopupForm() {
     contact_method: "phone",
   });
   const [agreed, setAgreed] = useState(false);
+  const [phoneError, setPhoneError] = useState<string | null>(null);
   const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error"
   >("idle");
@@ -33,6 +34,7 @@ export default function PopupForm() {
       setIsClosing(false);
       setAgreed(false);
       setStatus("idle");
+      setPhoneError(null);
       setFormData({ name: "", tel: "", email: "", message: "", contact_method: "phone" });
       setItemTitle(null);
       setDocumentId(null);
@@ -76,9 +78,76 @@ export default function PopupForm() {
     };
   }, []);
 
+  // Функция форматирования номера телефона: +7 (XXX) XXX-XX-XX
+  const formatPhoneNumber = (value: string): string => {
+    // Извлекаем только цифры
+    const digits = value.replace(/\D/g, "");
+    // Убираем ведущую 8 или 7 (код страны), оставляем максимум 10 цифр
+    let local = digits;
+    if (local.length > 0 && (local[0] === "8" || local[0] === "7")) {
+      local = local.substring(1);
+    }
+    local = local.substring(0, 10);
+
+    if (local.length === 0) return "";
+    if (local.length <= 3) return `+7 (${local}`;
+    if (local.length <= 6) return `+7 (${local.substring(0, 3)}) ${local.substring(3)}`;
+    if (local.length <= 8) return `+7 (${local.substring(0, 3)}) ${local.substring(3, 6)}-${local.substring(6)}`;
+    return `+7 (${local.substring(0, 3)}) ${local.substring(3, 6)}-${local.substring(6, 8)}-${local.substring(8)}`;
+  };
+
+  // Валидация номера: должно быть ровно 10 цифр после +7
+  const isPhoneValid = (phone: string): boolean => {
+    const digits = phone.replace(/\D/g, "");
+    let local = digits;
+    if (local.length > 0 && (local[0] === "8" || local[0] === "7")) {
+      local = local.substring(1);
+    }
+    return local.length === 10;
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    // Если пользователь стирает всё (включая +7) — очищаем
+    const digits = raw.replace(/\D/g, "");
+    if (digits.length === 0) {
+      setFormData({ ...formData, tel: "" });
+      setPhoneError(null);
+      return;
+    }
+    const formatted = formatPhoneNumber(raw);
+    setFormData({ ...formData, tel: formatted });
+    if (phoneError) setPhoneError(null);
+  };
+
+  // При фокусе, если поле пустое, подставляем +7 (
+  const handlePhoneFocus = () => {
+    if (!formData.tel) {
+      setFormData({ ...formData, tel: "+7 (" });
+    }
+  };
+
+  // При потере фокуса: если ввели только +7 ( — очищаем, иначе проверяем
+  const handlePhoneBlur = () => {
+    if (formData.tel === "+7 (" || formData.tel === "+7") {
+      setFormData({ ...formData, tel: "" });
+      setPhoneError(null);
+      return;
+    }
+    if (formData.tel && !isPhoneValid(formData.tel)) {
+      setPhoneError("Введите корректный номер телефона (10 цифр после +7)");
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!agreed) return;
+
+    // Проверяем телефон перед отправкой
+    if (!formData.tel || !isPhoneValid(formData.tel)) {
+      setPhoneError("Введите корректный номер телефона (10 цифр после +7)");
+      return;
+    }
 
     setStatus("loading");
     try {
@@ -97,6 +166,7 @@ export default function PopupForm() {
         setStatus("success");
         setFormData({ name: "", tel: "", email: "", message: "", contact_method: "phone" });
         setAgreed(false);
+        setPhoneError(null);
       } else {
         setStatus("error");
       }
@@ -241,12 +311,20 @@ export default function PopupForm() {
                   placeholder="Телефон"
                   required
                   value={formData.tel}
-                  onChange={(e) =>
-                    setFormData({ ...formData, tel: e.target.value })
-                  }
-                  pattern="[\+]?[0-9\s\-\(\)]{7,15}"
-                  title="Введите номер телефона, например: +7 (905) 617-98-52"
+                  onChange={handlePhoneChange}
+                  onFocus={handlePhoneFocus}
+                  onBlur={handlePhoneBlur}
+                  maxLength={18}
+                  title="Введите номер телефона в формате: +7 (XXX) XXX-XX-XX"
+                  style={{
+                    borderColor: phoneError ? "red" : undefined,
+                  }}
                 />
+                {phoneError && (
+                  <p style={{ color: "red", fontSize: 13, margin: "-5px 0 0" }}>
+                    {phoneError}
+                  </p>
+                )}
                 <div className="popup-contact-method" style={{ display: "flex", gap: 20, alignItems: "center", marginTop: 5 }}>
                   <span style={{ fontSize: 14, fontWeight: 500 }}>Как с вами связаться?</span>
                   <div>

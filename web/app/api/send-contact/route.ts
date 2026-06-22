@@ -16,6 +16,19 @@ export async function POST(request: Request) {
       );
     }
 
+    // Валидация российского номера телефона
+    const phoneDigits = tel.replace(/\D/g, "");
+    let localDigits = phoneDigits;
+    if (localDigits.length > 0 && (localDigits[0] === "8" || localDigits[0] === "7")) {
+      localDigits = localDigits.substring(1);
+    }
+    if (localDigits.length !== 10) {
+      return NextResponse.json(
+        { success: false, error: "Укажите корректный номер телефона (11 цифр)" },
+        { status: 400 }
+      );
+    }
+
     // Если выбран email как способ связи — email обязателен
     if (contact_method === "email" && !email) {
       return NextResponse.json(
