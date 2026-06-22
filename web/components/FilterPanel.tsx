@@ -151,8 +151,12 @@ export default function FilterPanel({
   const router = useRouter();
   const pathname = usePathname();
 
-  const [collapsed, setCollapsed] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [collapsed, setCollapsed] = useState(() =>
+    typeof window !== "undefined" && window.matchMedia("(max-width: 900px)").matches
+  );
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== "undefined" && window.matchMedia("(max-width: 900px)").matches
+  );
   const [manufacturers, setManufacturers] = useState<string[]>([]);
   const [loadingData, setLoadingData] = useState(true);
   const [hasPrices, setHasPrices] = useState(false);
@@ -187,8 +191,6 @@ export default function FilterPanel({
   // Отслеживаем размер экрана
   useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 900px)");
-    setIsMobile(mediaQuery.matches);
-    setCollapsed(mediaQuery.matches);
 
     const handler = (e: MediaQueryListEvent) => {
       setIsMobile(e.matches);
@@ -200,15 +202,20 @@ export default function FilterPanel({
   }, []);
 
   // Сбрасываем collapsed при смене страницы на мобильных
-  useEffect(() => {
-    if (isMobile) {
-      setCollapsed(true);
-    }
-  }, [pathname, isMobile]);
+  const [lastPathname, setLastPathname] = useState(pathname);
+  if (pathname !== lastPathname) {
+    setLastPathname(pathname);
+    if (isMobile) setCollapsed(true);
+  }
 
   // Загружаем данные для фильтров
-  useEffect(() => {
+  const [lastCategorySlug, setLastCategorySlug] = useState(categorySlug);
+  if (categorySlug !== lastCategorySlug) {
+    setLastCategorySlug(categorySlug);
     setLoadingData(true);
+  }
+
+  useEffect(() => {
     getFilterData(categorySlug)
       .then((data) => {
         setManufacturers(data.manufacturers);
@@ -221,7 +228,10 @@ export default function FilterPanel({
   }, [categorySlug]);
 
   // Синхронизируем локальное состояние с URL при навигации (например, сброс)
-  useEffect(() => {
+  const [lastSearchParamsStr, setLastSearchParamsStr] = useState(searchParams.toString());
+  const currentParamsStr = searchParams.toString();
+  if (currentParamsStr !== lastSearchParamsStr) {
+    setLastSearchParamsStr(currentParamsStr);
     setPriceMin(searchParams.get("priceMin") || "");
     setPriceMax(searchParams.get("priceMax") || "");
     setSelectedManufacturers(
@@ -236,7 +246,7 @@ export default function FilterPanel({
       }
     }
     setSelectedCharValues(charValues);
-  }, [searchParams]);
+  }
 
   // Переключить выбор производителя
   const toggleManufacturer = (m: string) => {
