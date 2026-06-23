@@ -182,6 +182,16 @@ sudo systemctl restart strapi
 sudo systemctl restart nextjs
 sudo systemctl restart nginx
 
+# Остановка сервисов
+sudo systemctl stop strapi
+sudo systemctl stop nextjs
+sudo systemctl stop nginx
+
+# Перед пересборкой Strapi в случае неудачи
+cd /opt/project/cms
+rm -rf dist
+rm -rf node_modules/.cache
+
 # Перезапуск PostgreSQL (Docker)
 cd /opt/project && docker compose restart
 
